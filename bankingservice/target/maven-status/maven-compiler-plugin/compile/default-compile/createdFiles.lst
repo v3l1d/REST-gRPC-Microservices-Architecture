@@ -1,0 +1,13 @@
+com/thesis/bankingservice/generated/BankingGrpc$BankingBlockingStub.class
+com/thesis/bankingservice/generated/BankingGrpc$BankingBaseDescriptorSupplier.class
+com/thesis/bankingservice/generated/BankingGrpc$1.class
+com/thesis/bankingservice/generated/BankingGrpc$BankingFileDescriptorSupplier.class
+com/thesis/bankingservice/generated/BankingGrpc$AsyncService.class
+com/thesis/bankingservice/generated/BankingGrpc$BankingFutureStub.class
+com/thesis/bankingservice/generated/BankingGrpc$BankingStub.class
+com/thesis/bankingservice/generated/BankingGrpc$BankingMethodDescriptorSupplier.class
+com/thesis/bankingservice/generated/BankingGrpc$MethodHandlers.class
+com/thesis/bankingservice/generated/BankingGrpc$2.class
+com/thesis/bankingservice/generated/BankingGrpc$3.class
+com/thesis/bankingservice/generated/BankingGrpc$BankingImplBase.class
+com/thesis/bankingservice/generated/BankingGrpc.class

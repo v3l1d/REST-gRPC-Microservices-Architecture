@@ -1,0 +1,29 @@
+syntax="proto3";
+option java_multiple_files=true;
+package com.thesis.generated;
+
+
+message Sms{
+    string prefix=1;
+    string number=2;
+}
+
+message Mail{
+    string address=1;
+
+}
+
+message Otp{
+    string password=1;
+}
+
+message Response{
+    bool verified=1;
+}
+
+
+service VerifyService{
+    rpc mailOtp(Mail) returns (Otp);
+    rpc smsOtp(Sms) returns (Otp);
+    rpc verifyOtp(Otp) returns (Response);
+}

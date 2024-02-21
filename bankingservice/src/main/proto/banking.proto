@@ -1,0 +1,21 @@
+syntax="proto3";
+package com.thesis.bankingservice.generated;
+option java_multiple_files=true;
+
+
+message payRequest{
+    string committent=1;
+    int64 amount=2;
+    string id=3;
+
+}
+
+
+message payResponse{
+    string result=1;
+    string requestId=2;
+}
+
+service Banking{
+    rpc payment(payRequest) returns  (payResponse);
+}

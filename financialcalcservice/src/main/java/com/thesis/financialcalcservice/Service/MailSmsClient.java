@@ -7,6 +7,7 @@ import io.grpc.StatusRuntimeException;
 
 import com.thesis.generated.Sms;
 import com.thesis.generated.VerifyServiceGrpc;
+import com.thesis.generated.Mail;
 import com.thesis.generated.Otp;
 
 public class MailSmsClient {
@@ -24,18 +25,36 @@ public class MailSmsClient {
         channel.shutdown().awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS);
     }
 
-    public void sendSmsOtp(String prefix, String number) {
+    public String sendSmsOtp(String prefix, String number) {
+        String result="";
         try {
             Sms request = Sms.newBuilder()
                 .setPrefix(prefix)
                 .setNumber(number)
                 .build();
             Otp response = blockingStub.smsOtp(request);
-            System.out.println("Generated OTP: " + response.getPassword());
+            result=response.getPassword();
         } catch (StatusRuntimeException e) {
             System.err.println("RPC failed: " + e.getStatus());
         }
+        return result;
     }
+
+    public String sendMailOtp(String email){
+            String result="";
+            try{
+                Mail mail= Mail.newBuilder()
+                    .setAddress(email)
+                    .build();
+                Otp response=blockingStub.mailOtp(mail);
+                result=response.getPassword();
+            }catch (Exception e){
+
+            }
+
+        return result;
+    }
+
     
 }
 

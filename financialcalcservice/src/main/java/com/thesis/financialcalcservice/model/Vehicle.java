@@ -1,14 +1,19 @@
 package com.thesis.financialcalcservice.model;
 
 public class Vehicle {
+    private String id;
     private String brand;
     private String name;
     private int model;
 
- public Vehicle(String brand, String name, int model) {
+ public Vehicle(String id,String brand, String name, int model) {
+        this.id=id;
         this.brand = brand;
         this.name = name;
         this.model = model;
+    }
+    public String getId(){
+        return this.id;
     }
 
     public String getBrand() {
@@ -35,14 +40,21 @@ public class Vehicle {
         this.model = model;
     }
 
+    public void setId(String id){
+        this.id=id;
+    }
+
+
     @Override
     public String toString() {
         return "{" +
-            " brand='" + getBrand() + "'" +
+            " id='" + getId() + "'" +
+            ", brand='" + getBrand() + "'" +
             ", name='" + getName() + "'" +
             ", model='" + getModel() + "'" +
             "}";
     }
+    
     
 }
    

@@ -9,6 +9,7 @@ import com.thesis.generated.Sms;
 import com.thesis.generated.VerifyServiceGrpc;
 import com.thesis.generated.Mail;
 import com.thesis.generated.Otp;
+import com.thesis.generated.Response;
 
 public class MailSmsClient {
     private final ManagedChannel channel;
@@ -48,11 +49,47 @@ public class MailSmsClient {
                     .build();
                 Otp response=blockingStub.mailOtp(mail);
                 result=response.getPassword();
-            }catch (Exception e){
-
+            }catch (StatusRuntimeException e){
+                System.err.println("RPC failed: " + e.getStatus());
             }
 
         return result;
+    }
+
+    public Boolean verifySms(String password){
+        Boolean res=false;
+        try{
+            if((password.isEmpty()==false)){
+                Otp toVerify=Otp.newBuilder()
+                    .setPassword(password)
+                    .build();
+                Response resp=blockingStub.verifySmsOtp(toVerify);
+                res=resp.getVerified();
+            }
+        }catch (StatusRuntimeException e){
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    public Boolean verifyMail(String password){
+        Boolean res=false;
+            try{
+                if(password.isEmpty()==false){
+                    Otp toVerify=Otp.newBuilder()  
+                        .setPassword(password)
+                        .build();
+                    Response resp=blockingStub.verifyMailOtp(toVerify);
+                    res=resp.getVerified();
+
+                }
+            }catch (StatusRuntimeException e){
+                e.printStackTrace();
+
+            }
+
+
+        return res;
     }
 
     

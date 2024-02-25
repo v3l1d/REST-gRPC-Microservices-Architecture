@@ -25,5 +25,6 @@ message Response{
 service VerifyService{
     rpc mailOtp(Mail) returns (Otp);
     rpc smsOtp(Sms) returns (Otp);
-    rpc verifyOtp(Otp) returns (Response);
+    rpc verifySmsOtp(Otp) returns (Response);
+    rpc verifyMailOtp(Otp) returns (Response);
 }

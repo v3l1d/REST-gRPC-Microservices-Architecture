@@ -6,7 +6,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.61.0)",
-    comments = "Source: banking.proto")
+    comments = "Source: bankPractice.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class BankingGrpc {
 
@@ -15,35 +15,35 @@ public final class BankingGrpc {
   public static final java.lang.String SERVICE_NAME = "com.thesis.bankingservice.generated.Banking";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<com.thesis.bankingservice.generated.payRequest,
-      com.thesis.bankingservice.generated.payResponse> getPaymentMethod;
+  private static volatile io.grpc.MethodDescriptor<com.thesis.bankingservice.generated.Request,
+      com.thesis.bankingservice.generated.Practice> getCreatePracticeMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "payment",
-      requestType = com.thesis.bankingservice.generated.payRequest.class,
-      responseType = com.thesis.bankingservice.generated.payResponse.class,
+      fullMethodName = SERVICE_NAME + '/' + "CreatePractice",
+      requestType = com.thesis.bankingservice.generated.Request.class,
+      responseType = com.thesis.bankingservice.generated.Practice.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<com.thesis.bankingservice.generated.payRequest,
-      com.thesis.bankingservice.generated.payResponse> getPaymentMethod() {
-    io.grpc.MethodDescriptor<com.thesis.bankingservice.generated.payRequest, com.thesis.bankingservice.generated.payResponse> getPaymentMethod;
-    if ((getPaymentMethod = BankingGrpc.getPaymentMethod) == null) {
+  public static io.grpc.MethodDescriptor<com.thesis.bankingservice.generated.Request,
+      com.thesis.bankingservice.generated.Practice> getCreatePracticeMethod() {
+    io.grpc.MethodDescriptor<com.thesis.bankingservice.generated.Request, com.thesis.bankingservice.generated.Practice> getCreatePracticeMethod;
+    if ((getCreatePracticeMethod = BankingGrpc.getCreatePracticeMethod) == null) {
       synchronized (BankingGrpc.class) {
-        if ((getPaymentMethod = BankingGrpc.getPaymentMethod) == null) {
-          BankingGrpc.getPaymentMethod = getPaymentMethod =
-              io.grpc.MethodDescriptor.<com.thesis.bankingservice.generated.payRequest, com.thesis.bankingservice.generated.payResponse>newBuilder()
+        if ((getCreatePracticeMethod = BankingGrpc.getCreatePracticeMethod) == null) {
+          BankingGrpc.getCreatePracticeMethod = getCreatePracticeMethod =
+              io.grpc.MethodDescriptor.<com.thesis.bankingservice.generated.Request, com.thesis.bankingservice.generated.Practice>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "payment"))
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CreatePractice"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.thesis.bankingservice.generated.payRequest.getDefaultInstance()))
+                  com.thesis.bankingservice.generated.Request.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.thesis.bankingservice.generated.payResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new BankingMethodDescriptorSupplier("payment"))
+                  com.thesis.bankingservice.generated.Practice.getDefaultInstance()))
+              .setSchemaDescriptor(new BankingMethodDescriptorSupplier("CreatePractice"))
               .build();
         }
       }
     }
-    return getPaymentMethod;
+    return getCreatePracticeMethod;
   }
 
   /**
@@ -96,9 +96,9 @@ public final class BankingGrpc {
 
     /**
      */
-    default void payment(com.thesis.bankingservice.generated.payRequest request,
-        io.grpc.stub.StreamObserver<com.thesis.bankingservice.generated.payResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getPaymentMethod(), responseObserver);
+    default void createPractice(com.thesis.bankingservice.generated.Request request,
+        io.grpc.stub.StreamObserver<com.thesis.bankingservice.generated.Practice> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCreatePracticeMethod(), responseObserver);
     }
   }
 
@@ -131,10 +131,10 @@ public final class BankingGrpc {
 
     /**
      */
-    public void payment(com.thesis.bankingservice.generated.payRequest request,
-        io.grpc.stub.StreamObserver<com.thesis.bankingservice.generated.payResponse> responseObserver) {
+    public void createPractice(com.thesis.bankingservice.generated.Request request,
+        io.grpc.stub.StreamObserver<com.thesis.bankingservice.generated.Practice> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getPaymentMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getCreatePracticeMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -156,9 +156,9 @@ public final class BankingGrpc {
 
     /**
      */
-    public com.thesis.bankingservice.generated.payResponse payment(com.thesis.bankingservice.generated.payRequest request) {
+    public com.thesis.bankingservice.generated.Practice createPractice(com.thesis.bankingservice.generated.Request request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getPaymentMethod(), getCallOptions(), request);
+          getChannel(), getCreatePracticeMethod(), getCallOptions(), request);
     }
   }
 
@@ -180,14 +180,14 @@ public final class BankingGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<com.thesis.bankingservice.generated.payResponse> payment(
-        com.thesis.bankingservice.generated.payRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<com.thesis.bankingservice.generated.Practice> createPractice(
+        com.thesis.bankingservice.generated.Request request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getPaymentMethod(), getCallOptions()), request);
+          getChannel().newCall(getCreatePracticeMethod(), getCallOptions()), request);
     }
   }
 
-  private static final int METHODID_PAYMENT = 0;
+  private static final int METHODID_CREATE_PRACTICE = 0;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -206,9 +206,9 @@ public final class BankingGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
-        case METHODID_PAYMENT:
-          serviceImpl.payment((com.thesis.bankingservice.generated.payRequest) request,
-              (io.grpc.stub.StreamObserver<com.thesis.bankingservice.generated.payResponse>) responseObserver);
+        case METHODID_CREATE_PRACTICE:
+          serviceImpl.createPractice((com.thesis.bankingservice.generated.Request) request,
+              (io.grpc.stub.StreamObserver<com.thesis.bankingservice.generated.Practice>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -229,12 +229,12 @@ public final class BankingGrpc {
   public static final io.grpc.ServerServiceDefinition bindService(AsyncService service) {
     return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
         .addMethod(
-          getPaymentMethod(),
+          getCreatePracticeMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              com.thesis.bankingservice.generated.payRequest,
-              com.thesis.bankingservice.generated.payResponse>(
-                service, METHODID_PAYMENT)))
+              com.thesis.bankingservice.generated.Request,
+              com.thesis.bankingservice.generated.Practice>(
+                service, METHODID_CREATE_PRACTICE)))
         .build();
   }
 
@@ -244,7 +244,7 @@ public final class BankingGrpc {
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return com.thesis.bankingservice.generated.BankingOuterClass.getDescriptor();
+      return com.thesis.bankingservice.generated.BankPractice.getDescriptor();
     }
 
     @java.lang.Override
@@ -283,7 +283,7 @@ public final class BankingGrpc {
         if (result == null) {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new BankingFileDescriptorSupplier())
-              .addMethod(getPaymentMethod())
+              .addMethod(getCreatePracticeMethod())
               .build();
         }
       }

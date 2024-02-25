@@ -13,8 +13,8 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 public class VerifyServiceImpl extends VerifyServiceImplBase {
-    private String otp;
-
+    private String MailOtp;
+    private String SmsOtp;
     public  VerifyServiceImpl(){
 
     }
@@ -33,8 +33,7 @@ public class VerifyServiceImpl extends VerifyServiceImplBase {
 
         responseObserver.onNext(password);
         responseObserver.onCompleted();
-        this.otp=genOtp;
-        System.out.println(this.otp);
+        this.SmsOtp=genOtp;
         }catch (Exception e){
             responseObserver.onError(Status.INTERNAL.withDescription("Error generating OTP").asException());
         }
@@ -54,16 +53,17 @@ public class VerifyServiceImpl extends VerifyServiceImplBase {
             
             responseObserver.onNext(password);
             responseObserver.onCompleted();
+            this.MailOtp=genOtp;
         } catch (Exception e){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("ERROR generating OTP").asException());
         }
     }
 
     @Override
-    public void  verifyOtp(Otp pass, StreamObserver<Response> respObserver){
+    public void  verifySmsOtp(Otp smsPass, StreamObserver<Response> respObserver){
         Boolean result;
-        System.out.println(pass.getPassword());
-        if(pass.getPassword().equals(this.otp)){
+        System.out.println(smsPass.getPassword());
+        if(smsPass.getPassword().equals(this.SmsOtp)){
            result=true;
         }else{
             result=false;
@@ -76,6 +76,22 @@ public class VerifyServiceImpl extends VerifyServiceImplBase {
         respObserver.onCompleted();
         
 
+    }
+
+    @Override
+    public void verifyMailOtp(Otp mailPass, StreamObserver<Response> respObserver){
+        Boolean result;
+        if(mailPass.getPassword().equals(this.MailOtp)){
+            result=true;
+        }else{
+            result=false;
+        }
+        Response resp=Response.newBuilder()
+            .setVerified(result)
+            .build();
+        System.out.println(resp.getVerified());
+        respObserver.onNext(resp);
+        respObserver.onCompleted();
     }
     
     

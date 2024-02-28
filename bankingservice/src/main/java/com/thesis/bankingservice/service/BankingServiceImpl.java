@@ -2,30 +2,79 @@ package com.thesis.bankingservice.service;
 
 import java.util.Random;
 
-import com.thesis.bankingservice.generated.BankingGrpc;
-import com.thesis.bankingservice.generated.Practice;
-import com.thesis.bankingservice.generated.PracticeResponse;
-import com.thesis.bankingservice.generated.Request;
+import com.thesis.generated.BankingGrpc;
+import com.thesis.generated.Practice;
+import com.thesis.generated.PracticeResponse;
+import com.thesis.generated.Request;
 
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
     private String practiceId;
+    private String status;
+    private Practice practice;
+   
 
     @Override
-    public void createPractice(Request req,StreamObserver<Practice> responseObserver){
-            if(req.getAction().equals(Request.Action.FILL)){
-                String practId=practiceIdGen();
-                this.practiceId=practId;
-                Practice response=Practice.newBuilder()
-                    .setPracticeId(practId)
-                    .setStatus("TEMPORARY")
-                    .build();
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-            }
+    public void createPractice(Practice request ,StreamObserver<PracticeResponse> responseObserver){
+          
+        if (request == null || request.getReq() == null) {
+        // Handle null request or req field
+        responseObserver.onError(Status.INVALID_ARGUMENT
+                .withDescription("Invalid request: req field is missing or null")
+                .asRuntimeException());
+        return;
     }
+        if(request.getReq().getAction()==Request.Action.CREATE){
+        this.status="CREATED";
+        this.practiceId=practiceIdGen();
+       
+        PracticeResponse resp= PracticeResponse.newBuilder()
+            .setStatus(status)
+            .setPracticeId(practiceId)
+            .build();
+        
+        responseObserver.onNext(resp);
+        responseObserver.onCompleted();
+      } else {
+        // Handle other actions
+        responseObserver.onError(Status.INVALID_ARGUMENT
+                .withDescription("Invalid action: only CREATE action is supported")
+                .asRuntimeException());
+    }
+    }   
 
+    @Override
+    public void fillPractice(Practice request, StreamObserver<PracticeResponse> responseObserver){
+      if(request==null || request.getReq()==null){
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                .withDescription("Invalid request: missing fields")
+                .asRuntimeException());
+            return;
+
+      } 
+    
+      if(request.getReq().getAction() == Request.Action.FILL && request.getPracticeId().equals(practiceId)){
+            this.status="COMPLETED";
+            this.practice=Practice.newBuilder()
+                .setStatus(status)
+                .setPracticeId(practiceId)
+                .setName(request.getName())
+                .setSurname(request.getSurname())
+                .setEmail(request.getEmail())
+                .setPhone(request.getPhone())
+                .build();
+            PracticeResponse response=PracticeResponse.newBuilder()
+                .setPracticeId(practiceId)
+                .setStatus(status)
+                .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+      }
+
+
+    }
     
 
 
@@ -40,7 +89,7 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
             practId.append(rand.nextInt(19));
         }
 
-        return practiceId;
+        return practId.toString();
     }
         
 }   

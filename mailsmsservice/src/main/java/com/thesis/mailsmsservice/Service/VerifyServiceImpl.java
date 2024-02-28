@@ -47,10 +47,10 @@ public class VerifyServiceImpl extends VerifyServiceImplBase {
         }
         try{
             String genOtp=generateRandomString(5);
-            Otp password=Otp.newBuilder()
+            Otp pasword=Otp.newBuilder()
                 .setPassword(genOtp)
                 .build();
-            
+
             responseObserver.onNext(password);
             responseObserver.onCompleted();
             this.MailOtp=genOtp;
@@ -59,28 +59,25 @@ public class VerifyServiceImpl extends VerifyServiceImplBase {
         }
     }
 
+
     @Override
     public void  verifySmsOtp(Otp smsPass, StreamObserver<Response> respObserver){
-        Boolean result;
+        boolean result;
         System.out.println(smsPass.getPassword());
-        if(smsPass.getPassword().equals(this.SmsOtp)){
-           result=true;
-        }else{
-            result=false;
-        }
+        result= smsPass.getPassword().equals(this.SmsOtp);
 
         Response resp=Response.newBuilder()
             .setVerified(result)
             .build();
         respObserver.onNext(resp);
         respObserver.onCompleted();
-        
+
 
     }
 
     @Override
     public void verifyMailOtp(Otp mailPass, StreamObserver<Response> respObserver){
-        Boolean result;
+        boolean result;
         if(mailPass.getPassword().equals(this.MailOtp)){
             result=true;
         }else{
@@ -93,17 +90,17 @@ public class VerifyServiceImpl extends VerifyServiceImplBase {
         respObserver.onNext(resp);
         respObserver.onCompleted();
     }
-    
-    
+
+
 
       public static String generateRandomString(int length) {
 
         SecureRandom random = new SecureRandom();
 
         byte[] randomBytes = new byte[length];
-        
+
         random.nextBytes(randomBytes);
-        
+
         return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
 
     }

@@ -1,5 +1,5 @@
 syntax="proto3";
-package com.thesis.bankingservice.generated;
+package com.thesis.generated;
 option java_multiple_files=true;
 
 message Request{
@@ -12,20 +12,23 @@ message Request{
 }
 
 message Practice{
+
     string practiceId=1;
     string status=2;
     string name=3;
     string surname=4;
     string email=5;
-    string phone=6;
-
+    string phone=6;    
+    Request req=7;
+    //TODO: insert financing data
 }
 
 message PracticeResponse{
-    string result=1;
-    string requestId=2;
+    string status=1;
+    string practiceId=2;
 }
 
 service Banking{
-    rpc CreatePractice(Request) returns (Practice);
+    rpc CreatePractice(Practice) returns (PracticeResponse);
+    rpc FillPractice(Practice) returns (PracticeResponse);
 }

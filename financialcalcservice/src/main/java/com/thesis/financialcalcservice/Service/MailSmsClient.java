@@ -26,7 +26,7 @@ public class MailSmsClient {
         channel.shutdown().awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS);
     }
 
-    public String sendSmsOtp(String prefix, String number) {
+    public String createSmsOtp(String prefix, String number) {
         String result="";
         try {
             Sms request = Sms.newBuilder()
@@ -41,7 +41,7 @@ public class MailSmsClient {
         return result;
     }
 
-    public String sendMailOtp(String email){
+    public String createMailOtp(String email){
             String result="";
             try{
                 Mail mail= Mail.newBuilder()
@@ -57,9 +57,9 @@ public class MailSmsClient {
     }
 
     public Boolean verifySms(String password){
-        Boolean res=false;
+        boolean res=false;
         try{
-            if((password.isEmpty()==false)){
+            if((!password.isEmpty())){
                 Otp toVerify=Otp.newBuilder()
                     .setPassword(password)
                     .build();
@@ -73,9 +73,9 @@ public class MailSmsClient {
     }
 
     public Boolean verifyMail(String password){
-        Boolean res=false;
+        boolean res=false;
             try{
-                if(password.isEmpty()==false){
+                if(!password.isEmpty()){
                     Otp toVerify=Otp.newBuilder()  
                         .setPassword(password)
                         .build();

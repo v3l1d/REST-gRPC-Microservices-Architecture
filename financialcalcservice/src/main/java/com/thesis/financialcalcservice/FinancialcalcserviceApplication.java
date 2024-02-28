@@ -3,7 +3,6 @@ package com.thesis.financialcalcservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.thesis.financialcalcservice.Service.MailSmsClient;
 
 
 

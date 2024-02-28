@@ -5,7 +5,7 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
 public class BankingServer {
-    private static final int port=50053;
+    private static final int port=50054;
     private final Server srv;
 
     public BankingServer() throws Exception{

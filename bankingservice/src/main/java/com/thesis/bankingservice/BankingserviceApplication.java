@@ -11,7 +11,7 @@ public class BankingserviceApplication {
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(BankingserviceApplication.class, args);
 		BankingServer srv= new BankingServer();
-		
+		srv.start();
 
 	}
 

@@ -1,10 +1,15 @@
 package com.thesis.financialcalcservice.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Person {
     private String name;
     private String surname;
     private String email;
     private String phone;
+    public Person()
+    {}
+
 
     public Person(String name, String surname, String email, String phone) {
         this.name = name;
@@ -13,6 +18,7 @@ public class Person {
         this.phone = phone;
     }
 
+    @JsonProperty
     public String getName() {
         return name;
     }
@@ -20,7 +26,7 @@ public class Person {
     public void setName(String name) {
         this.name = name;
     }
-
+    @JsonProperty
     public String getSurname() {
         return surname;
     }
@@ -28,7 +34,7 @@ public class Person {
     public void setSurname(String surname) {
         this.surname = surname;
     }
-
+    @JsonProperty
     public String getEmail() {
         return email;
     }
@@ -36,7 +42,7 @@ public class Person {
     public void setEmail(String email) {
         this.email = email;
     }
-
+    @JsonProperty
     public String getPhone() {
         return phone;
     }

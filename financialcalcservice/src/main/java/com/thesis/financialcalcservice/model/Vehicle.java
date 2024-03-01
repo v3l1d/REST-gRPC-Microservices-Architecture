@@ -1,10 +1,27 @@
 package com.thesis.financialcalcservice.model;
 
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name="vehicles")
 public class Vehicle {
+    @Id
+    @Column(name="id")
     private String id;
+    @Column(name="brand")
     private String brand;
+    @Column(name="model")
     private String name;
+    @Column(name="year")
     private int model;
+
+    public Vehicle(){
+
+    }
 
  public Vehicle(String id,String brand, String name, int model) {
         this.id=id;

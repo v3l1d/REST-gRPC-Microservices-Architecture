@@ -47,7 +47,7 @@ public class VerifyServiceImpl extends VerifyServiceImplBase {
         }
         try{
             String genOtp=generateRandomString(5);
-            Otp pasword=Otp.newBuilder()
+            Otp password=Otp.newBuilder()
                 .setPassword(genOtp)
                 .build();
 

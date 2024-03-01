@@ -75,7 +75,16 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
 
 
     }
-    
+    public void instanciate(){
+
+    }
+
+    public void updatePractice(String practiceId){
+
+    }
+
+
+
 
 
     public String practiceIdGen(){

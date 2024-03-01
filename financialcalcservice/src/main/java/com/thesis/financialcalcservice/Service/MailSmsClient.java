@@ -10,11 +10,14 @@ import com.thesis.generated.VerifyServiceGrpc;
 import com.thesis.generated.Mail;
 import com.thesis.generated.Otp;
 import com.thesis.generated.Response;
+import org.apache.logging.log4j.LogManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 public class MailSmsClient {
     private final ManagedChannel channel;
     private final VerifyServiceGrpc.VerifyServiceBlockingStub blockingStub;
-
+    private static final Logger logger= LogManager.getLogger(MailSmsClient.class);
     public MailSmsClient(String host, int port) {
         this.channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
@@ -28,6 +31,7 @@ public class MailSmsClient {
 
     public String createSmsOtp(String prefix, String number) {
         String result="";
+
         try {
             Sms request = Sms.newBuilder()
                 .setPrefix(prefix)
@@ -67,7 +71,7 @@ public class MailSmsClient {
                 res=resp.getVerified();
             }
         }catch (StatusRuntimeException e){
-            e.printStackTrace();
+            logger.error("Error processing password",e);
         }
         return res;
     }

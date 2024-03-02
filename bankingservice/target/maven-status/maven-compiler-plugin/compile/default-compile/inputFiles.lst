@@ -5,8 +5,11 @@
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/Practice.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/PracticeResponse.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/service/BankingServiceImpl.java
+/mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/model/PracticeEntity.java
+/mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/repository/PracticeRepository.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/PracticeResponseOrBuilder.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/PracticeOrBuilder.java
+/mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/service/BankDBService.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/BankingserviceApplication.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/controller/BankingController.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/RequestOrBuilder.java

@@ -1,3 +1,4 @@
+com/thesis/bankingservice/repository/PracticeRepository.class
 com/thesis/generated/PracticeResponse$1.class
 com/thesis/generated/BankingGrpc$BankingStub.class
 com/thesis/generated/Practice$Builder.class
@@ -13,6 +14,7 @@ com/thesis/generated/Request$Builder.class
 com/thesis/generated/Practice.class
 com/thesis/generated/BankingGrpc.class
 com/thesis/generated/PracticeResponse$Builder.class
+com/thesis/bankingservice/model/PracticeEntity.class
 com/thesis/generated/RequestOrBuilder.class
 com/thesis/bankingservice/service/BankingServer.class
 com/thesis/generated/BankingGrpc$BankingBlockingStub.class
@@ -28,6 +30,7 @@ com/thesis/generated/BankingGrpc$BankingImplBase.class
 com/thesis/bankingservice/controller/BankingController.class
 com/thesis/bankingservice/service/BankingServiceImpl.class
 com/thesis/generated/BankingGrpc$2.class
+com/thesis/bankingservice/service/BankDBService.class
 com/thesis/generated/BankingGrpc$BankingFileDescriptorSupplier.class
 com/thesis/generated/Request$1.class
 com/thesis/bankingservice/service/PaymentClient.class

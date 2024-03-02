@@ -10,8 +10,7 @@ public class MailsmsserviceApplication {
 
 	public static void main(String[] args) throws Exception{
 		SpringApplication.run(MailsmsserviceApplication.class, args);
-		GrpcServer srv= new GrpcServer();
-		srv.start();
+
 	}
 
 }

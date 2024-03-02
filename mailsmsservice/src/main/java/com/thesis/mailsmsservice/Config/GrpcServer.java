@@ -8,7 +8,7 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.ProtoReflectionService;
 
-@Configuration
+
 public class GrpcServer {
     private static final int port=50053;
     private final Server srv;

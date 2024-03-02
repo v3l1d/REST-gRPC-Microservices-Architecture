@@ -1,7 +1,11 @@
 package com.thesis.financialcalcservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name="people")
 public class Person {
     private String name;
     private String surname;

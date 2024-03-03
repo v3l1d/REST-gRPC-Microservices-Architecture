@@ -1,16 +1,25 @@
 package com.thesis.financialcalcservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name="people")
+@Table(name="customers")
 public class Person {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name="name")
     private String name;
+    @Column(name="surname")
     private String surname;
+
+    @Column(name="email")
     private String email;
+    @Column(name="phone")
     private String phone;
+    @Column(name="verified")
+    private boolean verified;
     public Person()
     {}
 

@@ -2,6 +2,7 @@ package com.thesis.financialcalcservice.controller;
 
 import com.thesis.financialcalcservice.Service.BankingClient;
 import com.thesis.financialcalcservice.repository.FinancingRepository;
+import com.thesis.financialcalcservice.Service.PersonService;
 import com.thesis.financialcalcservice.repository.VehicleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,17 +33,20 @@ import org.apache.logging.log4j.Logger;
 public class FinancialControllerGrpc {
    private final MailSmsClient mailSmsClient = new MailSmsClient("localhost", 50053);
    private final BankingClient bankingClient= new BankingClient("localhost",50054);
+
    private String MailOtp;
    private String SmsOtp;
    private final ObjectMapper obj= new ObjectMapper();
    private static final Logger logger=LogManager.getLogger(FinancialControllerGrpc.class);
    private final VehicleRepository vehicleRepository;
    private final FinancingRepository financingRepository;
+   private final PersonService personService;
 
-   
-    public FinancialControllerGrpc(VehicleRepository vehicleRepository, FinancingRepository financingRepository) {
+
+    public FinancialControllerGrpc(VehicleRepository vehicleRepository, FinancingRepository financingRepository, PersonService personService) {
         this.vehicleRepository = vehicleRepository;
         this.financingRepository = financingRepository;
+        this.personService=personService;
     }
 
     @GetMapping("/get-vehicles")
@@ -64,22 +68,24 @@ public class FinancialControllerGrpc {
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<String> otpVerification(@RequestBody String otps) {
+    public ResponseEntity<String> otpVerification(@RequestBody String otps , String email) {
         try {
             JsonNode passwords = obj.readTree(otps);
-            boolean smsResponse = false;
-            boolean mailResponse = false;
+            boolean SMSVerified = false;
+            boolean MailVerified = false;
 
             if (passwords.has("email")) {
-                mailResponse = mailSmsClient.verifyMail(passwords.get("email").asText());
-                if (mailResponse) {
+                MailVerified = mailSmsClient.verifyMail(passwords.get("email").asText());
+                logger.info(MailVerified);
+                if (MailVerified) {
                     return ResponseEntity.ok().body("Mail OTP verification completed!");
                 } else {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mail OTP verification failed!");
                 }
             } else if (passwords.has("sms")) {
-                smsResponse = mailSmsClient.verifySms(passwords.get("sms").asText());
-                if (smsResponse) {
+                SMSVerified = mailSmsClient.verifySms(passwords.get("sms").asText());
+                logger.info(SMSVerified);
+                if (SMSVerified) {
                     return ResponseEntity.ok().body("SMS OTP verification completed!");
                 } else {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("SMS OTP verification failed!");
@@ -87,6 +93,7 @@ public class FinancialControllerGrpc {
             } else {
                 return ResponseEntity.badRequest().body("Either email or SMS OTP is required!");
             }
+
         } catch (JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing OTPs!");
         }
@@ -98,6 +105,7 @@ public class FinancialControllerGrpc {
 
             try {
                 if (personalData.getEmail()!=null && personalData.getPhone()!=null) {
+                    personService.savePersonIfNotExists(personalData);
                     String jsonBody = obj.writeValueAsString(personalData);
                     logger.info(jsonBody);
                     WebClient webClient=WebClient.create();
@@ -131,7 +139,7 @@ public class FinancialControllerGrpc {
          
          try{
              if (personalData.getPhone()!=null && personalData.getEmail()!=null) {
-            logger.info("Both phone and email are present");
+            logger.info("Both phone and email are present {} {}:" ,personalData.getEmail() , personalData.getPhone());
             this.SmsOtp= mailSmsClient.createSmsOtp(personalData.getPhone().substring(0,1), personalData.getPhone().substring(2,11));
             this.MailOtp= mailSmsClient.createMailOtp(personalData.getEmail());
             logger.info(this.SmsOtp);

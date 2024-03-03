@@ -1,0 +1,16 @@
+syntax="proto3";
+option java_multiple_files=true;
+package com.thesis.generated;
+import bankingPractice.proto;
+
+message Request{
+    com.thesis.generated.Practice practice=1;
+}
+
+message Response{
+    string result=1;
+}
+
+service{
+    rpc Evaluate(Request) returns (Response);
+}

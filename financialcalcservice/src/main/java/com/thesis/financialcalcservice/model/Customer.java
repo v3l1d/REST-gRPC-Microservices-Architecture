@@ -5,10 +5,10 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name="customers")
-public class Person {
+public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
     @Column(name="name")
     private String name;
     @Column(name="surname")
@@ -18,17 +18,22 @@ public class Person {
     private String email;
     @Column(name="phone")
     private String phone;
-    @Column(name="verified")
-    private boolean verified;
-    public Person()
+    @Column(name="sms_verified")
+    private boolean SMSverified;
+
+    @Column (name="mail_verified")
+    private boolean mailVerified;
+    public Customer()
     {}
 
 
-    public Person(String name, String surname, String email, String phone) {
+    public Customer(String name, String surname, String email, String phone) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.phone = phone;
+        this.mailVerified=false;
+        this.SMSverified=false;
     }
 
     @JsonProperty
@@ -70,6 +75,18 @@ public class Person {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setMailVerified(boolean mailVerified) {
+        this.mailVerified = mailVerified;
+    }
+
+    public void setSMSverified(boolean SMSverified) {
+        this.SMSverified = SMSverified;
     }
 }
 

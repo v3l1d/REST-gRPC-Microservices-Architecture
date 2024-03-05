@@ -10,6 +10,7 @@
         <module name="mailsmsservice" />
         <module name="financialcalcservice" />
         <module name="paymentservice" />
+        <module name="ratingservice" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -25,6 +26,7 @@
       <module name="grpcserver" options="-parameters" />
       <module name="mailsmsservice" options="-parameters" />
       <module name="paymentservice" options="-parameters" />
+      <module name="ratingservice" options="-parameters" />
     </option>
   </component>
 </project>

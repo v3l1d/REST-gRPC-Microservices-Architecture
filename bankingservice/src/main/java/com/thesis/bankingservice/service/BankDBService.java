@@ -8,8 +8,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 @Service
 public class BankDBService {
+    private final Logger logger=LogManager.getLogger(BankDBService.class);
     @Autowired
     private PracticeRepository repository;
     @Transactional
@@ -18,6 +21,9 @@ public class BankDBService {
         if(toChange!=null){
             toChange=entity;
             repository.save(toChange);
+        }else{
+
+
         }
 
     }
@@ -26,6 +32,16 @@ public class BankDBService {
     public boolean practiceExists(String practiceId){
         return repository.findByPracticeId(practiceId) != null;
 
+    }
+
+    @Transactional
+    public String getFinancingIdByPractice(String practiceId){
+        if(repository.findByPracticeId(practiceId)!=null){
+            PracticeEntity temp=repository.findByPracticeId(practiceId);
+            return temp.getFinancingId();
+        }else{
+            return null;
+        }
     }
     @Transactional
     public void newPractice(PracticeEntity practice){

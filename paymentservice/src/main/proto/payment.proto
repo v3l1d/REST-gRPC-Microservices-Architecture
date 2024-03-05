@@ -1,18 +1,20 @@
 syntax="proto3";
 option java_multiple_files=true;
-package com.thesis.paymentservice.generated;
+package com.thesis.generated;
 
-message Payment{
+message paymentRequest{
     string method=1;
     string name=2;
     string surname=3;
+    string paymentId=4;
+
 }
 
 
-message Response{
+message paymentResponse{
     string result=1;
 }
 
-service PaymentService{
-    rpc payRequest(Payment) returns (Response);
+service Payment{
+    rpc payRequest(paymentRequest) returns (paymentResponse);
 }

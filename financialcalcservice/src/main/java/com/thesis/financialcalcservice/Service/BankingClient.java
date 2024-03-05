@@ -7,7 +7,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 
 import java.util.concurrent.TimeUnit;
-import com.thesis.financialcalcservice.model.Person;
+import com.thesis.financialcalcservice.model.Customer;
 import static com.thesis.generated.Request.Action.CREATE;
 import static com.thesis.generated.Request.Action.FILL;
 
@@ -27,37 +27,39 @@ public class BankingClient {
         chan.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 //
-    public boolean createPractice(){
-        boolean result=false;
+    public String createPractice(String customerEmail,String financingId){
+
         try{
             Practice request= Practice.newBuilder()
                     .setReq(Request.newBuilder().setAction(CREATE))
+                    .setEmail(customerEmail)
+                    .setFinancingId(financingId)
                     .build();
             PracticeResponse resp=bankingBlockingStub.createPractice(request);
             if(resp.getStatus().equals("CREATED")){
-                result=true;
+                return resp.getPracticeId();
 
             }
 
 
         }catch (StatusRuntimeException e){
-            System.err.println("RPC failed:" + e.getStatus());
+             System.err.println("RPC failed:" + e.getStatus());
         }
-        return result;
+        return null;
     }
 
-    public void fillPractice(Person personalData,String practiceId){
+    public void fillPractice(Customer personalData, String practiceId){
         try{
             Practice request=Practice.newBuilder()
                     .setPracticeId(practiceId)
                     .setReq(Request.newBuilder().setAction(FILL))
                     .setName(personalData.getName())
                     .setSurname(personalData.getSurname())
-                    .setEmail(personalData.getEmail())
                     .setPhone(personalData.getPhone())
+                    .setEmail(personalData.getEmail())
                     .build();
             PracticeResponse resp=bankingBlockingStub.fillPractice(request);
-            System.out.println("Practice status:"+resp.getStatus()+ "WITH ID"+resp.getPracticeId());
+            System.out.println("Practice status: "+resp.getStatus()+ " WITH ID "+resp.getPracticeId());
         }catch (StatusRuntimeException e){
             System.err.println("RPC failed:" + e.getStatus());
         }

@@ -18,8 +18,9 @@ message Practice{
     string name=3;
     string surname=4;
     string email=5;
-    string phone=6;    
-    Request req=7;
+    string phone=6;
+    string financingId=7;
+    Request req=8;
     //TODO: insert financing data
 }
 

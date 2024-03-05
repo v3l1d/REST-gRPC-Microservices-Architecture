@@ -32,6 +32,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>net.devh</groupId>
+			<artifactId>grpc-server-spring-boot-starter</artifactId>
+			<version>2.15.0.RELEASE</version>
+		</dependency>
+		<dependency>
     		<groupId>io.grpc</groupId>
     		<artifactId>grpc-protobuf</artifactId>
     		<version>1.61.0</version>

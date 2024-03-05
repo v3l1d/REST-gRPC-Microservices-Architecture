@@ -23,7 +23,8 @@ public class PracticeEntity {
     private String email;
     @Column(name="phone")
     private String phone;
-
+    @Column (name="financing_id")
+    private String financingId;
     public PracticeEntity(){}
 
     public String getPracticeId() {
@@ -86,4 +87,11 @@ public class PracticeEntity {
             "}";
     }
 
+    public String getFinancingId() {
+        return financingId;
+    }
+
+    public void setFinancingId(String financingId) {
+        this.financingId = financingId;
+    }
 }

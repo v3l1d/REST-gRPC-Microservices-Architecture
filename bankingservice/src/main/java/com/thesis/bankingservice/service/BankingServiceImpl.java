@@ -16,10 +16,12 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import jakarta.annotation.PostConstruct;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 @GrpcService
 public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
-
+    private final Logger logger=LogManager.getLogger(BankingServiceImpl.class);
     @Autowired
     private BankDBService dbService;
     private String tempId;
@@ -34,31 +36,31 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
 
     @Override
     public void createPractice(Practice request ,StreamObserver<PracticeResponse> responseObserver){
-          
-        if (request == null || request.getReq() == null) {
-        // Handle null request or req field
-        responseObserver.onError(Status.INVALID_ARGUMENT
-                .withDescription("Invalid request: req field is missing or null")
-                .asRuntimeException());
-        return;
-    }
-        if(request.getReq().getAction()==Request.Action.CREATE){
-        String status="CREATED";
-        tempId=practiceIdGen();
-        String practiceId=tempId;
-        
-        PracticeEntity entity= new PracticeEntity();
-        entity.setStatus(status);
-        entity.setPracticeId(practiceId);
-      // practiceRepository.save(entity);
 
-            dbService.newPractice(entity);
-        PracticeResponse resp= PracticeResponse.newBuilder()
-            .setStatus(status)
-            .setPracticeId(practiceId)
-            .build();
-        responseObserver.onNext(resp);
-        responseObserver.onCompleted();
+        if(request.getReq().getAction()==Request.Action.CREATE){
+            if(!dbService.practiceExists(request.getPracticeId())){
+                String status="CREATED";
+                tempId=practiceIdGen();
+                String practiceId=tempId;
+
+                PracticeEntity entity= new PracticeEntity();
+                entity.setStatus(status);
+                entity.setPracticeId(practiceId);
+                entity.setEmail(request.getEmail());
+                entity.setFinancingId(request.getFinancingId());
+                // practiceRepository.save(entity);
+
+                dbService.newPractice(entity);
+                PracticeResponse resp= PracticeResponse.newBuilder()
+                        .setStatus(status)
+                        .setPracticeId(practiceId)
+                        .build();
+                responseObserver.onNext(resp);
+                responseObserver.onCompleted();
+            }else{
+                responseObserver.onError(Status.PERMISSION_DENIED.withDescription("Practice for this financing and user already exists!").asException());
+            }
+
       } else {
         // Handle other actions
         responseObserver.onError(Status.INVALID_ARGUMENT
@@ -70,24 +72,17 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
 
     @Override
     public void fillPractice(Practice request, StreamObserver<PracticeResponse> responseObserver){
-      if(request==null || request.getReq()==null){
+      if(request == null){
             responseObserver.onError(Status.INVALID_ARGUMENT
                 .withDescription("Invalid request: missing fields")
                 .asRuntimeException());
             return;
 
       } 
-    
-      if(request.getReq().getAction() == Request.Action.FILL && dbService.practiceExists(request.getPracticeId())){
+      logger.info("ID : {}",request.getPracticeId());
+      if(dbService.practiceExists(request.getPracticeId())){
             String status="COMPLETED";
-            Practice practice=Practice.newBuilder()
-                .setStatus(status)
-                .setPracticeId(request.getPracticeId())
-                .setName(request.getName())
-                .setSurname(request.getSurname())
-                .setEmail(request.getEmail())
-                .setPhone(request.getPhone())
-                .build();
+            String financingId= dbService.getFinancingIdByPractice(request.getPracticeId());
 
             PracticeEntity temp=new PracticeEntity();
             temp.setStatus(status);
@@ -96,6 +91,7 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
             temp.setSurname(request.getSurname());
             temp.setEmail(request.getEmail());
             temp.setPhone(request.getPhone());
+            temp.setFinancingId(financingId);
             dbService.updatePractice(request.getPracticeId(), temp);
 
             PracticeResponse response=PracticeResponse.newBuilder()
@@ -132,5 +128,6 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
 
         return practId.toString();
     }
+
         
 }   

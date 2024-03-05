@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface FinancingRepository extends JpaRepository<Financing,String> {
     List<Financing> findByVehicleId(String vehicleId);
+    Financing findByFinancingId(String financingId);
+
 }

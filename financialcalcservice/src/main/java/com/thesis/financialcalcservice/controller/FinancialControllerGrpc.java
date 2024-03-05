@@ -1,8 +1,9 @@
 package com.thesis.financialcalcservice.controller;
 
+import com.google.gson.JsonObject;
 import com.thesis.financialcalcservice.Service.BankingClient;
 import com.thesis.financialcalcservice.repository.FinancingRepository;
-import com.thesis.financialcalcservice.Service.PersonService;
+import com.thesis.financialcalcservice.Service.CustomerService;
 import com.thesis.financialcalcservice.repository.VehicleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thesis.financialcalcservice.Service.MailSmsClient;
 import com.thesis.financialcalcservice.model.Financing;
 import com.thesis.financialcalcservice.model.Vehicle;
-import com.thesis.financialcalcservice.model.Person;
+import com.thesis.financialcalcservice.model.Customer;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -40,13 +41,13 @@ public class FinancialControllerGrpc {
    private static final Logger logger=LogManager.getLogger(FinancialControllerGrpc.class);
    private final VehicleRepository vehicleRepository;
    private final FinancingRepository financingRepository;
-   private final PersonService personService;
+   private final CustomerService customerService;
 
 
-    public FinancialControllerGrpc(VehicleRepository vehicleRepository, FinancingRepository financingRepository, PersonService personService) {
+    public FinancialControllerGrpc(VehicleRepository vehicleRepository, FinancingRepository financingRepository, CustomerService customerService) {
         this.vehicleRepository = vehicleRepository;
         this.financingRepository = financingRepository;
-        this.personService=personService;
+        this.customerService = customerService;
     }
 
     @GetMapping("/get-vehicles")
@@ -68,44 +69,53 @@ public class FinancialControllerGrpc {
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<String> otpVerification(@RequestBody String otps , String email) {
+    public ResponseEntity<String> otpVerification(@RequestBody String otps , @RequestParam String address) {
         try {
-            JsonNode passwords = obj.readTree(otps);
-            boolean SMSVerified = false;
-            boolean MailVerified = false;
 
-            if (passwords.has("email")) {
-                MailVerified = mailSmsClient.verifyMail(passwords.get("email").asText());
-                logger.info(MailVerified);
-                if (MailVerified) {
-                    return ResponseEntity.ok().body("Mail OTP verification completed!");
-                } else {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mail OTP verification failed!");
+                JsonNode passwords = obj.readTree(otps);
+                boolean SMSVerified = false;
+                boolean MailVerified = false;
+                if(customerService.findCustomerByEmail(address)) {
+                if (passwords.has("emailOtp")) {
+                    MailVerified = mailSmsClient.verifyMail(passwords.get("emailOtp").asText());
+                    logger.info(MailVerified);
+                    if (MailVerified) {
+                        customerService.setMailVerified(address);
+                        return ResponseEntity.ok().body("Mail OTP verification completed!");
+                    } else {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mail OTP verification failed!");
+                    }
                 }
-            } else if (passwords.has("sms")) {
-                SMSVerified = mailSmsClient.verifySms(passwords.get("sms").asText());
-                logger.info(SMSVerified);
-                if (SMSVerified) {
-                    return ResponseEntity.ok().body("SMS OTP verification completed!");
+                if (passwords.has("smsOtp") && customerService.findCustomerByEmail(address)) {
+                    SMSVerified = mailSmsClient.verifySms(passwords.get("smsOtp").asText());
+                    logger.info(SMSVerified);
+                    if (SMSVerified) {
+                        customerService.setSMSVerified(address);
+                        return ResponseEntity.ok().body("SMS OTP verification completed!");
+                    } else {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("SMS OTP verification failed!");
+                    }
                 } else {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("SMS OTP verification failed!");
+                    return ResponseEntity.badRequest().body("Either email or SMS OTP is required!");
                 }
-            } else {
-                return ResponseEntity.badRequest().body("Either email or SMS OTP is required!");
-            }
+            }else{
+                    return ResponseEntity.badRequest().body("User not found!");
+                }
 
         } catch (JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing OTPs!");
         }
+
     }
 
 
     @PostMapping("/personal-data")
-      public ResponseEntity<ObjectNode> dataProcessing(@RequestBody Person personalData) {
+      public ResponseEntity<ObjectNode> dataProcessing(@RequestBody Customer personalData) {
 
             try {
+
                 if (personalData.getEmail()!=null && personalData.getPhone()!=null) {
-                    personService.savePersonIfNotExists(personalData);
+                    customerService.savePersonIfNotExists(personalData);
                     String jsonBody = obj.writeValueAsString(personalData);
                     logger.info(jsonBody);
                     WebClient webClient=WebClient.create();
@@ -133,19 +143,19 @@ public class FinancialControllerGrpc {
 
 
     @PostMapping("/generate-otp")
-    public ObjectNode verification(@RequestBody Person personalData) {
+    public ObjectNode verification(@RequestBody Customer personalData) {
         ObjectNode response=obj.createObjectNode();
 
          
          try{
-             if (personalData.getPhone()!=null && personalData.getEmail()!=null) {
+             if (personalData.getPhone()!=null && personalData.getEmail()!=null){
+                 customerService.savePersonIfNotExists(personalData);
             logger.info("Both phone and email are present {} {}:" ,personalData.getEmail() , personalData.getPhone());
             this.SmsOtp= mailSmsClient.createSmsOtp(personalData.getPhone().substring(0,1), personalData.getPhone().substring(2,11));
             this.MailOtp= mailSmsClient.createMailOtp(personalData.getEmail());
-            logger.info(this.SmsOtp);
-            logger.info(this.MailOtp);
             response.put("SMS OTP", SmsOtp);
             response.put("Mail OTP", MailOtp);
+            response.put("Customer ID:", personalData.getId());
             logger.info(response);
          }else{
             response.put("SMS OTP", "Null");
@@ -164,27 +174,35 @@ public class FinancialControllerGrpc {
 
 
 
-    @GetMapping("/create-practice")
-    public String createPracticeId(@RequestParam String action) {
-        if (action.equals("CREATE")) {
-            if (bankingClient.createPractice()) {
-                return "Practice created";
-            } else {
-
-                return "Practice not Created!";
-
+    @PostMapping("/create-practice")
+    public ResponseEntity<String> createPracticeId(@RequestBody String reqBody) throws JsonProcessingException {
+        JsonNode body=obj.readTree(reqBody);
+        String customerEmail=body.get("customerEmail").asText();
+        String financingID=body.get("financingId").asText();
+        logger.info("Body: {} , customerEmail: {} ,financingId: {}",body,customerEmail,financingID);
+        try{
+            if(customerService.findCustomerByEmail(customerEmail) && financingRepository.findByFinancingId(financingID)!=null){
+                logger.info("condition verified");
+                String resp=bankingClient.createPractice(customerEmail,financingID);
+                logger.info(resp);
+                if(resp!=null) {
+                    Customer temp=customerService.getCustomerByEmail(customerEmail);
+                    bankingClient.fillPractice(temp,resp);
+                    return ResponseEntity.ok("Practice successfully created with id: "+resp);
+                }
+            }else{
+                return ResponseEntity.internalServerError().body("Customer not found!");
             }
+        } catch (Exception e){
+            logger.error("ERROR CREATING PRACTICE",e);
         }
-        return null;
+
+        return ResponseEntity.badRequest().build();
+
     }
 
 
-    @PostMapping("/fill-practice")
-    public void fillPractice(@RequestBody Person personalData){
 
-        bankingClient.fillPractice(personalData,"asd213"
-        );
-    }
 
     
     

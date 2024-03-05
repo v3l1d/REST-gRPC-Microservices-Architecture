@@ -15,18 +15,28 @@ message BankTransfer{
 
 }
 
-message PaymentRequest{
+message CardPayment{
+    CreditCard card=1;
+    int64 amount=2;
+    string paymentId=3;
 
-    int64 amount=6;
-    string paymentId=7;
+}
 
+message BankPayment{
+
+    BankTransfer transfer=1;
+    int64 amount=2;
+    string paymentId=3;
 }
 
 
 message PaymentResponse{
     string result=1;
+    string paymentId=2;
+
 }
 
 service Payment{
-    rpc Pay(PaymentRequest) returns (PaymentResponse);
+    rpc cardPay(CardPayment) returns (PaymentResponse);
+    rpc bankPay(BankPayment) returns (PaymentResponse);
 }

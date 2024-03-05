@@ -2,19 +2,26 @@ syntax="proto3";
 option java_multiple_files=true;
 package com.thesis.generated;
 
-message paymentRequest{
+message PaymentRequest{
+    enum Method{
+      CREDIT_CARD=0;
+      BANK_TRANSFER=1;
+    }
     string method=1;
     string name=2;
     string surname=3;
-    string paymentId=4;
+    string practiceId=4;
+    Method paymentMethod=5;
+    int64 amount=6;
+    string paymentId=7;
 
 }
 
 
-message paymentResponse{
+message PaymentResponse{
     string result=1;
 }
 
 service Payment{
-    rpc payRequest(paymentRequest) returns (paymentResponse);
+    rpc Pay(PaymentRequest) returns (PaymentResponse);
 }

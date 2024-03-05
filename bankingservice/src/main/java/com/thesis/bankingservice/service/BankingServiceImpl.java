@@ -43,12 +43,17 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
                 tempId=practiceIdGen();
                 String practiceId=tempId;
 
+                logger.info(request.getAmount());
+
                 PracticeEntity entity= new PracticeEntity();
                 entity.setStatus(status);
                 entity.setPracticeId(practiceId);
                 entity.setEmail(request.getEmail());
+                entity.setAmount(request.getAmount());
+                logger.info("VALUE IN ENTITY: {}",entity.getAmount());
                 entity.setFinancingId(request.getFinancingId());
                 // practiceRepository.save(entity);
+
 
                 dbService.newPractice(entity);
                 PracticeResponse resp= PracticeResponse.newBuilder()
@@ -91,6 +96,7 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
             temp.setSurname(request.getSurname());
             temp.setEmail(request.getEmail());
             temp.setPhone(request.getPhone());
+            temp.setAmount(request.getAmount());
             temp.setFinancingId(financingId);
             dbService.updatePractice(request.getPracticeId(), temp);
 

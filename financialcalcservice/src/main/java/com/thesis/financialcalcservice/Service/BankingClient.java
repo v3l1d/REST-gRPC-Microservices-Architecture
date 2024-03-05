@@ -8,10 +8,15 @@ import io.grpc.StatusRuntimeException;
 
 import java.util.concurrent.TimeUnit;
 import com.thesis.financialcalcservice.model.Customer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import static com.thesis.generated.Request.Action.CREATE;
 import static com.thesis.generated.Request.Action.FILL;
 
 public class BankingClient {
+    private final Logger logger= LogManager.getLogger(BankingClient.class);
+
     private final ManagedChannel chan;
     private final BankingGrpc.BankingBlockingStub bankingBlockingStub;
 
@@ -27,13 +32,14 @@ public class BankingClient {
         chan.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 //
-    public String createPractice(String customerEmail,String financingId){
-
+    public String createPractice(String customerEmail,String financingId,double amount){
+        logger.info("AMOUNT IN BANKING CLIENT {} : ",amount);
         try{
             Practice request= Practice.newBuilder()
                     .setReq(Request.newBuilder().setAction(CREATE))
                     .setEmail(customerEmail)
                     .setFinancingId(financingId)
+                    .setAmount(amount)
                     .build();
             PracticeResponse resp=bankingBlockingStub.createPractice(request);
             if(resp.getStatus().equals("CREATED")){
@@ -48,7 +54,7 @@ public class BankingClient {
         return null;
     }
 
-    public void fillPractice(Customer personalData, String practiceId){
+    public void fillPractice(Customer personalData, String practiceId,double amount){
         try{
             Practice request=Practice.newBuilder()
                     .setPracticeId(practiceId)
@@ -56,6 +62,7 @@ public class BankingClient {
                     .setName(personalData.getName())
                     .setSurname(personalData.getSurname())
                     .setPhone(personalData.getPhone())
+                    .setAmount(amount)
                     .setEmail(personalData.getEmail())
                     .build();
             PracticeResponse resp=bankingBlockingStub.fillPractice(request);

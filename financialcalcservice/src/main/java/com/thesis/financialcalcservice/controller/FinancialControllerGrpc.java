@@ -183,11 +183,14 @@ public class FinancialControllerGrpc {
         try{
             if(customerService.findCustomerByEmail(customerEmail) && financingRepository.findByFinancingId(financingID)!=null){
                 logger.info("condition verified");
-                String resp=bankingClient.createPractice(customerEmail,financingID);
+                Financing financingTemp=financingRepository.findByFinancingId(financingID);
+                double amount=financingTemp.getLoanAmount();
+                logger.info("AMOUNT VALUE IN CONTROLLER {}:",amount);
+                String resp=bankingClient.createPractice(customerEmail,financingID,amount);
                 logger.info(resp);
                 if(resp!=null) {
                     Customer temp=customerService.getCustomerByEmail(customerEmail);
-                    bankingClient.fillPractice(temp,resp);
+                    bankingClient.fillPractice(temp,resp,amount);
                     return ResponseEntity.ok("Practice successfully created with id: "+resp);
                 }
             }else{

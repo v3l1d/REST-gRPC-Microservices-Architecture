@@ -12,7 +12,6 @@ message Request{
 }
 
 message Practice{
-
     string practiceId=1;
     string status=2;
     string name=3;
@@ -21,6 +20,7 @@ message Practice{
     string phone=6;
     string financingId=7;
     Request req=8;
+    double amount=9;
     //TODO: insert financing data
 }
 

@@ -3,7 +3,6 @@ package com.thesis.bankingservice.service;
 
 import com.thesis.bankingservice.model.PracticeEntity;
 import com.thesis.bankingservice.repository.PracticeRepository;
-import com.thesis.generated.Practice;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ public class BankDBService {
             toChange=entity;
             repository.save(toChange);
         }else{
-
+            logger.error("Practice not found!");
 
         }
 

@@ -1,0 +1,32 @@
+syntax="proto3";
+option java_multiple_files=true;
+package com.thesis.generated;
+
+message CreditCard{
+    string owner=1;
+    string number=2;
+    string code=3;
+}
+
+message BankTransfer{
+    string owner=1;
+    string bankId=2;
+
+
+}
+
+message PaymentRequest{
+
+    int64 amount=6;
+    string paymentId=7;
+
+}
+
+
+message PaymentResponse{
+    string result=1;
+}
+
+service Payment{
+    rpc Pay(PaymentRequest) returns (PaymentResponse);
+}

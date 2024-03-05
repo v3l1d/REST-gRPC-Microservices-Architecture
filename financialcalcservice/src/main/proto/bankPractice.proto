@@ -21,6 +21,7 @@ message Practice{
     string phone=6;
     string financingId=7;
     Request req=8;
+    double amount=9;
     //TODO: insert financing data
 }
 

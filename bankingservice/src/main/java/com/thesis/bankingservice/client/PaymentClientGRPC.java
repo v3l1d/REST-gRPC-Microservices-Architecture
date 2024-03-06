@@ -7,20 +7,17 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import com.thesis.bankingservice.service.BankDBService;
-public class PaymentClient{
-    private final Logger logger=LogManager.getLogger(PaymentClient.class);
-    private final ManagedChannel chan;
+public class PaymentClientGRPC {
+    private final Logger logger=LogManager.getLogger(PaymentClientGRPC.class);
     private final PaymentGrpc.PaymentBlockingStub stub;
 
     private  BankDBService dbService;
 
 
-    public PaymentClient(String host, int port) {
+    public PaymentClientGRPC(String host, int port) {
 
-        this.chan=ManagedChannelBuilder.forAddress(host,port)
+        ManagedChannel chan = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();
         this.stub= PaymentGrpc.newBlockingStub(chan);

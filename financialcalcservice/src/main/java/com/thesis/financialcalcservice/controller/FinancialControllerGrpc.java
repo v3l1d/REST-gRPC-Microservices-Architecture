@@ -1,7 +1,6 @@
 package com.thesis.financialcalcservice.controller;
 
-import com.google.gson.JsonObject;
-import com.thesis.financialcalcservice.Service.BankingClient;
+import com.thesis.financialcalcservice.client.BankingClientGRPC;
 import com.thesis.financialcalcservice.repository.FinancingRepository;
 import com.thesis.financialcalcservice.Service.CustomerService;
 import com.thesis.financialcalcservice.repository.VehicleRepository;
@@ -18,7 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.thesis.financialcalcservice.Service.MailSmsClient;
+import com.thesis.financialcalcservice.client.MailSmsClientGRPC;
 import com.thesis.financialcalcservice.model.Financing;
 import com.thesis.financialcalcservice.model.Vehicle;
 import com.thesis.financialcalcservice.model.Customer;
@@ -32,8 +31,8 @@ import org.apache.logging.log4j.Logger;
 
 @RestController
 public class FinancialControllerGrpc {
-   private final MailSmsClient mailSmsClient = new MailSmsClient("localhost", 50053);
-   private final BankingClient bankingClient= new BankingClient("localhost",50054);
+   private final MailSmsClientGRPC mailSmsClientGRPC = new MailSmsClientGRPC("localhost", 50053);
+   private final BankingClientGRPC bankingClientGRPC = new BankingClientGRPC("localhost",50054);
 
    private String MailOtp;
    private String SmsOtp;
@@ -60,7 +59,7 @@ public class FinancialControllerGrpc {
     }
 
     @GetMapping("/financing-request")
-    public List<Financing> getMethodName(@RequestParam String id) {
+    public List<Financing> listFinancings(@RequestParam String id) {
 
         logger.info(id);
         logger.info("VEHICLED REQUESTED: {} \n AVAILABLE FINANCINGS FOR THIS ID : {}",id,financingRepository.findByVehicleId(id));
@@ -77,7 +76,7 @@ public class FinancialControllerGrpc {
                 boolean MailVerified = false;
                 if(customerService.findCustomerByEmail(address)) {
                 if (passwords.has("emailOtp")) {
-                    MailVerified = mailSmsClient.verifyMail(passwords.get("emailOtp").asText());
+                    MailVerified = mailSmsClientGRPC.verifyMail(passwords.get("emailOtp").asText());
                     logger.info(MailVerified);
                     if (MailVerified) {
                         customerService.setMailVerified(address);
@@ -87,7 +86,7 @@ public class FinancialControllerGrpc {
                     }
                 }
                 if (passwords.has("smsOtp") && customerService.findCustomerByEmail(address)) {
-                    SMSVerified = mailSmsClient.verifySms(passwords.get("smsOtp").asText());
+                    SMSVerified = mailSmsClientGRPC.verifySms(passwords.get("smsOtp").asText());
                     logger.info(SMSVerified);
                     if (SMSVerified) {
                         customerService.setSMSVerified(address);
@@ -151,8 +150,8 @@ public class FinancialControllerGrpc {
              if (personalData.getPhone()!=null && personalData.getEmail()!=null){
                  customerService.savePersonIfNotExists(personalData);
             logger.info("Both phone and email are present {} {}:" ,personalData.getEmail() , personalData.getPhone());
-            this.SmsOtp= mailSmsClient.createSmsOtp(personalData.getPhone().substring(0,1), personalData.getPhone().substring(2,11));
-            this.MailOtp= mailSmsClient.createMailOtp(personalData.getEmail());
+            this.SmsOtp= mailSmsClientGRPC.createSmsOtp(personalData.getPhone().substring(0,1), personalData.getPhone().substring(2,11));
+            this.MailOtp= mailSmsClientGRPC.createMailOtp(personalData.getEmail());
             response.put("SMS OTP", SmsOtp);
             response.put("Mail OTP", MailOtp);
             response.put("Customer ID:", personalData.getId());
@@ -186,11 +185,11 @@ public class FinancialControllerGrpc {
                 Financing financingTemp=financingRepository.findByFinancingId(financingID);
                 double amount=financingTemp.getLoanAmount();
                 logger.info("AMOUNT VALUE IN CONTROLLER {}:",amount);
-                String resp=bankingClient.createPractice(customerEmail,financingID,amount);
+                String resp= bankingClientGRPC.createPractice(customerEmail,financingID,amount);
                 logger.info(resp);
                 if(resp!=null) {
                     Customer temp=customerService.getCustomerByEmail(customerEmail);
-                    bankingClient.fillPractice(temp,resp,amount);
+                    bankingClientGRPC.fillPractice(temp,resp,amount);
                     return ResponseEntity.ok("Practice successfully created with id: "+resp);
                 }
             }else{

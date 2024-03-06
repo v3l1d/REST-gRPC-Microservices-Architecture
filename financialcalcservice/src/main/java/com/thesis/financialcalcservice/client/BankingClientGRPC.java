@@ -1,4 +1,4 @@
-package com.thesis.financialcalcservice.Service;
+package com.thesis.financialcalcservice.client;
 
 
 import com.thesis.generated.*;
@@ -14,13 +14,13 @@ import org.apache.logging.log4j.Logger;
 import static com.thesis.generated.Request.Action.CREATE;
 import static com.thesis.generated.Request.Action.FILL;
 
-public class BankingClient {
-    private final Logger logger= LogManager.getLogger(BankingClient.class);
+public class BankingClientGRPC {
+    private final Logger logger= LogManager.getLogger(BankingClientGRPC.class);
 
     private final ManagedChannel chan;
     private final BankingGrpc.BankingBlockingStub bankingBlockingStub;
 
-    public BankingClient(String host,int port)  {
+    public BankingClientGRPC(String host, int port)  {
         this.chan=ManagedChannelBuilder.forAddress(host,port)
                 .usePlaintext()
                 .build();

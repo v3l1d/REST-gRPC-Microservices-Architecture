@@ -1,10 +1,6 @@
 package com.thesis.bankingservice.service;
 
 
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.thesis.bankingservice.repository.PracticeRepository;
 
 import io.grpc.Server;

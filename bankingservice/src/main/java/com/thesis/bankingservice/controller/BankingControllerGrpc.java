@@ -6,6 +6,7 @@ import com.thesis.bankingservice.model.Card;
 import com.thesis.bankingservice.service.BankDBService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
+@Profile("grpc")
 @RestController
 public class BankingControllerGrpc {
     private final BankDBService dbService;

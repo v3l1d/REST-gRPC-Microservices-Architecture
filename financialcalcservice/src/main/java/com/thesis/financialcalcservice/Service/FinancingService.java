@@ -21,6 +21,9 @@ public class FinancingService {
         return financingRepository.findByVehicleId(id);
     }
 
+    public Financing getFinancingById(String id){
+        return financingRepository.findByFinancingId(id);
+    }
 
 
 }

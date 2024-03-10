@@ -8,8 +8,8 @@ import com.thesis.financialcalcservice.Service.VehicleService;
 import com.thesis.financialcalcservice.model.Customer;
 import com.thesis.financialcalcservice.model.Financing;
 import com.thesis.financialcalcservice.model.Vehicle;
-
-import org.apache.http.HttpStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.thesis.financialcalcservice.client.BankingClientREST;
 import com.thesis.financialcalcservice.client.MailSmsClientREST;
 import java.util.List;
 
@@ -31,6 +33,8 @@ public class FinancialControllerREST {
     //private final WebClient webClient=WebClient.builder().baseUrl("http://localhost:9093").build();
     private final ObjectMapper obj=new ObjectMapper();
     private final MailSmsClientREST MailSmsClientREST=new MailSmsClientREST();
+    private final BankingClientREST BankingClientREST=new BankingClientREST();
+    private final Logger logger=LogManager.getLogger(FinancialControllerREST.class);
     @Autowired
     public FinancialControllerREST(FinancingService financingService, VehicleService vehicleService,CustomerService customerService) {
         this.financingService = financingService;
@@ -59,7 +63,7 @@ public class FinancialControllerREST {
            return ResponseEntity.ok().body("MailOTP: " +mailOtp + " SMSOtp: "+smsOtp);
         }
         else{
-            return  ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).build();
+            return  ResponseEntity.badRequest().build();
         }
     }
 
@@ -102,6 +106,23 @@ public class FinancialControllerREST {
     }
     }
 
+    @PostMapping("/create-practice")
+    public ResponseEntity<String> createPracticeId(@RequestBody Customer PersonalData,@RequestParam String financingId){
+        Financing temp=financingService.getFinancingById(financingId);
+        logger.info("PERSONAL DATA:{}",PersonalData);
+        logger.info("FINANCING ID:{}", financingId);
+        if(temp!=null){
+            String response=BankingClientREST.createPractice(PersonalData, financingId);
+            if(response!=null){
+                return ResponseEntity.ok().body("PRACTICE CREATED with ID:" + response);
+            }
+        }else{
+            return ResponseEntity.badRequest().body("FINANCING NOT FOUND! UNABLE TO CREATE PRACTICE!!");
+        }
+
+
+        return ResponseEntity.badRequest().build();
+    }
 
 
 

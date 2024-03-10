@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.thesis.bankingservice.model.PracticeEntity;
-import com.thesis.bankingservice.repository.PracticeRepository;
 import com.thesis.generated.BankingGrpc;
 import com.thesis.generated.Practice;
 import com.thesis.generated.PracticeResponse;
@@ -14,10 +13,7 @@ import com.thesis.generated.Request;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import jakarta.annotation.PostConstruct;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 @GrpcService
 public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {

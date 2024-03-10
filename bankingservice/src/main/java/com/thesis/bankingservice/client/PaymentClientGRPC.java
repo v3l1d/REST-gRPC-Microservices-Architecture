@@ -7,12 +7,12 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.thesis.bankingservice.service.BankDBService;
+
 public class PaymentClientGRPC {
     private final Logger logger=LogManager.getLogger(PaymentClientGRPC.class);
     private final PaymentGrpc.PaymentBlockingStub stub;
 
-    private  BankDBService dbService;
+   
 
 
     public PaymentClientGRPC(String host, int port) {

@@ -3,7 +3,6 @@ package com.thesis.mailsmsservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.thesis.mailsmsservice.Config.GrpcServer;
 
 @SpringBootApplication
 public class MailsmsserviceApplication {

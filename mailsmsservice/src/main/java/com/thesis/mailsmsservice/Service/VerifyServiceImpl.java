@@ -3,6 +3,8 @@ package com.thesis.mailsmsservice.Service;
 import java.security.SecureRandom;
 import java.util.Base64;
 
+import org.springframework.context.annotation.Profile;
+
 import com.thesis.generated.Mail;
 import com.thesis.generated.Otp;
 import com.thesis.generated.Sms;
@@ -12,7 +14,7 @@ import com.thesis.generated.VerifyServiceGrpc.VerifyServiceImplBase;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-
+@Profile("grpc")
 @GrpcService
 public class VerifyServiceImpl extends VerifyServiceImplBase {
     private String MailOtp;

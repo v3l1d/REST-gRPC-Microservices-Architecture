@@ -43,6 +43,7 @@ public class MailSmsClientGRPC {
         } catch (StatusRuntimeException e) {
             System.err.println("RPC failed: " + e.getStatus());
         }
+        logger.info(result);
         return result;
     }
 

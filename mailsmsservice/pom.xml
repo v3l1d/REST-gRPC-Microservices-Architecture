@@ -43,6 +43,11 @@
 			<artifactId>grpc-server-spring-boot-starter</artifactId>
 			<version>2.15.0.RELEASE</version>
 		</dependency>
+		<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-webflux</artifactId>
+    <version>3.2.3</version>
+</dependency>
 
 		<dependency>
     		<groupId>io.grpc</groupId>
@@ -122,4 +127,47 @@
 		</plugins>
 	</build>
 
+<profiles>
+		<!-- Profile for FinancialControllerREST -->
+		<profile>
+			<id>smsservicerest</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+							<excludes>
+								<exclude>src/main/java/com/thesis/mailsmsservice/Service/VerifyServiceImpl.java</exclude>
+								<exclude>src/main/java/com/thesis/mailsmsservice/config/GrpcServer.java</exclude>
+								<exclude>src/main/proto/*.proto</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Profile for FinancialControllerGRPC -->
+		<profile>
+			<id>smsservicegrpc</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+							<excludes>
+								<exclude></exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

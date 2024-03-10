@@ -4,6 +4,8 @@ import com.thesis.financialcalcservice.client.BankingClientGRPC;
 import com.thesis.financialcalcservice.repository.FinancingRepository;
 import com.thesis.financialcalcservice.Service.CustomerService;
 import com.thesis.financialcalcservice.repository.VehicleRepository;
+
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +31,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
+@Profile("grpc")
 @RestController
+
 public class FinancialControllerGrpc {
    private final MailSmsClientGRPC mailSmsClientGRPC = new MailSmsClientGRPC("localhost", 50053);
    private final BankingClientGRPC bankingClientGRPC = new BankingClientGRPC("localhost",50054);

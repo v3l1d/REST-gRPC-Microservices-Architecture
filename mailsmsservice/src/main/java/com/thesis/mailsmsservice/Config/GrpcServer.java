@@ -1,14 +1,12 @@
 package com.thesis.mailsmsservice.Config;
 
-import org.springframework.context.annotation.Configuration;
-
+import org.springframework.context.annotation.Profile;
 import com.thesis.mailsmsservice.Service.VerifyServiceImpl;
-
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.ProtoReflectionService;
 
-
+@Profile("grpc")
 public class GrpcServer {
     private static final int port=50053;
     private final Server srv;

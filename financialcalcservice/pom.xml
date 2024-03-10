@@ -136,4 +136,48 @@
 		</plugins>
 	</build>
 
+<profiles>
+		<!-- Profile for FinancialControllerREST -->
+		<profile>
+			<id>financialcontrollerrest</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+							<excludes>
+								<exclude>src/main/java/com/thesis/financialcalcservice/controller/FinancialControllerGRPC.java</exclude>
+								<exclude>src/main/java/com/thesis/financialcalcservice/client/MailSmsClientGRPC</exclude>
+								<exclude>src/main/java/com/thesis/financialcalcservice/client/BankingClientGRPC</exclude>
+								<exclude>src/main/proto/*.proto</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Profile for FinancialControllerGRPC -->
+		<profile>
+			<id>financialcontrollergrpc</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+							<excludes>
+								<exclude>src/main/java/com/thesis/financialcalcservice/controller/FinancialControllerREST.java</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

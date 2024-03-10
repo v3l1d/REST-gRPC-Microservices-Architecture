@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class FinancialcalcserviceApplication {
 
 	public static void main(String[] args) throws InterruptedException {
+        
 		SpringApplication.run(FinancialcalcserviceApplication.class, args);
 		/*  MailSmsClient client = new MailSmsClient("localhost",50053);
 		   try {

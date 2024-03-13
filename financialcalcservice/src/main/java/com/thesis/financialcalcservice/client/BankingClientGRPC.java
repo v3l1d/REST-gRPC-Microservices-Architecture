@@ -10,10 +10,9 @@ import java.util.concurrent.TimeUnit;
 import com.thesis.financialcalcservice.model.Customer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.annotation.Profile;
 
-import static com.thesis.generated.Request.Action.CREATE;
-import static com.thesis.generated.Request.Action.FILL;
-
+@Profile("grpc")
 public class BankingClientGRPC {
     private final Logger logger= LogManager.getLogger(BankingClientGRPC.class);
 
@@ -32,12 +31,14 @@ public class BankingClientGRPC {
         chan.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 //
-    public String createPractice(String customerEmail,String financingId,double amount){
+    public String createPractice(Customer personalData,String financingId,double amount){
         logger.info("AMOUNT IN BANKING CLIENT {} : ",amount);
         try{
             Practice request= Practice.newBuilder()
-                    .setReq(Request.newBuilder().setAction(CREATE))
-                    .setEmail(customerEmail)
+                    .setEmail(personalData.getEmail())
+                    .setName(personalData.getName())
+                    .setSurname(personalData.getSurname())
+                    .setPhone(personalData.getPhone())
                     .setFinancingId(financingId)
                     .setAmount(amount)
                     .build();
@@ -54,22 +55,7 @@ public class BankingClientGRPC {
         return null;
     }
 
-    public void fillPractice(Customer personalData, String practiceId,double amount){
-        try{
-            Practice request=Practice.newBuilder()
-                    .setPracticeId(practiceId)
-                    .setReq(Request.newBuilder().setAction(FILL))
-                    .setName(personalData.getName())
-                    .setSurname(personalData.getSurname())
-                    .setPhone(personalData.getPhone())
-                    .setAmount(amount)
-                    .setEmail(personalData.getEmail())
-                    .build();
-            PracticeResponse resp=bankingBlockingStub.fillPractice(request);
-            System.out.println("Practice status: "+resp.getStatus()+ " WITH ID "+resp.getPracticeId());
-        }catch (StatusRuntimeException e){
-            System.err.println("RPC failed:" + e.getStatus());
-        }
+
 
 
     }
@@ -81,4 +67,4 @@ public class BankingClientGRPC {
 
 
 
-}
+

@@ -162,7 +162,9 @@
 							<source>1.8</source>
 							<target>1.8</target>
 							<excludes>
-								<exclude></exclude>
+								<exclude>src/main/java/com/thesis/mailsmsservice/Controller/MailSMSController.java</exclude>
+								<exclude>src/main/java/com/thesis/mailsmsservice/Service/VerifyServiceREST.java</exclude>
+								<exclude>src/main/java/com/thesis/mailsmsservice/Config/GrpcServer.java</exclude>
 							</excludes>
 						</configuration>
 					</plugin>

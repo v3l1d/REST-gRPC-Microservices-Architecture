@@ -4,8 +4,7 @@ package com.thesis.generated;
 
 
 message Sms{
-    string prefix=1;
-    string number=2;
+    string number=1;
 }
 
 message Mail{

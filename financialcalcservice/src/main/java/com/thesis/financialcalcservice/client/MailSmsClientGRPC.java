@@ -13,8 +13,9 @@ import com.thesis.generated.Response;
 import org.apache.logging.log4j.LogManager;
 
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.annotation.Profile;
 
-
+@Profile("grpc")
 public class MailSmsClientGRPC {
     private final ManagedChannel channel;
     private final VerifyServiceGrpc.VerifyServiceBlockingStub blockingStub;
@@ -30,12 +31,11 @@ public class MailSmsClientGRPC {
         channel.shutdown().awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS);
     }
 
-    public String createSmsOtp(String prefix, String number) {
+    public String createSmsOtp(String number) {
         String result="";
 
         try {
             Sms request = Sms.newBuilder()
-                .setPrefix(prefix)
                 .setNumber(number)
                 .build();
             Otp response = blockingStub.smsOtp(request);
@@ -43,7 +43,6 @@ public class MailSmsClientGRPC {
         } catch (StatusRuntimeException e) {
             System.err.println("RPC failed: " + e.getStatus());
         }
-        logger.info(result);
         return result;
     }
 
@@ -90,7 +89,7 @@ public class MailSmsClientGRPC {
 
                 }
             }catch (StatusRuntimeException e){
-                e.printStackTrace();
+                logger.error("Error processing passowrd",e);
 
             }
 

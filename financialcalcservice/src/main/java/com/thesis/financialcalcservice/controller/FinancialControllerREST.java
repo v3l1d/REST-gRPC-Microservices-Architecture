@@ -60,7 +60,7 @@ public class FinancialControllerREST {
             customerService.savePersonIfNotExists(personalData);
             String mailOtp=MailSmsClientREST.getMailOtp(personalData.getEmail());
             String smsOtp=MailSmsClientREST.getSmsOtp(personalData.getPhone());
-           return ResponseEntity.ok().body("MailOTP: " +mailOtp + " SMSOtp: "+smsOtp);
+            return ResponseEntity.ok().body("MailOTP: " +mailOtp + " SMSOtp: "+smsOtp);
         }
         else{
             return  ResponseEntity.badRequest().build();
@@ -76,9 +76,9 @@ public class FinancialControllerREST {
         boolean mailverified=false;
         if(customerService.findCustomerByEmail(address)){
         if(passwords.has("mailOtp")) {
-            customerService.setMailVerified(address);
            mailverified=MailSmsClientREST.verifyMail(passwords.get("mailOtp").asText());
             if(mailverified){
+                customerService.setMailVerified(address);
                 return ResponseEntity.ok().body("Mail Verification Completed!");
 
             }else{
@@ -112,7 +112,7 @@ public class FinancialControllerREST {
         logger.info("PERSONAL DATA:{}",PersonalData);
         logger.info("FINANCING ID:{}", financingId);
         if(temp!=null){
-            String response=BankingClientREST.createPractice(PersonalData, financingId);
+            String response=BankingClientREST.createPractice(PersonalData, financingId, temp.getLoanAmount());
             if(response!=null){
                 return ResponseEntity.ok().body("PRACTICE CREATED with ID:" + response);
             }

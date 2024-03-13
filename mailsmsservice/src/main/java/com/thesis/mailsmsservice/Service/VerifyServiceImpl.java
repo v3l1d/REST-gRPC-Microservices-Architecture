@@ -24,7 +24,7 @@ public class VerifyServiceImpl extends VerifyServiceImplBase {
     }
     @Override
     public void smsOtp(Sms verify, StreamObserver<Otp> responseObserver){
-        if (verify.getPrefix().isEmpty() || verify.getNumber().isEmpty()) {
+        if (verify.getNumber().isEmpty()) {
             // Throw an exception indicating that the fields are empty
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Prefix or number is empty").asException());
             return; // Stop further execution

@@ -7,7 +7,10 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.annotation.Profile;
 
+
+@Profile("grpc")
 public class PaymentClientGRPC {
     private final Logger logger=LogManager.getLogger(PaymentClientGRPC.class);
     private final PaymentGrpc.PaymentBlockingStub stub;

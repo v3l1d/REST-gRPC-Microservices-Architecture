@@ -7,8 +7,9 @@ import com.thesis.generated.Practice;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import com.thesis.generated.EvaluationGrpc.EvaluationBlockingStub;
+import org.springframework.context.annotation.Profile;
 
-
+@Profile("grpc")
 public class RatingClient {
 private final ManagedChannel chan;
 private final EvaluationBlockingStub stub;

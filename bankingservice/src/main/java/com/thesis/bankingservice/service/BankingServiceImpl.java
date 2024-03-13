@@ -9,12 +9,13 @@ import com.thesis.bankingservice.model.PracticeEntity;
 import com.thesis.generated.BankingGrpc;
 import com.thesis.generated.Practice;
 import com.thesis.generated.PracticeResponse;
-import com.thesis.generated.Request;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.context.annotation.Profile;
 
+@Profile("grpc")
 @GrpcService
 public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
     private final Logger logger=LogManager.getLogger(BankingServiceImpl.class);
@@ -33,7 +34,7 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
     @Override
     public void createPractice(Practice request ,StreamObserver<PracticeResponse> responseObserver){
 
-        if(request.getReq().getAction()==Request.Action.CREATE){
+        if(request!=null){
             if(!dbService.practiceExists(request.getPracticeId())){
                 String status="CREATED";
                 tempId=practiceIdGen();
@@ -46,6 +47,10 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
                 entity.setPracticeId(practiceId);
                 entity.setEmail(request.getEmail());
                 entity.setAmount(request.getAmount());
+                entity.setPhone(request.getPhone());
+                entity.setName(request.getName());
+                entity.setSurname(request.getSurname());
+                entity.setFinancingId(request.getFinancingId());
                 logger.info("VALUE IN ENTITY: {}",entity.getAmount());
                 entity.setFinancingId(request.getFinancingId());
                 // practiceRepository.save(entity);
@@ -71,46 +76,7 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
     }
 
 
-    @Override
-    public void fillPractice(Practice request, StreamObserver<PracticeResponse> responseObserver){
-      if(request == null){
-            responseObserver.onError(Status.INVALID_ARGUMENT
-                .withDescription("Invalid request: missing fields")
-                .asRuntimeException());
-            return;
 
-      } 
-      logger.info("ID : {}",request.getPracticeId());
-      if(dbService.practiceExists(request.getPracticeId())){
-            String status="COMPLETED";
-            String financingId= dbService.getFinancingIdByPractice(request.getPracticeId());
-
-            PracticeEntity temp=new PracticeEntity();
-            temp.setStatus(status);
-            temp.setPracticeId(request.getPracticeId());
-            temp.setName(request.getName());
-            temp.setSurname(request.getSurname());
-            temp.setEmail(request.getEmail());
-            temp.setPhone(request.getPhone());
-            temp.setAmount(request.getAmount());
-            temp.setFinancingId(financingId);
-            dbService.updatePractice(request.getPracticeId(), temp);
-
-            PracticeResponse response=PracticeResponse.newBuilder()
-                .setPracticeId(tempId)
-                .setStatus(status)
-                .build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-      }else {
-          responseObserver.onError(Status.INVALID_ARGUMENT
-                  .withDescription("ERROR! Practice ID not found")
-                  .asRuntimeException());
-
-      }
-
-
-    }
 
 
 

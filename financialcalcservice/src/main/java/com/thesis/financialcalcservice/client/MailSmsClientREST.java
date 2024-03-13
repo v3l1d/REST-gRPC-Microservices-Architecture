@@ -2,12 +2,13 @@ package com.thesis.financialcalcservice.client;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+@Profile("rest")
 public class MailSmsClientREST {
     private ObjectMapper obj= new ObjectMapper();
     private final Logger logger=LogManager.getLogger(MailSmsClientREST.class);

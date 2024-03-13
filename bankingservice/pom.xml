@@ -94,6 +94,10 @@
     <artifactId>grpc-all</artifactId> <!--teoricamente importa tutte le classi io.grpc, qui l'ho usato perchè non riuscivo a trovare io.grpc.services-->
     <version>1.61.0</version>
 </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
 	</dependencies>
 	   
 
@@ -132,5 +136,48 @@
     </plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<!-- Profile for FinancialControllerREST -->
+		<profile>
+			<id>bankingservicerest</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+							<excludes>
+								<exclude>src/main/java/com/thesis/bankingservice/controller/BankingControllerGRPC.java</exclude>
+								<exclude>src/main/java/com/thesis/bankingservice/client/PaymentClientGRPC</exclude>
+								<exclude>src/main/java/com/thesis/bankingservice/client/RatingClient</exclude>
+								<exclude>src/main/proto/*.proto</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 
+		<!-- Profile for FinancialControllerGRPC -->
+		<profile>
+			<id>bankingservicegrpc</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+							<excludes>
+								<exclude>src/main/java/com/thesis/bankingservice/controller/BankingControllerREST.java</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

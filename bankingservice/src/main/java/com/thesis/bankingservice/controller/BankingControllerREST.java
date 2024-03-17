@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thesis.bankingservice.client.PaymentClientREST;
+import com.thesis.bankingservice.client.RatingClientREST;
 import com.thesis.bankingservice.model.Card;
 import com.thesis.bankingservice.model.Transfer;
 import com.thesis.bankingservice.service.BankDBService;
@@ -12,7 +13,7 @@ import com.thesis.bankingservice.service.BankingServiceREST;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,13 +27,16 @@ public class BankingControllerREST {
     private final ObjectMapper obj=new ObjectMapper();
     private final Logger logger=LogManager.getLogger(BankingControllerREST.class);
     private final BankingServiceREST bankingServiceREST;
-    private final PaymentClientREST paymentClientREST= new PaymentClientREST();
+    private final PaymentClientREST paymentClientREST;
+    private final RatingClientREST ratingClientREST;
     private final BankDBService dbService;
 
-    @Autowired
-    public BankingControllerREST(BankDBService dbService){
+ 
+    public BankingControllerREST(BankDBService dbService,@Value("${ratingservice.rest.url}") String ratingServiceUrl,@Value("${paymentservice.rest.url}")String paymentServerUrl){
         this.dbService=dbService;
-        bankingServiceREST=new BankingServiceREST(dbService);
+        this.bankingServiceREST=new BankingServiceREST(dbService);
+        this.paymentClientREST=new PaymentClientREST(paymentServerUrl);
+        this.ratingClientREST=new RatingClientREST(ratingServiceUrl);
     }
 
     @PostMapping("/create-practice")
@@ -82,5 +86,20 @@ public class BankingControllerREST {
 
 
     }
+    @PostMapping("/evaluate-practice")
+    public ResponseEntity<String> evaluatePractice(@RequestParam String practiceId) {
+        if(dbService.practiceExists(practiceId)){
+            String response=ratingClientREST.getPracticeEvaluation(practiceId);
+            if(response.equals("GOOD PRACTICE!")){
+                return ResponseEntity.ok().body("PRACTICE QUALITY: (8/10)");
+        }else{
+            return ResponseEntity.badRequest().body("ERROR IN EVALUATION");
+        }
+       
+    }else{
+        return ResponseEntity.badRequest().body("PRACTICE NOT FOUND!");
+    }
+}
+    
 
 }

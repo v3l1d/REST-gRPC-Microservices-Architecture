@@ -1,5 +1,6 @@
 package com.thesis.bankingservice.client;
 
+import com.thesis.bankingservice.model.PracticeEntity;
 import com.thesis.generated.EvaluationGrpc;
 import com.thesis.generated.EvaluationRequest;
 import com.thesis.generated.EvaluationResponse;
@@ -10,21 +11,23 @@ import com.thesis.generated.EvaluationGrpc.EvaluationBlockingStub;
 import org.springframework.context.annotation.Profile;
 
 @Profile("grpc")
-public class RatingClient {
+public class RatingClientGRPC {
 private final ManagedChannel chan;
 private final EvaluationBlockingStub stub;
-    private final String host="localhost";
-    private final int port= 50055;
-    public RatingClient(String host,int port){
-        this.chan = ManagedChannelBuilder.forAddress(host, port)
+    public RatingClientGRPC(String host){
+        this.chan = ManagedChannelBuilder.forTarget(host)
                 .usePlaintext()
                 .build();
         this.stub = EvaluationGrpc.newBlockingStub(chan);
     }
 
-    public String getPracticeEvaluation(Practice practice){
+    public String getPracticeEvaluation(String practiceId){
+        Practice toEvaluate=Practice.newBuilder()
+            .setPracticeId(practiceId)
+            .setStatus("CREATED")
+            .build();
         EvaluationRequest request=EvaluationRequest.newBuilder()
-                .setPractice(practice)
+                .setPractice(toEvaluate)
                 .build();
         EvaluationResponse response=stub.evaluate(request);
         return response.getResult();

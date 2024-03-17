@@ -14,13 +14,12 @@ import org.springframework.context.annotation.Profile;
 public class PaymentClientGRPC {
     private final Logger logger=LogManager.getLogger(PaymentClientGRPC.class);
     private final PaymentGrpc.PaymentBlockingStub stub;
-
+  
    
 
+    public PaymentClientGRPC(String host) {
 
-    public PaymentClientGRPC(String host, int port) {
-
-        ManagedChannel chan = ManagedChannelBuilder.forAddress(host, port)
+        ManagedChannel chan = ManagedChannelBuilder.forTarget(host)
                 .usePlaintext()
                 .build();
         this.stub= PaymentGrpc.newBlockingStub(chan);

@@ -1,3 +1,4 @@
+/mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/client/RatingClientGRPC.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/controller/BankingControllerGrpc.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/PaymentResponseOrBuilder.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/model/Transfer.java
@@ -9,6 +10,7 @@
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/CardPayment.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/PracticeOrBuilder.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/service/BankDBService.java
+/mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/client/RatingClientREST.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/client/PaymentClientREST.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/client/PaymentClientGRPC.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/PaymentResponse.java
@@ -35,4 +37,3 @@
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/CreditCardOrBuilder.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/EvaluationResponseOrBuilder.java
 /mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/target/generated-sources/protobuf/java/com/thesis/generated/Rating.java
-/mnt/c/Users/Alessandro/Desktop/WORKSPACE2/bankingservice/src/main/java/com/thesis/bankingservice/client/RatingClient.java

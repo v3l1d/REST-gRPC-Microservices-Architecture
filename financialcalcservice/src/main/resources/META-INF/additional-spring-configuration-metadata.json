@@ -1,0 +1,32 @@
+{"properties": [
+  {
+    "name": "mailsmsservice.rest.url",
+    "type": "java.lang.String",
+    "description": "A description for 'mailsmsservice.rest.url'"
+  },
+  {
+    "name": "bankingservice.grpc.url",
+    "type": "java.lang.String",
+    "description": "A description for 'bankingservice.grpc.url'"
+  },
+  {
+    "name": "bankingservice.rest.url",
+    "type": "java.lang.String",
+    "description": "A description for 'bankingservice.rest.url'"
+  },
+  {
+    "name": "mailsmsservice.grpc.url",
+    "type": "java.lang.String",
+    "description": "A description for 'mailsmsservice.grpc.url'"
+  },
+  {
+    "name": "bankingservice.grpc.port",
+    "type": "java.lang.String",
+    "description": "A description for 'bankingservice.grpc.port'"
+  },
+  {
+    "name": "mailsmsservice.grpc.port",
+    "type": "java.lang.String",
+    "description": "A description for 'mailsmsservice.grpc.port'"
+  }
+]}

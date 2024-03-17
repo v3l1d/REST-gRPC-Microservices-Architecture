@@ -10,7 +10,7 @@ import com.thesis.financialcalcservice.model.Financing;
 import com.thesis.financialcalcservice.model.Vehicle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,14 +32,16 @@ public class FinancialControllerREST {
     private final CustomerService customerService;
     //private final WebClient webClient=WebClient.builder().baseUrl("http://localhost:9093").build();
     private final ObjectMapper obj=new ObjectMapper();
-    private final MailSmsClientREST MailSmsClientREST=new MailSmsClientREST();
-    private final BankingClientREST BankingClientREST=new BankingClientREST();
+    private final MailSmsClientREST MailSmsClientREST;
+    private final BankingClientREST BankingClientREST;
     private final Logger logger=LogManager.getLogger(FinancialControllerREST.class);
-    @Autowired
-    public FinancialControllerREST(FinancingService financingService, VehicleService vehicleService,CustomerService customerService) {
+  
+    public FinancialControllerREST(@Value("${bankingservice.rest.url}") String bankingServiceUrl, @Value("${mailsmsservice.rest.url}") String mailSmsServiceUrl,FinancingService financingService, VehicleService vehicleService,CustomerService customerService) {
         this.financingService = financingService;
         this.vehicleService = vehicleService;
         this.customerService=customerService;
+        this.MailSmsClientREST=new MailSmsClientREST(mailSmsServiceUrl);
+        this.BankingClientREST=new BankingClientREST(bankingServiceUrl);
     }
 
     @GetMapping("/get-vehicles")

@@ -4,23 +4,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thesis.bankingservice.model.Card;
 import com.thesis.bankingservice.model.Transfer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
 
 import java.util.Objects;
 
 
 @Profile("rest")
 public class PaymentClientREST {
-    private final Logger logger= LogManager.getLogger(PaymentClientREST.class);
-    private final WebClient webClient=WebClient.builder().baseUrl("http://localhost:9093").build();
+    private final WebClient webClient;
     private final ObjectMapper obj=new ObjectMapper();
+    private final String PaymentServiceUrl;
 
-    public PaymentClientREST(){
+    public PaymentClientREST(String paymentServiceUrl){
+        this.PaymentServiceUrl=paymentServiceUrl;
+        this.webClient=WebClient.builder().baseUrl(PaymentServiceUrl).build();
 
     }
     public boolean creditCardPayment(Card card){

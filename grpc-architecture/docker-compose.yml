@@ -47,6 +47,13 @@ services:
     networks:
       - grpc-architecture-network
 
+  ratingservice:
+    build:
+      context: .
+      dockerfile: dockerfile-ratingservice
+    networks:
+      - grpc-architecture-network
+
 networks:
   grpc-architecture-network:
     driver: bridge

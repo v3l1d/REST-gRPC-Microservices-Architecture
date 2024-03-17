@@ -7,8 +7,6 @@ import com.thesis.generated.PaymentResponse;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.context.annotation.Profile;
-
-import java.time.Instant;
 import java.util.Random;
 
 @Profile("grpc")

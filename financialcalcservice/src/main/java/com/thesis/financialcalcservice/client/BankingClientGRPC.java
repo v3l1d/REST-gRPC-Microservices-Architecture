@@ -19,8 +19,8 @@ public class BankingClientGRPC {
     private final ManagedChannel chan;
     private final BankingGrpc.BankingBlockingStub bankingBlockingStub;
 
-    public BankingClientGRPC(String host, int port)  {
-        this.chan=ManagedChannelBuilder.forAddress(host,port)
+    public BankingClientGRPC(String host)  {
+        this.chan=ManagedChannelBuilder.forTarget(host)
                 .usePlaintext()
                 .build();
         this.bankingBlockingStub=BankingGrpc.newBlockingStub(chan);

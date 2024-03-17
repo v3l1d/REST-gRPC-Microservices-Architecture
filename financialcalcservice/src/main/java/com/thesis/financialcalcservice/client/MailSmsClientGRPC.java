@@ -20,8 +20,8 @@ public class MailSmsClientGRPC {
     private final ManagedChannel channel;
     private final VerifyServiceGrpc.VerifyServiceBlockingStub blockingStub;
     private static final Logger logger= LogManager.getLogger(MailSmsClientGRPC.class);
-    public MailSmsClientGRPC(String host, int port) {
-        this.channel = ManagedChannelBuilder.forAddress(host, port)
+    public MailSmsClientGRPC(String host) {
+        this.channel = ManagedChannelBuilder.forTarget(host)
                 .usePlaintext()
                 .build();
         this.blockingStub = VerifyServiceGrpc.newBlockingStub(channel);

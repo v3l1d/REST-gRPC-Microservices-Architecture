@@ -5,14 +5,12 @@ import com.thesis.financialcalcservice.repository.FinancingRepository;
 import com.thesis.financialcalcservice.Service.CustomerService;
 import com.thesis.financialcalcservice.repository.VehicleRepository;
 
-import com.thesis.generated.Sms;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,15 +18,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thesis.financialcalcservice.client.MailSmsClientGRPC;
 import com.thesis.financialcalcservice.model.Financing;
 import com.thesis.financialcalcservice.model.Vehicle;
 import com.thesis.financialcalcservice.model.Customer;
 
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,9 +33,12 @@ import org.apache.logging.log4j.Logger;
 @RestController
 
 public class FinancialControllerGrpc {
-   private final MailSmsClientGRPC mailSmsClientGRPC = new MailSmsClientGRPC("localhost", 50053);
-   private final BankingClientGRPC bankingClientGRPC = new BankingClientGRPC("localhost",50054);
-
+   private final MailSmsClientGRPC mailSmsClientGRPC;
+   private final BankingClientGRPC bankingClientGRPC;
+   private final String grpcBankServer;
+   private final String mailSmsServer;
+   private final int grpcBankingServerPort;
+   private final int mailSMSServerPort;
    private String MailOtp;
    private String SmsOtp;
    private final ObjectMapper obj= new ObjectMapper();
@@ -49,11 +47,16 @@ public class FinancialControllerGrpc {
    private final FinancingRepository financingRepository;
    private final CustomerService customerService;
 
-    @Autowired
-    public FinancialControllerGrpc(VehicleRepository vehicleRepository, FinancingRepository financingRepository, CustomerService customerService) {
+    public FinancialControllerGrpc(@Value("${bankingservice.grpc.url}")String bankingHost,@Value("${mailsmsservice.grpc.url}") String mailsmsHost,@Value("${bankingservice.grpc.port}") String bankPort,@Value("${mailsmsservice.grpc.port}") String mailSmsPort,VehicleRepository vehicleRepository, FinancingRepository financingRepository, CustomerService customerService) {
         this.vehicleRepository = vehicleRepository;
         this.financingRepository = financingRepository;
         this.customerService = customerService;
+        this.grpcBankServer=bankingHost;
+        this.mailSmsServer=mailsmsHost;
+        this.grpcBankingServerPort=Integer.parseInt(bankPort);
+        this.mailSMSServerPort=Integer.parseInt(mailSmsPort);
+        this.bankingClientGRPC=new BankingClientGRPC(grpcBankServer);
+        this.mailSmsClientGRPC=new MailSmsClientGRPC(mailSmsServer);
     }
 
     @GetMapping("/get-vehicles")
@@ -137,16 +140,16 @@ public class FinancialControllerGrpc {
 
 
     @PostMapping("/create-practice")
-    public ResponseEntity<String> createPracticeId(@RequestBody Customer personalData,@RequestParam String financingID) throws JsonProcessingException {
+    public ResponseEntity<String> createPracticeId(@RequestBody Customer personalData,@RequestParam String financingId) throws JsonProcessingException {
 
-        logger.info("customerEmail: {} ,financingId: {}",personalData.getEmail(),financingID);
+        logger.info("customerEmail: {} ,financingId: {}",personalData.getEmail(),financingId);
         try{
-            if(customerService.findCustomerByEmail(personalData.getEmail()) && financingRepository.findByFinancingId(financingID)!=null){
+            if(customerService.findCustomerByEmail(personalData.getEmail()) && financingRepository.findByFinancingId(financingId)!=null){
                 logger.info("condition verified");
-                Financing financingTemp=financingRepository.findByFinancingId(financingID);
+                Financing financingTemp=financingRepository.findByFinancingId(financingId);
                 double amount=financingTemp.getLoanAmount();
                 logger.info("AMOUNT VALUE IN CONTROLLER {}:",amount);
-                String resp= bankingClientGRPC.createPractice(personalData,financingID,amount);
+                String resp= bankingClientGRPC.createPractice(personalData,financingId,amount);
                 logger.info(resp);
                 if(resp!=null) {
                     return ResponseEntity.ok("Practice successfully created with id: "+resp);

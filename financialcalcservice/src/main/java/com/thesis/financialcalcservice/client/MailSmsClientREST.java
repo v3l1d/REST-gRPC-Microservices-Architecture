@@ -12,10 +12,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class MailSmsClientREST {
     private ObjectMapper obj= new ObjectMapper();
     private final Logger logger=LogManager.getLogger(MailSmsClientREST.class);
-    private final WebClient webClient=WebClient.builder().baseUrl("http://localhost:9093").build();
+   
+    private final String MailSmsServiceUrl;
+    private final WebClient webClient;
 
-    public MailSmsClientREST(){
-
+    public MailSmsClientREST(String mailSmsServiceUrl) {
+        this.MailSmsServiceUrl = mailSmsServiceUrl;
+        this.webClient = WebClient.builder().baseUrl(MailSmsServiceUrl).build();
     }
 
     public String getMailOtp(String email) {

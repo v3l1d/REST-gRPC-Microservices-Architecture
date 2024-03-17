@@ -5,7 +5,6 @@ import com.thesis.bankingservice.model.PracticeEntity;
 import com.thesis.bankingservice.repository.PracticeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +15,7 @@ public class BankDBService {
     private final Logger logger=LogManager.getLogger(BankDBService.class);
     @Autowired
     private final PracticeRepository repository;
-    @Autowired
+    
     public BankDBService(PracticeRepository practiceRepository){
         this.repository=practiceRepository;
     }
@@ -54,4 +53,6 @@ public class BankDBService {
             repository.save(practice);
         }
     }
+
+    
 }

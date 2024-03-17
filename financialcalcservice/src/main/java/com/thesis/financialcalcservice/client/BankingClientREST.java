@@ -13,11 +13,13 @@ import com.thesis.financialcalcservice.model.Customer;
 @Profile("rest")
 public class BankingClientREST {
     private final Logger logger=LogManager.getLogger(BankingClientREST.class);
-    private final WebClient webClient=WebClient.builder().baseUrl("http://localhost:9090").build();
+    private final WebClient webClient;
     private final ObjectMapper obj=new ObjectMapper();
+   private final String BankingServiceUrl;
 
-
-    public BankingClientREST(){
+    public BankingClientREST(String bankingServiceUrl){
+        this.BankingServiceUrl=bankingServiceUrl;
+        this.webClient=WebClient.builder().baseUrl(BankingServiceUrl).build();
 
     }
  public String createPractice(Customer personalData, String financingId,double amount) {

@@ -1,0 +1,6 @@
+#Dockerfile-java
+FROM openjdk:17-oracle
+WORKDIR /app
+COPY jars/mailsmsservice-0.0.1-SNAPSHOT.jar /app/mailsmsservice-0.0.1-SNAPSHOT.jar
+EXPOSE 9093
+CMD ["java", "-jar","-Dspring.profiles.active=rest", "mailsmsservice-0.0.1-SNAPSHOT.jar"]

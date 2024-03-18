@@ -37,8 +37,6 @@ public class FinancialControllerGrpc {
    private final BankingClientGRPC bankingClientGRPC;
    private final String grpcBankServer;
    private final String mailSmsServer;
-   private final int grpcBankingServerPort;
-   private final int mailSMSServerPort;
    private String MailOtp;
    private String SmsOtp;
    private final ObjectMapper obj= new ObjectMapper();
@@ -47,14 +45,12 @@ public class FinancialControllerGrpc {
    private final FinancingRepository financingRepository;
    private final CustomerService customerService;
 
-    public FinancialControllerGrpc(@Value("${bankingservice.grpc.url}")String bankingHost,@Value("${mailsmsservice.grpc.url}") String mailsmsHost,@Value("${bankingservice.grpc.port}") String bankPort,@Value("${mailsmsservice.grpc.port}") String mailSmsPort,VehicleRepository vehicleRepository, FinancingRepository financingRepository, CustomerService customerService) {
+    public FinancialControllerGrpc(@Value("${bankingservice.grpc.url}")String bankingHost,@Value("${mailsmsservice.grpc.url}") String mailsmsHost,VehicleRepository vehicleRepository, FinancingRepository financingRepository, CustomerService customerService) {
         this.vehicleRepository = vehicleRepository;
         this.financingRepository = financingRepository;
         this.customerService = customerService;
         this.grpcBankServer=bankingHost;
         this.mailSmsServer=mailsmsHost;
-        this.grpcBankingServerPort=Integer.parseInt(bankPort);
-        this.mailSMSServerPort=Integer.parseInt(mailSmsPort);
         this.bankingClientGRPC=new BankingClientGRPC(grpcBankServer);
         this.mailSmsClientGRPC=new MailSmsClientGRPC(mailSmsServer);
     }

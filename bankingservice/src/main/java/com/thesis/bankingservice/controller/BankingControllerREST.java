@@ -78,8 +78,11 @@ public class BankingControllerREST {
     @PostMapping("/bank-transfer-payment")
     public ResponseEntity<String> btPayment(@RequestParam String practiceId, @RequestBody Transfer transfer){
         if(dbService.practiceExists(practiceId)){
-
+            if(paymentClientREST.bankTransferPayment(transfer)){
             return  ResponseEntity.ok().body("PAYMENT ACCEPTED!");
+            }else{
+                return ResponseEntity.badRequest().body("PAYMENT REFUSED");
+            }
         }else {
             return ResponseEntity.badRequest().build();
         }

@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: dockerfile-nginx
+    ports:
+      - "80:80"
+    networks:
+      - grpc-architecture-network
+
+  mysql:
+    build:
+      context: .
+      dockerfile: dockerfile-mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - grpc-architecture-network
+
+  calculationservice:
+    build:
+      context: .
+      dockerfile: dockerfile-calculationservice
+    ports:
+      - "9092:9092"
+    networks:
+      - grpc-architecture-network
+
+  bankingservice:
+    build:
+      context: .
+      dockerfile: dockerfile-bankingservice
+    ports:
+      - "9090:9090"
+    networks:
+      - grpc-architecture-network
+
+  mailsmsservice:
+    build:
+      context: .
+      dockerfile: dockerfile-mailsmsservice
+    ports:
+      - "9093:9093"
+    networks:
+      - grpc-architecture-network
+
+  paymentservice:
+    build:
+      context: .
+      dockerfile: dockerfile-paymentservice
+    ports:
+      - "9094:9094"
+    networks:
+      - grpc-architecture-network
+volumes:
+  mysql_data:
+networks:
+  grpc-architecture-network:
+    external: true

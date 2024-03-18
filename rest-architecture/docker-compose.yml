@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: dockerfile-nginx
+    ports:
+      - "80:80"
+    networks:
+      - rest-architecture-network
+
+  mysql:
+    build:
+      context: .
+      dockerfile: dockerfile-mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    networks:
+      - rest-architecture-network
+
+  calculationservice:
+    build:
+      context: .
+      dockerfile: dockerfile-calculationservice
+    networks:
+      - rest-architecture-network
+
+  bankingservice:
+    build:
+      context: .
+      dockerfile: dockerfile-bankingservice
+    networks:
+      - rest-architecture-network
+
+  mailsmsservice:
+    build:
+      context: .
+      dockerfile: dockerfile-mailsmsservice
+    networks:
+      - rest-architecture-network
+
+  paymentservice:
+    build:
+      context: .
+      dockerfile: dockerfile-paymentservice
+    networks:
+      - rest-architecture-network
+
+  ratingservice:
+    build:
+      context: .
+      dockerfile: dockerfile-ratingservice
+    networks:
+      - rest-architecture-network
+
+networks:
+  rest-architecture-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

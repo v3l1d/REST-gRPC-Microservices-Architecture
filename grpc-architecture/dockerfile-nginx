@@ -6,5 +6,10 @@ RUN rm /etc/nginx/conf.d/default.conf
 # Copy your custom NGINX configuration file
 COPY api_gateway.conf /etc/nginx/conf.d/
 
+# Copy SSL certificate and key files
+COPY nginx.crt /etc/nginx/nginx.crt
+COPY nginx.key /etc/nginx/nginx.key
+
 # Expose ports
 EXPOSE 80
+EXPOSE 443

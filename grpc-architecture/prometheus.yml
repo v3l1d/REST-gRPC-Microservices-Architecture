@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx:80']  # Assuming your nginx service exposes metrics on port 80
+
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['mysql:9104']  # Assuming you are using the default MySQL exporter port
+
+  # Add similar scrape configs for other services as needed
+

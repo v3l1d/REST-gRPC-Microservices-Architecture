@@ -1,6 +1,5 @@
 package com.thesis.bankingservice.client;
 
-import com.thesis.bankingservice.model.PracticeEntity;
 import com.thesis.generated.EvaluationGrpc;
 import com.thesis.generated.EvaluationRequest;
 import com.thesis.generated.EvaluationResponse;

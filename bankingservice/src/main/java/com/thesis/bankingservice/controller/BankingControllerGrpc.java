@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Profile("grpc")
 @RestController
@@ -40,10 +41,11 @@ public class BankingControllerGrpc {
 
 
     @PostMapping("/credit-card-payment")
-    public ResponseEntity<String> ccPayment(@RequestParam String practiceId,@RequestBody Card card) {
+    public ResponseEntity<String> ccPayment(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId,@RequestBody Card card) {
         logger.info("PRACITCE ID:{} ", practiceId);
+        logger.info("CARD:{}", card);
         if (dbService.practiceExists(practiceId)) {
-            String response= paymentClientGRPC.paymentRequestCard(card);
+            String response= paymentClientGRPC.paymentRequestCard(card,reqId);
             logger.info("RESPONSE IN CONTROLLER: {}",response);
             if(!response.isEmpty()){
                 return ResponseEntity.ok().body(response);
@@ -58,9 +60,10 @@ public class BankingControllerGrpc {
 
 
     @PostMapping("/bank-transfer-payment")
-    public ResponseEntity<String> btPayment(@RequestParam String practiceId,@RequestBody Transfer transfer){
+    public ResponseEntity<String> btPayment(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId,@RequestBody Transfer transfer){
+      
         if (dbService.practiceExists(practiceId)) {
-            String response= paymentClientGRPC.paymentRequestBank(transfer);
+            String response= paymentClientGRPC.paymentRequestBank(transfer,reqId);
             logger.info("RESPONSE IN CONTROLLER: {}",response);
             if(!response.isEmpty()){
                 return ResponseEntity.ok().body("PAYMENT ACCEPTED with id:" +response);
@@ -73,9 +76,10 @@ public class BankingControllerGrpc {
     }
 
     @PostMapping("/evaluate-practice")
-    public ResponseEntity<String> evaluatePractice(@RequestParam String practiceId){
+    public ResponseEntity<String> evaluatePractice(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId){
+        logger.info("Request ID: {}", reqId);
         if(dbService.practiceExists(practiceId)){
-                String response=ratingClientGRPC.getPracticeEvaluation(practiceId);
+                String response=ratingClientGRPC.getPracticeEvaluation(practiceId,reqId);
             if(response.equals("GOOD PRACTICE!")){
 
                 return ResponseEntity.ok("PRACTICE QUALITY: (8/10)");

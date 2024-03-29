@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,7 +57,8 @@ public class FinancialControllerGrpc {
     }
 
     @GetMapping("/get-vehicles")
-    public List<Vehicle> getVehiclesList(@RequestBody String param) {
+    public List<Vehicle> getVehiclesList(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody String param) {
+        logger.info("Request id: {}", reqId);
         return vehicleRepository.findAll();
 
 
@@ -74,7 +76,7 @@ public class FinancialControllerGrpc {
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<String> otpVerification(@RequestBody String otps , @RequestParam String address) {
+    public ResponseEntity<String> otpVerification(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody String otps , @RequestParam String address) {
         try {
 
                 JsonNode passwords = obj.readTree(otps);
@@ -82,7 +84,7 @@ public class FinancialControllerGrpc {
                 boolean mailVerified = false;
                 if(customerService.findCustomerByEmail(address)) {
                 if (passwords.has("mailOtp")) {
-                    mailVerified = mailSmsClientGRPC.verifyMail(passwords.get("mailOtp").asText());
+                    mailVerified = mailSmsClientGRPC.verifyMail(passwords.get("mailOtp").asText(),reqId);
                     logger.info(mailVerified);
                     if (mailVerified) {
                         customerService.setMailVerified(address);
@@ -92,7 +94,7 @@ public class FinancialControllerGrpc {
                     }
                 }
                 if (passwords.has("smsOtp") && customerService.findCustomerByEmail(address)) {
-                    smsVerified = mailSmsClientGRPC.verifySms(passwords.get("smsOtp").asText());
+                    smsVerified = mailSmsClientGRPC.verifySms(passwords.get("smsOtp").asText(),reqId);
                     logger.info(smsVerified);
                     if (smsVerified) {
                         customerService.setSMSVerified(address);
@@ -116,11 +118,12 @@ public class FinancialControllerGrpc {
 
 
     @PostMapping("/generate-otp")
-    public ResponseEntity<String> generateOtp(@RequestBody Customer personalData){
+    public ResponseEntity<String> generateOtp(@RequestHeader(value="X-Request-ID") String reqId, @RequestBody Customer personalData){
+        logger.info("Request id {}",reqId);
         if(personalData.getEmail()!=null && personalData.getPhone()!=null){
             customerService.savePersonIfNotExists(personalData);
-            this.SmsOtp= mailSmsClientGRPC.createSmsOtp(personalData.getPhone());
-            this.MailOtp= mailSmsClientGRPC.createMailOtp(personalData.getEmail());
+            this.SmsOtp= mailSmsClientGRPC.createSmsOtp(personalData.getPhone(),reqId);
+            this.MailOtp= mailSmsClientGRPC.createMailOtp(personalData.getEmail(),reqId);
             return ResponseEntity.ok().body("MailOTP: " +MailOtp + " SMSOtp: "+ SmsOtp);
         }
         else{
@@ -136,16 +139,15 @@ public class FinancialControllerGrpc {
 
 
     @PostMapping("/create-practice")
-    public ResponseEntity<String> createPracticeId(@RequestBody Customer personalData,@RequestParam String financingId) throws JsonProcessingException {
-
-        logger.info("customerEmail: {} ,financingId: {}",personalData.getEmail(),financingId);
+    public ResponseEntity<String> createPracticeId(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody Customer personalData,@RequestParam String financingId) throws JsonProcessingException {
+        logger.info("Request id {}",reqId);
         try{
             if(customerService.findCustomerByEmail(personalData.getEmail()) && financingRepository.findByFinancingId(financingId)!=null){
                 logger.info("condition verified");
                 Financing financingTemp=financingRepository.findByFinancingId(financingId);
                 double amount=financingTemp.getLoanAmount();
                 logger.info("AMOUNT VALUE IN CONTROLLER {}:",amount);
-                String resp= bankingClientGRPC.createPractice(personalData,financingId,amount);
+                String resp= bankingClientGRPC.createPractice(personalData,financingId,amount,reqId);
                 logger.info(resp);
                 if(resp!=null) {
                     return ResponseEntity.ok("Practice successfully created with id: "+resp);

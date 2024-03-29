@@ -16,7 +16,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.context.annotation.Profile;
 
 @Profile("grpc")
-@GrpcService
+@GrpcService(interceptors = {HeaderInterceptor.class})
 public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
     private final Logger logger=LogManager.getLogger(BankingServiceImpl.class);
     @Autowired

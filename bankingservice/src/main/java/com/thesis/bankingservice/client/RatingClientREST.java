@@ -3,7 +3,6 @@ package com.thesis.bankingservice.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.thesis.bankingservice.model.PracticeEntity;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +18,8 @@ public class RatingClientREST {
         this.webClient=WebClient.builder().baseUrl(host).build();
     }
 
-    public String getPracticeEvaluation(String practiceId){
+    public String getPracticeEvaluation(String practiceId,String reqId){
+        
         ObjectNode body=obj.createObjectNode()
                 .put("practiceId",practiceId);
         String response=webClient.post()

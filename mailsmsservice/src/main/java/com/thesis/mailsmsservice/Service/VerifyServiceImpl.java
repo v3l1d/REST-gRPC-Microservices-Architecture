@@ -15,13 +15,14 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 @Profile("grpc")
-@GrpcService
+@GrpcService(interceptors={HeaderInterceptor.class})
 public class VerifyServiceImpl extends VerifyServiceImplBase {
     private String MailOtp;
     private String SmsOtp;
     public  VerifyServiceImpl(){
 
     }
+    
     @Override
     public void smsOtp(Sms verify, StreamObserver<Otp> responseObserver){
         if (verify.getNumber().isEmpty()) {

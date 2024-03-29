@@ -4,6 +4,7 @@ package com.thesis.financialcalcservice.client;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,18 +23,23 @@ public class BankingClientREST {
         this.webClient=WebClient.builder().baseUrl(BankingServiceUrl).build();
 
     }
- public String createPractice(Customer personalData, String financingId,double amount) {
+ public String createPractice(Customer personalData, String financingId,double amount,String reqId) {
     ObjectNode requestBody = obj.createObjectNode()
             .put("financingId", financingId)
             .put("amount",amount)
             .putPOJO("personalData", personalData);
     try {
+        HttpHeaders header= new HttpHeaders();
+        header.add("Request-ID", reqId);
         String response = webClient.post()
                 .uri("/create-practice")
+                .header("Request-ID", reqId)
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+                
+        logger.info("REQUEST ID:{} INPUT:PERSONAL DATA: {}  FINANCING ID:{} OUTPUT:{}",reqId,personalData,financingId,response );
         return response;
     } catch (WebClientException e) {
         logger.error("Error occurred during HTTP request: {}", e.getMessage());

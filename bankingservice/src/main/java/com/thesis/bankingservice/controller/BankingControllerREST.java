@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,8 +41,9 @@ public class BankingControllerREST {
     }
 
     @PostMapping("/create-practice")
-    public ResponseEntity<String> createPracticeId(@RequestBody String reqBody) throws JsonMappingException, JsonProcessingException{
+    public ResponseEntity<String> createPracticeId(@RequestHeader(value="Request-ID") String reqId,@RequestBody String reqBody) throws JsonMappingException, JsonProcessingException{
         String result;
+        logger.info("REQUEST ID: {} INPUT: {}",reqId,reqBody);
         JsonNode customer=obj.readTree(reqBody);
         logger.info(reqBody);
         logger.info(customer.has("personalData"));
@@ -62,9 +64,9 @@ public class BankingControllerREST {
     }
 
     @PostMapping("/credit-card-payment")
-    public ResponseEntity<String> ccPayment(@RequestParam  String practiceId, @RequestBody  Card card){
+    public ResponseEntity<String> ccPayment(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam  String practiceId, @RequestBody  Card card){
         if(dbService.practiceExists(practiceId)){
-            if(paymentClientREST.creditCardPayment(card)){
+            if(paymentClientREST.creditCardPayment(card,reqId)){
                 return ResponseEntity.ok().body("PAYMENT ACCEPTED!");
             }else{
                 return ResponseEntity.badRequest().body("PAYMENT REFUSED!");
@@ -76,9 +78,9 @@ public class BankingControllerREST {
 
 
     @PostMapping("/bank-transfer-payment")
-    public ResponseEntity<String> btPayment(@RequestParam String practiceId, @RequestBody Transfer transfer){
+    public ResponseEntity<String> btPayment(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId, @RequestBody Transfer transfer){
         if(dbService.practiceExists(practiceId)){
-            if(paymentClientREST.bankTransferPayment(transfer)){
+            if(paymentClientREST.bankTransferPayment(transfer,reqId)){
             return  ResponseEntity.ok().body("PAYMENT ACCEPTED!");
             }else{
                 return ResponseEntity.badRequest().body("PAYMENT REFUSED");
@@ -90,9 +92,9 @@ public class BankingControllerREST {
 
     }
     @PostMapping("/evaluate-practice")
-    public ResponseEntity<String> evaluatePractice(@RequestParam String practiceId) {
+    public ResponseEntity<String> evaluatePractice(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId) {
         if(dbService.practiceExists(practiceId)){
-            String response=ratingClientREST.getPracticeEvaluation(practiceId);
+            String response=ratingClientREST.getPracticeEvaluation(practiceId,reqId);
             if(response.equals("GOOD PRACTICE!")){
                 return ResponseEntity.ok().body("PRACTICE QUALITY: (8/10)");
         }else{

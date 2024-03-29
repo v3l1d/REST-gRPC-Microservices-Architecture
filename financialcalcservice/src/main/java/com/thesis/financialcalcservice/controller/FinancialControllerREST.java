@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,11 +58,11 @@ public class FinancialControllerREST {
     }
 
     @PostMapping("/generate-otp")
-    public ResponseEntity<String> generateOtp(@RequestBody Customer personalData){
+    public ResponseEntity<String> generateOtp(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody Customer personalData){
         if(personalData.getEmail()!=null && personalData.getPhone()!=null){
             customerService.savePersonIfNotExists(personalData);
-            String mailOtp=MailSmsClientREST.getMailOtp(personalData.getEmail());
-            String smsOtp=MailSmsClientREST.getSmsOtp(personalData.getPhone());
+            String mailOtp=MailSmsClientREST.getMailOtp(personalData.getEmail(),reqId);
+            String smsOtp=MailSmsClientREST.getSmsOtp(personalData.getPhone(),reqId);
             return ResponseEntity.ok().body("MailOTP: " +mailOtp + " SMSOtp: "+smsOtp);
         }
         else{
@@ -71,14 +72,14 @@ public class FinancialControllerREST {
 
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<String> otpVerification(@RequestBody String otps,@RequestParam String address){
+    public ResponseEntity<String> otpVerification(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody String otps,@RequestParam String address){
         try{
         JsonNode passwords=obj.readTree(otps);
         boolean smsVerified=false;
         boolean mailverified=false;
         if(customerService.findCustomerByEmail(address)){
         if(passwords.has("mailOtp")) {
-           mailverified=MailSmsClientREST.verifyMail(passwords.get("mailOtp").asText());
+           mailverified=MailSmsClientREST.verifyMail(passwords.get("mailOtp").asText(),reqId);
             if(mailverified){
                 customerService.setMailVerified(address);
                 return ResponseEntity.ok().body("Mail Verification Completed!");
@@ -88,7 +89,7 @@ public class FinancialControllerREST {
             }
         } else
         if(passwords.has("smsOtp")){
-            smsVerified=MailSmsClientREST.verifySms(passwords.get("smsOtp").asText());
+            smsVerified=MailSmsClientREST.verifySms(passwords.get("smsOtp").asText(),reqId);
            if(smsVerified){
             customerService.setSMSVerified(address);
             return ResponseEntity.ok().body("SMS Verification Completed!"); 
@@ -109,12 +110,12 @@ public class FinancialControllerREST {
     }
 
     @PostMapping("/create-practice")
-    public ResponseEntity<String> createPracticeId(@RequestBody Customer PersonalData,@RequestParam String financingId){
+    public ResponseEntity<String> createPracticeId(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody Customer PersonalData,@RequestParam String financingId){
         Financing temp=financingService.getFinancingById(financingId);
         logger.info("PERSONAL DATA:{}",PersonalData);
         logger.info("FINANCING ID:{}", financingId);
         if(temp!=null){
-            String response=BankingClientREST.createPractice(PersonalData, financingId, temp.getLoanAmount());
+            String response=BankingClientREST.createPractice(PersonalData, financingId, temp.getLoanAmount(),reqId);
             if(response!=null){
                 return ResponseEntity.ok().body("PRACTICE CREATED with ID:" + response);
             }

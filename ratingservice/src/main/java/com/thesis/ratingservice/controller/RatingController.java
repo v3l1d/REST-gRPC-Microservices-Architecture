@@ -21,6 +21,8 @@ public class RatingController {
     private final Logger logger=LogManager.getLogger(RatingController.class);
     @PostMapping("/evaluate-practice")
     public ResponseEntity<String> evaluatePractice(@RequestHeader(value="Request-ID")String reqId,@RequestBody String pract) throws JsonProcessingException {
+        logger.info("REQUEST ID:{}",reqId);
+        logger.info("REQUEST BODY:{}",pract);
         JsonNode practice=obj.readTree(pract);
         logger.info(pract);
         if(practice.has("practiceId")){

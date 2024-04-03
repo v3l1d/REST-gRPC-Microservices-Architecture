@@ -1,8 +1,8 @@
 #Dockerfile-mysql
 FROM mysql:8.0
 ENV MYSQL_ROOT_PASSWORD=root
-ENV MYSQL_USER=adil
-ENV MYSQL_PASSWORD=P@ssword!2024
+ENV MYSQL_USER=aledil
+ENV MYSQL_PASSWORD=alert123
 ENV MYSQL_DATABASE_1=calculationservice
 ENV MYSQL_DATABASE_2=bankingservice
 WORKDIR /docker-entrypoint-initdb.d

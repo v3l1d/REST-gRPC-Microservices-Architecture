@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @Profile("rest")
@@ -19,7 +20,7 @@ public class RatingController {
     private final ObjectMapper obj=new ObjectMapper();
     private final Logger logger=LogManager.getLogger(RatingController.class);
     @PostMapping("/evaluate-practice")
-    public ResponseEntity<String> evaluatePractice(@RequestBody String pract) throws JsonProcessingException {
+    public ResponseEntity<String> evaluatePractice(@RequestHeader(value="Request-ID")String reqId,@RequestBody String pract) throws JsonProcessingException {
         JsonNode practice=obj.readTree(pract);
         logger.info(pract);
         if(practice.has("practiceId")){

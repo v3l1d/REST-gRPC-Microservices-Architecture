@@ -46,12 +46,12 @@ public class FinancialControllerREST {
     }
 
     @GetMapping("/get-vehicles")
-    public ResponseEntity<List<Vehicle>> listVechiles(@RequestParam String get){
+    public ResponseEntity<List<Vehicle>> listVechiles(@RequestHeader(value="X-Request-ID") String reqId){
         return ResponseEntity.ok().body(vehicleService.getAllVehicles());
     }
 
     @GetMapping("/financing-request")
-    public ResponseEntity<List<Financing>> listFinancings(@RequestParam String vehicleId){
+    public ResponseEntity<List<Financing>> listFinancings(@RequestHeader(value="X-Request-ID") String id,@RequestParam String vehicleId){
 
         return ResponseEntity.ok().body(financingService.getFinancingsByVehicleId(vehicleId));
 

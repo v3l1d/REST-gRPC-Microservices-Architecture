@@ -1,8 +1,8 @@
 package com.thesis.financialcalcservice.controller;
 
 import com.thesis.financialcalcservice.client.BankingClientGRPC;
-import com.thesis.financialcalcservice.repository.FinancingRepository;
 import com.thesis.financialcalcservice.Service.CustomerService;
+import com.thesis.financialcalcservice.Service.FinancingService;
 import com.thesis.financialcalcservice.repository.VehicleRepository;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -43,21 +43,21 @@ public class FinancialControllerGrpc {
    private final ObjectMapper obj= new ObjectMapper();
    private static final Logger logger=LogManager.getLogger(FinancialControllerGrpc.class);
    private final VehicleRepository vehicleRepository;
-   private final FinancingRepository financingRepository;
    private final CustomerService customerService;
+   private final FinancingService financingService;
 
-    public FinancialControllerGrpc(@Value("${bankingservice.grpc.url}")String bankingHost,@Value("${mailsmsservice.grpc.url}") String mailsmsHost,VehicleRepository vehicleRepository, FinancingRepository financingRepository, CustomerService customerService) {
+    public FinancialControllerGrpc(@Value("${bankingservice.grpc.url}")String bankingHost,@Value("${mailsmsservice.grpc.url}") String mailsmsHost,VehicleRepository vehicleRepository, FinancingService financingService, CustomerService customerService) {
         this.vehicleRepository = vehicleRepository;
-        this.financingRepository = financingRepository;
         this.customerService = customerService;
         this.grpcBankServer=bankingHost;
         this.mailSmsServer=mailsmsHost;
         this.bankingClientGRPC=new BankingClientGRPC(grpcBankServer);
         this.mailSmsClientGRPC=new MailSmsClientGRPC(mailSmsServer);
+        this.financingService = financingService;
     }
 
     @GetMapping("/get-vehicles")
-    public List<Vehicle> getVehiclesList(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody String param) {
+    public List<Vehicle> getVehiclesList(@RequestHeader(value="X-Request-ID") String reqId) {
         logger.info("Request id: {}", reqId);
         return vehicleRepository.findAll();
 
@@ -67,11 +67,9 @@ public class FinancialControllerGrpc {
     }
 
     @GetMapping("/financing-request")
-    public List<Financing> listFinancings(@RequestParam String id) {
-
-        logger.info(id);
-        logger.info("VEHICLED REQUESTED: {} \n AVAILABLE FINANCINGS FOR THIS ID : {}",id,financingRepository.findByVehicleId(id));
-        return financingRepository.findByVehicleId(id);
+    public ResponseEntity<List<Financing>> listFinancings(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String vehicleId) {
+        logger.info("Request ID:{} INPUT:{} OUTPUT:{}",reqId,vehicleId,financingService.getFinancingsByVehicleId(vehicleId));
+        return ResponseEntity.ok().body(financingService.getFinancingsByVehicleId(vehicleId));
 
     }
 
@@ -116,7 +114,6 @@ public class FinancialControllerGrpc {
     }
 
 
-
     @PostMapping("/generate-otp")
     public ResponseEntity<String> generateOtp(@RequestHeader(value="X-Request-ID") String reqId, @RequestBody Customer personalData){
         logger.info("Request id {}",reqId);
@@ -131,20 +128,13 @@ public class FinancialControllerGrpc {
         }
     }
 
-
-
-
-
-
-
-
     @PostMapping("/create-practice")
     public ResponseEntity<String> createPracticeId(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody Customer personalData,@RequestParam String financingId) throws JsonProcessingException {
         logger.info("Request id {}",reqId);
         try{
-            if(customerService.findCustomerByEmail(personalData.getEmail()) && financingRepository.findByFinancingId(financingId)!=null){
+            if(customerService.findCustomerByEmail(personalData.getEmail()) && financingService.getFinancingById(financingId)!=null){
                 logger.info("condition verified");
-                Financing financingTemp=financingRepository.findByFinancingId(financingId);
+                Financing financingTemp=financingService.getFinancingById(financingId);
                 double amount=financingTemp.getLoanAmount();
                 logger.info("AMOUNT VALUE IN CONTROLLER {}:",amount);
                 String resp= bankingClientGRPC.createPractice(personalData,financingId,amount,reqId);

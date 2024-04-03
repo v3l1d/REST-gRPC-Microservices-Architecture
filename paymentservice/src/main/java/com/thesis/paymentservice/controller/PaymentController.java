@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
     private final ObjectMapper obj= new ObjectMapper();
     @PostMapping("/credit-card")
-    public ResponseEntity<String> ccPayment(@RequestBody String card) throws JsonProcessingException {
+    public ResponseEntity<String> ccPayment(@RequestHeader(value="Request-ID") String reqId,@RequestBody String card) throws JsonProcessingException {
         JsonNode reqBody=obj.readTree(card);
         if(reqBody!=null){
             return ResponseEntity.ok().body("ACCEPTED");
@@ -25,7 +26,7 @@ public class PaymentController {
     }
 
     @PostMapping("/bank-transfer")
-    public ResponseEntity<String> btPayment(@RequestBody String transfer) throws JsonProcessingException {
+    public ResponseEntity<String> btPayment(@RequestHeader(value="Request-ID") String reqId,@RequestBody String transfer) throws JsonProcessingException {
         JsonNode reqBody= obj.readTree(transfer);
         if(reqBody!=null){
             return ResponseEntity.ok().body("ACCEPTED");

@@ -48,7 +48,7 @@ public class MailSmsClientGRPC {
                 .build();
             Otp response = blockingStub.smsOtp(request);
             result=response.getPassword();
-            logger.info("Request with id: {} got this response: {}",reqId,response.getPassword());
+            logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,number,response.getPassword());
         } catch (StatusRuntimeException e) {
             System.err.println("RPC failed: " + e.getStatus());
         }
@@ -70,7 +70,7 @@ public class MailSmsClientGRPC {
                     .build();
                 Otp response=stub.mailOtp(mail);
                 result=response.getPassword();
-                logger.info("Request with id: {} got this response: {}",reqId,response.getPassword());
+                logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,email,response.getPassword());
             }catch (StatusRuntimeException e){
                 System.err.println("RPC failed: " + e.getStatus());
             }
@@ -92,7 +92,7 @@ public class MailSmsClientGRPC {
                 Response resp=stub.verifySmsOtp(toVerify);
                 res=resp.getVerified();
                 
-                logger.info("Request with id: {} got this response: {}",reqId,resp);
+                logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,password,res);
             }
         }catch (StatusRuntimeException e){
             logger.error("Error processing password",e);
@@ -113,7 +113,7 @@ public class MailSmsClientGRPC {
                         .build();
                     Response resp=stub.verifyMailOtp(toVerify);
                     res=resp.getVerified();
-                    logger.info("Request with id: {} got this response: {}",reqId,resp);
+                    logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,password,res);
 
                 }
             }catch (StatusRuntimeException e){

@@ -45,6 +45,7 @@ public class PaymentClientGRPC {
             PaymentResponse response = stub.cardPay(request);
             if(response.getResult().equals("ACCEPTED")){
                 result="PAYMENT ACCEPTED with id:" + response.getPaymentId();
+                logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,card,response.getResult());
             }
         }}catch (StatusRuntimeException e){
             logger.error("PAYMENT REFUSED",e);
@@ -67,6 +68,7 @@ public class PaymentClientGRPC {
                         .build();
                 PaymentResponse response=stub.bankPay(request);
                 if(response.getResult().equals("ACCEPTED")){
+                    logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,transfer,response.getResult());
                     result=response.getPaymentId();
                 }
             }

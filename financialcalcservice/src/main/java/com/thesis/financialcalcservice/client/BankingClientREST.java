@@ -39,7 +39,7 @@ public class BankingClientREST {
                 .bodyToMono(String.class)
                 .block();
                 
-        logger.info("REQUEST ID:{} INPUT:PERSONAL DATA: {}  FINANCING ID:{} OUTPUT:{}",reqId,personalData,financingId,response );
+        logger.info("REQUEST ID:{} INPUT:{}{} OUTPUT:{}",reqId,personalData,financingId,response );
         return response;
     } catch (WebClientException e) {
         logger.error("Error occurred during HTTP request: {}", e.getMessage());

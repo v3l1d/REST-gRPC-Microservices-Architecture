@@ -28,7 +28,7 @@ public class RatingClientREST {
                 .retrieve()
                 .bodyToMono(String.class)   
                 .block();
-        logger.info("RESPONSE:{}", response.toString());
+        logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,practiceId,response.toString());
         return response;
 
     }

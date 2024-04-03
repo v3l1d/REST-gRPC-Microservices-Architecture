@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thesis.bankingservice.model.Card;
 import com.thesis.bankingservice.model.Transfer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -16,6 +18,7 @@ public class PaymentClientREST {
     private final WebClient webClient;
     private final ObjectMapper obj=new ObjectMapper();
     private final String PaymentServiceUrl;
+    private final Logger logger=LogManager.getLogger(PaymentClientREST.class);
 
     public PaymentClientREST(String paymentServiceUrl){
         this.PaymentServiceUrl=paymentServiceUrl;
@@ -32,6 +35,7 @@ public class PaymentClientREST {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+        logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,card,result);
         return Objects.equals(result, "ACCEPTED");
 
     }
@@ -45,6 +49,7 @@ public class PaymentClientREST {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+        logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,transfer,result);
         return Objects.equals(result, "ACCEPTED");
 
     }

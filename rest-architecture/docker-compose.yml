@@ -7,8 +7,9 @@ services:
       dockerfile: dockerfile-nginx
     ports:
       - "80:80"
+      - "443:443"
     networks:
-      - rest-architecture-network
+      - grpc-architecture-network
 
   mysql:
     build:
@@ -16,47 +17,74 @@ services:
       dockerfile: dockerfile-mysql
     volumes:
       - mysql_data:/var/lib/mysql
-
     networks:
-      - rest-architecture-network
+      - grpc-architecture-network
 
   calculationservice:
     build:
       context: .
       dockerfile: dockerfile-calculationservice
     networks:
-      - rest-architecture-network
+      - grpc-architecture-network
 
   bankingservice:
     build:
       context: .
       dockerfile: dockerfile-bankingservice
     networks:
-      - rest-architecture-network
+      - grpc-architecture-network
 
   mailsmsservice:
     build:
       context: .
       dockerfile: dockerfile-mailsmsservice
     networks:
-      - rest-architecture-network
+      - grpc-architecture-network
 
   paymentservice:
     build:
       context: .
       dockerfile: dockerfile-paymentservice
     networks:
-      - rest-architecture-network
+      - grpc-architecture-network
 
   ratingservice:
     build:
       context: .
       dockerfile: dockerfile-ratingservice
     networks:
-      - rest-architecture-network
-
+      - grpc-architecture-network
+  prometheus:
+    image: prom/prometheus
+    ports: 
+    - "9090:9090"
+    volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+    - grpc-architecture-network
+  grafana:
+    image: grafana/grafana
+    logging:
+      driver: none
+    ports:
+      - "3000:3000"
+    networks:
+      - grpc-architecture-network
+  cadvisor:
+    image: google/cadvisor:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - grpc-architecture-network
+  
+ 
 networks:
-  rest-architecture-network:
+  grpc-architecture-network:
     driver: bridge
 
 volumes:

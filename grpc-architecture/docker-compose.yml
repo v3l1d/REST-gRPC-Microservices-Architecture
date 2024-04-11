@@ -81,21 +81,22 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     networks:
       - grpc-architecture-network
-  
-
   locust-master:
     image: locustio/locust
     ports:
      - "8089:8089"
     volumes:
       - ./:/mnt/locust
-    command: -f /mnt/locust/locustfile.py --master -H http://master:8089
+    command: -f /mnt/locust/locustfile.py --master
+
   
   locust-worker:
     image: locustio/locust
     volumes:
       - ./:/mnt/locust
-    command: -f /mnt/locust/locustfile.py --worker --master-host locust-master
+    command: -f /mnt/locust/locustfile.py --worker --master-host locust-master 
+
+ 
 networks:
   grpc-architecture-network:
     driver: bridge

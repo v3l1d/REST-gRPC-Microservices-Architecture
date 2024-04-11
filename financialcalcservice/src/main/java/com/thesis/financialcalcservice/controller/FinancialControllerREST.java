@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.thesis.financialcalcservice.client.BankingClientREST;
 import com.thesis.financialcalcservice.client.MailSmsClientREST;
 import java.util.List;
-
+import org.springframework.http.MediaType;
 @Profile("rest")
 @RestController
 public class FinancialControllerREST {
@@ -61,9 +61,10 @@ public class FinancialControllerREST {
     public ResponseEntity<String> generateOtp(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody Customer personalData){
         if(personalData.getEmail()!=null && personalData.getPhone()!=null){
             customerService.savePersonIfNotExists(personalData);
-            String mailOtp=MailSmsClientREST.getMailOtp(personalData.getEmail(),reqId);
-            String smsOtp=MailSmsClientREST.getSmsOtp(personalData.getPhone(),reqId);
-            return ResponseEntity.ok().body("MailOTP: " +mailOtp + " SMSOtp: "+smsOtp);
+            String MailOtp=MailSmsClientREST.getMailOtp(personalData.getEmail(),reqId);
+            String SmsOtp=MailSmsClientREST.getSmsOtp(personalData.getPhone(),reqId);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"MailOTP\": \"" + MailOtp + "\", \"SMSOtp\": \"" + SmsOtp + "\"}");
+      
         }
         else{
             return  ResponseEntity.badRequest().build();

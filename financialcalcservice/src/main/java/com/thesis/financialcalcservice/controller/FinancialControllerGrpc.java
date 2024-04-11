@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.MediaType;
 
 
 @Profile("grpc")
@@ -121,7 +122,7 @@ public class FinancialControllerGrpc {
             customerService.savePersonIfNotExists(personalData);
             this.SmsOtp= mailSmsClientGRPC.createSmsOtp(personalData.getPhone(),reqId);
             this.MailOtp= mailSmsClientGRPC.createMailOtp(personalData.getEmail(),reqId);
-            return ResponseEntity.ok().body("MailOTP: " +MailOtp + " SMSOtp: "+ SmsOtp);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"MailOTP\": \"" + MailOtp + "\", \"SMSOtp\": \"" + SmsOtp + "\"}");
         }
         else{
             return  ResponseEntity.badRequest().build();

@@ -4,7 +4,7 @@
 
 # REST/GRPC Microservices Architecture PoC
 
-This repository contains the source code for my Master's Thesis project at the University of Milan. The project implements a distributed microservices architecture designed to compare the efficiency of REST and gRPC by Google.
+This repository contains the source code for my Master's Thesis project at the University of Milan. The project implements a distributed microservices architecture designed to compare the efficiency of REST on HTTP and gRPC by Google on HTTP/2.
 
 ## Installation
 

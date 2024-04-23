@@ -47,5 +47,5 @@ The architecture has the following services running:
 -  `Grafana at localhost:3000`
 -  `Prometheus at localhost:9090`
 -  `cAdvisor at localhost:8080`
--  `Zipking at localhost:9411`
+-  `Zipkin at localhost:9411`
 

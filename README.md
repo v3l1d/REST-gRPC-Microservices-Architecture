@@ -1,11 +1,10 @@
 <p align="center">
   <img src="https://www.unimi.it/sites/default/files/2019-05/LogoFooter_a9f0c3692bf29c71609e5f204522c5d4_0.png" width="300" />
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Logo_Reply.svg/1280px-Logo_Reply.svg.png" width="300" /> 
 </p>
 
 # REST/GRPC Microservices Architecture PoC
 
-This repository contains the source code for my Master's Thesis project at the University of Milan in collaboration with Reply. The project implements a distributed microservices architecture designed to compare the efficiency of REST and gRPC by Google.
+This repository contains the source code for my Master's Thesis project at the University of Milan. The project implements a distributed microservices architecture designed to compare the efficiency of REST and gRPC by Google.
 
 ## Installation
 

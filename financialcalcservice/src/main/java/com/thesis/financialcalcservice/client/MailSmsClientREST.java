@@ -4,21 +4,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.reactive.function.client.WebClient;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 
 @Profile("rest")
 public class MailSmsClientREST {
     private ObjectMapper obj= new ObjectMapper();
     private final Logger logger=LogManager.getLogger(MailSmsClientREST.class);
-   
     private final String MailSmsServiceUrl;
     private final WebClient webClient;
 
-    public MailSmsClientREST(String mailSmsServiceUrl) {
+    public MailSmsClientREST(String mailSmsServiceUrl, WebClient.Builder webClientBuilder) {
         this.MailSmsServiceUrl = mailSmsServiceUrl;
-        this.webClient = WebClient.builder().baseUrl(MailSmsServiceUrl).build();
+        this.webClient = webClientBuilder.baseUrl(MailSmsServiceUrl).build();
     }
 
     public String getMailOtp(String email,String reqId) {

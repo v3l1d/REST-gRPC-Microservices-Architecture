@@ -1,10 +1,12 @@
 package com.thesis.financialcalcservice.controller;
 
+import brave.grpc.GrpcTracing;
 import com.thesis.financialcalcservice.client.BankingClientGRPC;
 import com.thesis.financialcalcservice.Service.CustomerService;
 import com.thesis.financialcalcservice.Service.FinancingService;
 import com.thesis.financialcalcservice.repository.VehicleRepository;
 
+import io.micrometer.observation.annotation.Observed;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -30,7 +32,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.MediaType;
 
-
 @Profile("grpc")
 @RestController
 
@@ -47,17 +48,18 @@ public class FinancialControllerGrpc {
    private final CustomerService customerService;
    private final FinancingService financingService;
 
-    public FinancialControllerGrpc(@Value("${bankingservice.grpc.url}")String bankingHost,@Value("${mailsmsservice.grpc.url}") String mailsmsHost,VehicleRepository vehicleRepository, FinancingService financingService, CustomerService customerService) {
+    public FinancialControllerGrpc(@Value("${bankingservice.grpc.url}")String bankingHost, @Value("${mailsmsservice.grpc.url}") String mailsmsHost, VehicleRepository vehicleRepository, FinancingService financingService, CustomerService customerService, GrpcTracing grpcTracing) {
         this.vehicleRepository = vehicleRepository;
         this.customerService = customerService;
         this.grpcBankServer=bankingHost;
         this.mailSmsServer=mailsmsHost;
-        this.bankingClientGRPC=new BankingClientGRPC(grpcBankServer);
-        this.mailSmsClientGRPC=new MailSmsClientGRPC(mailSmsServer);
+        this.bankingClientGRPC=new BankingClientGRPC(grpcBankServer,grpcTracing);
+        this.mailSmsClientGRPC=new MailSmsClientGRPC(mailSmsServer,grpcTracing);
         this.financingService = financingService;
     }
 
     @GetMapping("/get-vehicles")
+    @Observed
     public List<Vehicle> getVehiclesList(@RequestHeader(value="X-Request-ID") String reqId) {
         logger.info("Request id: {}", reqId);
         return vehicleRepository.findAll();
@@ -68,6 +70,7 @@ public class FinancialControllerGrpc {
     }
 
     @GetMapping("/financing-request")
+    @Observed
     public ResponseEntity<List<Financing>> listFinancings(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String vehicleId) {
         logger.info("Request ID:{} INPUT:{} OUTPUT:{}",reqId,vehicleId,financingService.getFinancingsByVehicleId(vehicleId));
         return ResponseEntity.ok().body(financingService.getFinancingsByVehicleId(vehicleId));
@@ -75,6 +78,7 @@ public class FinancialControllerGrpc {
     }
 
     @PostMapping("/verify-otp")
+    @Observed
     public ResponseEntity<String> otpVerification(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody String otps , @RequestParam String address) {
         try {
 
@@ -122,7 +126,8 @@ public class FinancialControllerGrpc {
             customerService.savePersonIfNotExists(personalData);
             this.SmsOtp= mailSmsClientGRPC.createSmsOtp(personalData.getPhone(),reqId);
             this.MailOtp= mailSmsClientGRPC.createMailOtp(personalData.getEmail(),reqId);
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"MailOTP\": \"" + MailOtp + "\", \"SMSOtp\": \"" + SmsOtp + "\"}");
+
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"MailOTP\": \"" + MailOtp + "\", \"SmsOtp\": \"" + SmsOtp + "\"}");
         }
         else{
             return  ResponseEntity.badRequest().build();

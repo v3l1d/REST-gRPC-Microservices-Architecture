@@ -20,9 +20,9 @@ public class PaymentClientREST {
     private final String PaymentServiceUrl;
     private final Logger logger=LogManager.getLogger(PaymentClientREST.class);
 
-    public PaymentClientREST(String paymentServiceUrl){
+    public PaymentClientREST(String paymentServiceUrl,WebClient.Builder webClientBuilder){
         this.PaymentServiceUrl=paymentServiceUrl;
-        this.webClient=WebClient.builder().baseUrl(PaymentServiceUrl).build();
+        this.webClient=webClientBuilder.baseUrl(PaymentServiceUrl).build();
 
     }
     public boolean creditCardPayment(Card card,String reqId){

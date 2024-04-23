@@ -9,7 +9,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.Metadata;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.MetadataUtils;
-
+import brave.grpc.GrpcTracing;
 import java.util.concurrent.TimeUnit;
 import com.thesis.financialcalcservice.model.Customer;
 import org.apache.logging.log4j.LogManager;
@@ -23,9 +23,10 @@ public class BankingClientGRPC {
 
     private final ManagedChannel chan;
 
-    public BankingClientGRPC(String host)  {
+    public BankingClientGRPC(String host,GrpcTracing grpcTracing)  {
         this.chan=ManagedChannelBuilder.forTarget(host)
                 .usePlaintext()
+                .intercept(grpcTracing.newClientInterceptor())
                 .build();
 
     }

@@ -6,8 +6,7 @@ import os,json
 class WebsiteUser(HttpUser):
     wait_time = between(1, 2)
     ca_certs = os.path.join(os.path.dirname(os.path.abspath(__file__)), "nginx.crt")
-    host = "https://localhost:443"
-    
+    host="https://ec2-13-48-1-159.eu-north-1.compute.amazonaws.com/"
     
     def get_vehicles(self):
         response = self.client.get("/get-vehicles", verify=False)  # Set verify to True
@@ -23,7 +22,7 @@ class WebsiteUser(HttpUser):
         response = self.client.post("/generate-otp", json={"name":"john", "surname":"doe","email": "test@example.com", "phone": "1234567890"},verify=False)
        
         mail_otp = response.json()["MailOTP"]
-        sms_otp = response.json()["SmsOtp"]
+        sms_otp = response.json()["SMSOtp"]
         print (response)
         verify_mail=self.client.post("/verify-otp?address=test@example.com", json={"mailOtp": mail_otp},verify=False)
         verify_sms=self.client.post("/verify-otp?address=test@example.com",json={"smsOtp": sms_otp},verify=False)
@@ -40,3 +39,5 @@ class WebsiteUser(HttpUser):
     @task
     def credit_card_paymanet(self):
         pass
+
+

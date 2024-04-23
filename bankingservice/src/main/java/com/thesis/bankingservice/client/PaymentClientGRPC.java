@@ -1,4 +1,5 @@
 package com.thesis.bankingservice.client;
+import brave.grpc.GrpcTracing;
 import com.thesis.bankingservice.model.Card;
 import com.thesis.bankingservice.model.Transfer;
 import com.thesis.generated.*;
@@ -19,10 +20,11 @@ public class PaymentClientGRPC {
     private final ManagedChannel chan;
    
 
-    public PaymentClientGRPC(String host) {
+    public PaymentClientGRPC(String host, GrpcTracing grpcTracing) {
 
          this.chan = ManagedChannelBuilder.forTarget(host)
                 .usePlaintext()
+                 .intercept(grpcTracing.newClientInterceptor())
                 .build();
 
 

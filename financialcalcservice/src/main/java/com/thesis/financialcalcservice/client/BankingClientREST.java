@@ -18,9 +18,9 @@ public class BankingClientREST {
     private final ObjectMapper obj=new ObjectMapper();
    private final String BankingServiceUrl;
 
-    public BankingClientREST(String bankingServiceUrl){
+    public BankingClientREST(String bankingServiceUrl,WebClient.Builder webClientBuilder){
         this.BankingServiceUrl=bankingServiceUrl;
-        this.webClient=WebClient.builder().baseUrl(BankingServiceUrl).build();
+        this.webClient=webClientBuilder.baseUrl(BankingServiceUrl).build();
 
     }
  public String createPractice(Customer personalData, String financingId,double amount,String reqId) {

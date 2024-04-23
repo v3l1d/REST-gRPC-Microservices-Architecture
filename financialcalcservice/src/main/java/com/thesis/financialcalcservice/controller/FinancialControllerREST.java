@@ -8,6 +8,7 @@ import com.thesis.financialcalcservice.Service.VehicleService;
 import com.thesis.financialcalcservice.model.Customer;
 import com.thesis.financialcalcservice.model.Financing;
 import com.thesis.financialcalcservice.model.Vehicle;
+import io.micrometer.observation.annotation.Observed;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.thesis.financialcalcservice.client.BankingClientREST;
 import com.thesis.financialcalcservice.client.MailSmsClientREST;
@@ -37,20 +39,22 @@ public class FinancialControllerREST {
     private final BankingClientREST BankingClientREST;
     private final Logger logger=LogManager.getLogger(FinancialControllerREST.class);
   
-    public FinancialControllerREST(@Value("${bankingservice.rest.url}") String bankingServiceUrl, @Value("${mailsmsservice.rest.url}") String mailSmsServiceUrl,FinancingService financingService, VehicleService vehicleService,CustomerService customerService) {
+    public FinancialControllerREST(@Value("${bankingservice.rest.url}") String bankingServiceUrl, @Value("${mailsmsservice.rest.url}") String mailSmsServiceUrl,FinancingService financingService, VehicleService vehicleService,CustomerService customerService,WebClient.Builder webClientBuilder) {
         this.financingService = financingService;
         this.vehicleService = vehicleService;
         this.customerService=customerService;
-        this.MailSmsClientREST=new MailSmsClientREST(mailSmsServiceUrl);
-        this.BankingClientREST=new BankingClientREST(bankingServiceUrl);
+        this.MailSmsClientREST=new MailSmsClientREST(mailSmsServiceUrl,webClientBuilder);
+        this.BankingClientREST=new BankingClientREST(bankingServiceUrl, webClientBuilder);
     }
 
     @GetMapping("/get-vehicles")
+    
     public ResponseEntity<List<Vehicle>> listVechiles(@RequestHeader(value="X-Request-ID") String reqId){
         return ResponseEntity.ok().body(vehicleService.getAllVehicles());
     }
 
     @GetMapping("/financing-request")
+    @Observed
     public ResponseEntity<List<Financing>> listFinancings(@RequestHeader(value="X-Request-ID") String id,@RequestParam String vehicleId){
 
         return ResponseEntity.ok().body(financingService.getFinancingsByVehicleId(vehicleId));
@@ -58,6 +62,7 @@ public class FinancialControllerREST {
     }
 
     @PostMapping("/generate-otp")
+    
     public ResponseEntity<String> generateOtp(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody Customer personalData){
         if(personalData.getEmail()!=null && personalData.getPhone()!=null){
             customerService.savePersonIfNotExists(personalData);
@@ -73,6 +78,7 @@ public class FinancialControllerREST {
 
 
     @PostMapping("/verify-otp")
+    
     public ResponseEntity<String> otpVerification(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody String otps,@RequestParam String address){
         try{
         JsonNode passwords=obj.readTree(otps);
@@ -111,6 +117,7 @@ public class FinancialControllerREST {
     }
 
     @PostMapping("/create-practice")
+    
     public ResponseEntity<String> createPracticeId(@RequestHeader(value="X-Request-ID") String reqId,@RequestBody Customer PersonalData,@RequestParam String financingId){
         Financing temp=financingService.getFinancingById(financingId);
         logger.info("PERSONAL DATA:{}",PersonalData);

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Profile("rest")
 @RestController
@@ -33,11 +34,11 @@ public class BankingControllerREST {
     private final BankDBService dbService;
 
  
-    public BankingControllerREST(BankDBService dbService,@Value("${ratingservice.rest.url}") String ratingServiceUrl,@Value("${paymentservice.rest.url}")String paymentServerUrl){
+    public BankingControllerREST(BankDBService dbService,@Value("${ratingservice.rest.url}") String ratingServiceUrl,@Value("${paymentservice.rest.url}")String paymentServerUrl,WebClient.Builder webClientBuilder){
         this.dbService=dbService;
         this.bankingServiceREST=new BankingServiceREST(dbService);
-        this.paymentClientREST=new PaymentClientREST(paymentServerUrl);
-        this.ratingClientREST=new RatingClientREST(ratingServiceUrl);
+        this.paymentClientREST=new PaymentClientREST(paymentServerUrl, webClientBuilder);
+        this.ratingClientREST=new RatingClientREST(ratingServiceUrl, webClientBuilder);
     }
 
     @PostMapping("/create-practice")

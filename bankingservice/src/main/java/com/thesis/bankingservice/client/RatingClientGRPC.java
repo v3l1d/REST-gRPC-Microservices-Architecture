@@ -1,5 +1,6 @@
 package com.thesis.bankingservice.client;
 
+import brave.grpc.GrpcTracing;
 import com.thesis.generated.EvaluationGrpc;
 import com.thesis.generated.EvaluationRequest;
 import com.thesis.generated.EvaluationResponse;
@@ -17,9 +18,10 @@ import org.springframework.context.annotation.Profile;
 public class RatingClientGRPC {
 private final ManagedChannel chan;
 private final Logger logger=LogManager.getLogger(RatingClientGRPC.class);
-    public RatingClientGRPC(String host){
+    public RatingClientGRPC(String host, GrpcTracing grpcTracing){
         this.chan = ManagedChannelBuilder.forTarget(host)
                 .usePlaintext()
+                .intercept(grpcTracing.newClientInterceptor())
                 .build();
     }
 

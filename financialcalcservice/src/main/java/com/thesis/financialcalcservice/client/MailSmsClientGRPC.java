@@ -1,10 +1,7 @@
 package com.thesis.financialcalcservice.client;
 
 
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.StatusRuntimeException;
-import io.grpc.Metadata;
+import io.grpc.*;
 import io.grpc.stub.MetadataUtils;
 import com.thesis.generated.Sms;
 import com.thesis.generated.VerifyServiceGrpc;
@@ -14,15 +11,17 @@ import com.thesis.generated.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Profile;
+import brave.grpc.GrpcTracing;
 
 @Profile("grpc")
 public class MailSmsClientGRPC {
     private final ManagedChannel channel;
     private final VerifyServiceGrpc.VerifyServiceBlockingStub blockingStub;
     private static final Logger logger= LogManager.getLogger(MailSmsClientGRPC.class);
-    public MailSmsClientGRPC(String host) {
+    public MailSmsClientGRPC(String host, GrpcTracing grpcTracing) {
         this.channel = ManagedChannelBuilder.forTarget(host)
                 .usePlaintext()
+                .intercept(grpcTracing.newClientInterceptor())
                 .build();
         this.blockingStub = VerifyServiceGrpc.newBlockingStub(channel);
     }
@@ -107,7 +106,7 @@ public class MailSmsClientGRPC {
                     Metadata headers = new Metadata();
                     Metadata.Key<String> requestIdKey = Metadata.Key.of("Request-ID", Metadata.ASCII_STRING_MARSHALLER);
                     headers.put(requestIdKey, reqId);
-                    VerifyServiceGrpc.VerifyServiceBlockingStub stub= VerifyServiceGrpc.newBlockingStub(channel);    
+                    VerifyServiceGrpc.VerifyServiceBlockingStub stub= VerifyServiceGrpc.newBlockingStub(channel);
                     Otp toVerify=Otp.newBuilder()  
                         .setPassword(password)
                         .build();

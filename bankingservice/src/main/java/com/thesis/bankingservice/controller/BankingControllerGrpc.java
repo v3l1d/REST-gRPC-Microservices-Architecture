@@ -1,5 +1,6 @@
 package com.thesis.bankingservice.controller;
 
+import brave.grpc.GrpcTracing;
 import com.thesis.bankingservice.client.PaymentClientGRPC;
 import com.thesis.bankingservice.client.RatingClientGRPC;
 import com.thesis.bankingservice.model.Transfer;
@@ -31,12 +32,12 @@ public class BankingControllerGrpc {
 
     public BankingControllerGrpc(@Value("${paymentservice.grpc.url}") String paymentServerGrpcUrl,
                                  @Value("${ratingservice.grpc.url}") String ratingServerGrpcUrl,
-                                 BankDBService dbService) {
+                                 BankDBService dbService, GrpcTracing grpcTracing) {
         this.paymentServerGrpcUrl = paymentServerGrpcUrl;
         this.ratingServerGrpcUrl=ratingServerGrpcUrl;
         this.dbService = dbService;
-        this.ratingClientGRPC=new RatingClientGRPC(ratingServerGrpcUrl);
-        this.paymentClientGRPC = new PaymentClientGRPC(paymentServerGrpcUrl);
+        this.ratingClientGRPC=new RatingClientGRPC(ratingServerGrpcUrl,grpcTracing);
+        this.paymentClientGRPC = new PaymentClientGRPC(paymentServerGrpcUrl,grpcTracing);
     }
 
 

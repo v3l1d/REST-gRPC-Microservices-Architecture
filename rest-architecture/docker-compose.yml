@@ -81,8 +81,12 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     networks:
       - grpc-architecture-network
-  
- 
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - grpc-architecture-network
 networks:
   grpc-architecture-network:
     driver: bridge

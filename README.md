@@ -43,7 +43,7 @@ Endpoints:
 - `localhost:443/credit-card-payment`
 - `localhost:443/evaluate-practice`
 
-# Service
+# Services
 The architecture has the following services running:
 -  `Grafana at localhost:3000`
 -  `Prometheus at localhost:9090`

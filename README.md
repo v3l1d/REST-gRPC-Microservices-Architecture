@@ -42,3 +42,11 @@ Endpoints:
 - `localhost:443/bank-transfer-payment`
 - `localhost:443/credit-card-payment`
 - `localhost:443/evaluate-practice`
+
+# Service
+The architecture has the following services running:
+-  `Grafana at localhost:3000`
+-  `Prometheus at localhost:9090`
+-  `cAdvisor at localhost:8080`
+-  `Zipking at localhost:9411`
+

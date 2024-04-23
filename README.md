@@ -24,7 +24,7 @@ Move the .jar generated file to grpc-architecture/ or rest-architecture/
 
 
 # Running
-Before running the entire system log in mysql container as root and give privileges to user and import ```bankingservice.sql``` and ```calculationservice.sql``` are imported.
+Before running the entire system log in mysql container as root and give privileges to user and import ```bankingservice.sql``` and ```calculationservice.sql``` for databases instantiation.
 
 
 Run ```docker-compose up``` and the system will start-up

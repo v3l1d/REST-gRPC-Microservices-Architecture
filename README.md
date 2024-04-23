@@ -30,7 +30,7 @@ Before running the entire system log in mysql container as root and give privile
 Run ```docker-compose up``` and the system will start-up
 
 # Endpoints
-The services expose endpoints via an Nginx reverse proxy with HTTPS using a self-signed certificate. 
+The services expose endpoints trough an Nginx reverse proxy with HTTPS using a self-signed certificate. 
 
 Endpoints:
 

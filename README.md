@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="https://bgasparotto.com/wp-content/uploads/2017/12/spring-boot-logo.png" width="300" />
-  <img src="https://grpc.io/img/logos/grpc-icon-color.png" width="300" />
-  <img src="https://alexei-led.github.io/img/compose_swarm.png" width="300"/>
+  <img src="https://bgasparotto.com/wp-content/uploads/2017/12/spring-boot-logo.png" width="250" />
+  <img src="https://grpc.io/img/logos/grpc-icon-color.png" width="250" />
+  <img src="https://alexei-led.github.io/img/compose_swarm.png" width="250"/>
 </p>
 
 # REST/GRPC Microservices Architecture PoC

@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="https://www.unimi.it/sites/default/files/2019-05/LogoFooter_a9f0c3692bf29c71609e5f204522c5d4_0.png" width="300" />
+  <img src="https://bgasparotto.com/wp-content/uploads/2017/12/spring-boot-logo.png" width="300" />
+  <img src="https://grpc.io/img/logos/grpc-icon-color.png" width="300" />
+  <img src="https://alexei-led.github.io/img/compose_swarm.png" width="300"/>
 </p>
 
 # REST/GRPC Microservices Architecture PoC

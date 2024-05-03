@@ -44,7 +44,7 @@ public class FinancialControllerREST {
         this.vehicleService = vehicleService;
         this.customerService=customerService;
         this.MailSmsClientREST=new MailSmsClientREST(mailSmsServiceUrl,webClientBuilder);
-        this.BankingClientREST=new BankingClientREST(bankingServiceUrl, webClientBuilder);
+        this.BankingClientREST=new BankingClientREST(bankingServiceUrl, webClientBuilder,financingService,vehicleService);
     }
 
     @GetMapping("/get-vehicles")
@@ -123,7 +123,7 @@ public class FinancialControllerREST {
         logger.info("PERSONAL DATA:{}",PersonalData);
         logger.info("FINANCING ID:{}", financingId);
         if(temp!=null){
-            String response=BankingClientREST.createPractice(PersonalData, financingId, temp.getLoanAmount(),reqId);
+            String response=BankingClientREST.createPractice(PersonalData, financingId,reqId);
             if(response!=null){
                 return ResponseEntity.ok().body("PRACTICE CREATED with ID:" + response);
             }

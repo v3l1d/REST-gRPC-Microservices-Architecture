@@ -13,18 +13,15 @@ public class Customer {
     private String name;
     @Column(name="surname")
     private String surname;
-
     @Column(name="email")
     private String email;
     @Column(name="phone")
     private String phone;
     @Column(name="sms_verified")
     private boolean SMSverified;
-
     @Column (name="mail_verified")
     private boolean mailVerified;
-    public Customer()
-    {}
+    public Customer(){}
 
 
     public Customer(String name, String surname, String email, String phone) {
@@ -36,7 +33,7 @@ public class Customer {
         this.SMSverified=false;
     }
 
-    @JsonProperty
+  
     public String getName() {
         return name;
     }
@@ -44,7 +41,7 @@ public class Customer {
     public void setName(String name) {
         this.name = name;
     }
-    @JsonProperty
+  
     public String getSurname() {
         return surname;
     }
@@ -52,7 +49,7 @@ public class Customer {
     public void setSurname(String surname) {
         this.surname = surname;
     }
-    @JsonProperty
+
     public String getEmail() {
         return email;
     }
@@ -60,7 +57,7 @@ public class Customer {
     public void setEmail(String email) {
         this.email = email;
     }
-    @JsonProperty
+ 
     public String getPhone() {
         return phone;
     }

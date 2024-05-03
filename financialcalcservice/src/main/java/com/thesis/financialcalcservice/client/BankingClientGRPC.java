@@ -1,8 +1,9 @@
 package com.thesis.financialcalcservice.client;
 
 
+import com.thesis.financialcalcservice.model.Financing;
+import com.thesis.financialcalcservice.model.Vehicle;
 import com.thesis.generated.*;
-import com.thesis.generated.BankingGrpc.BankingBlockingStub;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -35,14 +36,14 @@ public class BankingClientGRPC {
         chan.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 //
-    public String createPractice(Customer personalData,String financingId,double amount,String reqId){
-        logger.info("AMOUNT IN BANKING CLIENT {} : ",amount);
+    public String createPractice(Customer personalData, Financing financing, Vehicle vehicleTemp, String reqId){
+
         try{
              Metadata headers = new Metadata();
         // Add the Request-ID header to the Metadata object
         Metadata.Key<String> requestIdKey = Metadata.Key.of("Request-ID", Metadata.ASCII_STRING_MARSHALLER);
         headers.put(requestIdKey, reqId);
-        
+
         BankingGrpc.BankingBlockingStub stub= BankingGrpc.newBlockingStub(chan);
         stub=stub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(headers));
             Practice request= Practice.newBuilder()
@@ -50,8 +51,17 @@ public class BankingClientGRPC {
                     .setName(personalData.getName())
                     .setSurname(personalData.getSurname())
                     .setPhone(personalData.getPhone())
-                    .setFinancingId(financingId)
-                    .setAmount(amount)
+                    .setFinancingInfo(FinancingInfo.newBuilder()
+                            .setFinancingId(financing.getFinancingId())
+                            .setVehicleId(financing.getVehicleId())
+                            .setLoanAmount(financing.getLoanAmount())
+                            .setLoanTerm(financing.getLoanTerm())
+                            .build())
+                    .setVehicleInfo(VehicleInfo.newBuilder()
+                            .setVehicleId(vehicleTemp.getVehicleId())
+                            .setBrand(vehicleTemp.getBrand())
+                            .setName(vehicleTemp.getModel())
+                            .setYear(vehicleTemp.getYear()))
                     .build();
             PracticeResponse resp=stub.createPractice(request);
     

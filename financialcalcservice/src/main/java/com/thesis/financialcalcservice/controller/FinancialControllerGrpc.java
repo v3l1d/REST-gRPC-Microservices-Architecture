@@ -1,6 +1,7 @@
 package com.thesis.financialcalcservice.controller;
 
 import brave.grpc.GrpcTracing;
+import com.thesis.financialcalcservice.Service.VehicleService;
 import com.thesis.financialcalcservice.client.BankingClientGRPC;
 import com.thesis.financialcalcservice.Service.CustomerService;
 import com.thesis.financialcalcservice.Service.FinancingService;
@@ -44,12 +45,12 @@ public class FinancialControllerGrpc {
    private String SmsOtp;
    private final ObjectMapper obj= new ObjectMapper();
    private static final Logger logger=LogManager.getLogger(FinancialControllerGrpc.class);
-   private final VehicleRepository vehicleRepository;
+   private final VehicleService vehicleService;
    private final CustomerService customerService;
    private final FinancingService financingService;
 
-    public FinancialControllerGrpc(@Value("${bankingservice.grpc.url}")String bankingHost, @Value("${mailsmsservice.grpc.url}") String mailsmsHost, VehicleRepository vehicleRepository, FinancingService financingService, CustomerService customerService, GrpcTracing grpcTracing) {
-        this.vehicleRepository = vehicleRepository;
+    public FinancialControllerGrpc(@Value("${bankingservice.grpc.url}")String bankingHost, @Value("${mailsmsservice.grpc.url}") String mailsmsHost, FinancingService financingService, CustomerService customerService, GrpcTracing grpcTracing, VehicleService vehicleService) {
+        this.vehicleService = vehicleService;
         this.customerService = customerService;
         this.grpcBankServer=bankingHost;
         this.mailSmsServer=mailsmsHost;
@@ -62,7 +63,7 @@ public class FinancialControllerGrpc {
     @Observed
     public List<Vehicle> getVehiclesList(@RequestHeader(value="X-Request-ID") String reqId) {
         logger.info("Request id: {}", reqId);
-        return vehicleRepository.findAll();
+        return vehicleService.getAllVehicles();
 
 
 
@@ -141,9 +142,8 @@ public class FinancialControllerGrpc {
             if(customerService.findCustomerByEmail(personalData.getEmail()) && financingService.getFinancingById(financingId)!=null){
                 logger.info("condition verified");
                 Financing financingTemp=financingService.getFinancingById(financingId);
-                double amount=financingTemp.getLoanAmount();
-                logger.info("AMOUNT VALUE IN CONTROLLER {}:",amount);
-                String resp= bankingClientGRPC.createPractice(personalData,financingId,amount,reqId);
+                Vehicle vehicleTemp=vehicleService.getVehicleById(financingTemp.getVehicleId());
+                String resp= bankingClientGRPC.createPractice(personalData,financingTemp,vehicleTemp,reqId);
                 logger.info(resp);
                 if(resp!=null) {
                     return ResponseEntity.ok("Practice successfully created with id: "+resp);

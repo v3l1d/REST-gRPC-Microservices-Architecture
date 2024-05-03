@@ -2,18 +2,63 @@ syntax="proto3";
 package com.thesis.generated;
 option java_multiple_files=true;
 
+message Date{
+    int32 year=1;
+    int32 month=2;
+    int32 day=3;
+}
 
+message VehicleInfo {
+    string vehicleId = 1;
+    string brand = 2;
+    string name = 3;
+    int32 year = 4;
+}
 
-message Practice{
-    string practiceId=1;
-    string status=2;
-    string name=3;
-    string surname=4;
-    string email=5;
-    string phone=6;
-    string financingId=7;
-    double amount=9;
-    //TODO: insert financing data
+message AdditionalInfo {
+    string job = 1;
+    string gender = 2;
+    Date dateOfBirth = 3;
+    string province=4;
+}
+
+message FinancingInfo {
+    string financingId = 1;
+    string vehicleId = 2;
+    double loanAmount = 3;
+    double loanTerm = 4;
+}
+
+message CardPaymentInfo {
+    string owner = 1;
+    string cardNumber = 2;
+    string code = 3;
+    Date expireDate = 4;
+}
+
+message BankTransferInfo {
+    string bankId = 1;
+}
+
+// Define PaymentInfo as a oneof to represent either card payment or bank transfer.
+message PaymentInfo {
+    oneof payment_method {
+        CardPaymentInfo card_payment = 1;
+        BankTransferInfo bank_transfer = 2;
+    }
+}
+
+message Practice {
+    string practiceId = 1;
+    string status = 2;
+    string name = 3;
+    string surname = 4;
+    string email = 5;
+    string phone = 6;
+    PaymentInfo paymentInfo = 7;
+    AdditionalInfo additionalInfo = 8;
+    FinancingInfo financingInfo = 9;
+    VehicleInfo vehicleInfo = 10;
 }
 
 message PracticeResponse{
@@ -23,4 +68,6 @@ message PracticeResponse{
 
 service Banking{
     rpc CreatePractice(Practice) returns (PracticeResponse);
+    rpc UpdatePractice(Practice) returns (PracticeResponse);
+    rpc CompletePractice(Practice) returns (PracticeResponse);
 }

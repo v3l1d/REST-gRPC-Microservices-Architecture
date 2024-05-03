@@ -4,6 +4,7 @@ package com.thesis.bankingservice.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.thesis.bankingservice.model.PracticeEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Profile;
@@ -18,18 +19,17 @@ public class RatingClientREST {
         this.webClient=webClientBuilder.baseUrl(host).build();
     }
 
-    public String getPracticeEvaluation(String practiceId,String reqId){
-        
-        ObjectNode body=obj.createObjectNode()
-                .put("practiceId",practiceId);
+    public String getPracticeEvaluation(String practiceJson,String reqId){
+
+
         String response=webClient.post()
                 .uri("/evaluate-practice")
                 .header("Request-ID", reqId)
-                .bodyValue(body)
+                .bodyValue(practiceJson)
                 .retrieve()
-                .bodyToMono(String.class)   
+                .bodyToMono(String.class)
                 .block();
-        logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,practiceId,response.toString());
+        logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,practiceJson,response);
         return response;
 
     }

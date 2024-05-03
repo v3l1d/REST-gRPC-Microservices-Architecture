@@ -1,34 +1,69 @@
 package com.thesis.bankingservice.model;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.util.Date;
+
 
 @Entity
 @Table(name="practice")
 public class PracticeEntity {
-    @Column(name="practice_id")
+    @Column(name = "practice_id")
     @Id
     private String practiceId;
-    @Column(name="status")
+    @Column(name = "status")
     private String status;
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
-    @Column(name="surname")
+    @Column(name = "surname")
     private String surname;
-    @Column(name="email")
+    @Column(name = "email")
     private String email;
-    @Column(name="phone")
+    @Column(name = "phone")
     private String phone;
-    @Column (name="financing_id")
-    private String financingId;
 
-    @Column (name="amount")
-    private double amount;
-    public PracticeEntity(){}
+    @Column(name="payment_method")
+    private String paymentMethod;
+
+    @Column(name="additional_info")
+    private String additionalInfo;
+
+    @Column(name="financing_info")
+    private String financingInfo;
+
+    @Column(name="vehicle_info")
+    private String vehicleInfo;
+
+    @Column(name="payment_info")
+    private String paymentInfo;
+    public String getAdditionalInfo() {
+        return additionalInfo;
+    }
+
+    public void setAdditionalInfo(String additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }
+
+    public String getFinancingInfo() {
+        return financingInfo;
+    }
+
+    public void setFinancingInfo(String financingInfo) {
+        this.financingInfo = financingInfo;
+    }
+
+    public String getVehicleInfo() {
+        return vehicleInfo;
+    }
+
+    public void setVehicleInfo(String vehicleInfo) {
+        this.vehicleInfo = vehicleInfo;
+    }
+
+
 
     public String getPracticeId() {
         return practiceId;
@@ -78,31 +113,38 @@ public class PracticeEntity {
         this.phone = phone;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getPaymentInfo() {
+        return paymentInfo;
+    }
+
+    public void setPaymentInfo(String paymentInfo) {
+        this.paymentInfo = paymentInfo;
+    }
+
     @Override
     public String toString() {
         return "{" +
-            " practiceId='" + getPracticeId() + "'" +
-            ", status='" + getStatus() + "'" +
-            ", name='" + getName() + "'" +
-            ", surname='" + getSurname() + "'" +
-            ", email='" + getEmail() + "'" +
-            ", phone='" + getPhone() + "'" +
-            "}";
+                "\"practiceId\": \"" + practiceId + "\"," +
+                "\"status\": \"" + status + "\"," +
+                "\"name\": \"" + name + "\"," +
+                "\"surname\": \"" + surname + "\"," +
+                "\"email\": \"" + email + "\"," +
+                "\"phone\": \"" + phone + "\"," +
+                "\"paymentMethod\": \"" + paymentMethod + "\"," +
+                "\"additionalInfo\": " + additionalInfo + "," +
+                "\"financingInfo\": " + financingInfo + "," +
+                "\"vehicleInfo\": " + vehicleInfo + "," +
+                "\"paymentInfo\": " + paymentInfo +
+                "}";
     }
 
-    public String getFinancingId() {
-        return financingId;
-    }
 
-    public void setFinancingId(String financingId) {
-        this.financingId = financingId;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
 }

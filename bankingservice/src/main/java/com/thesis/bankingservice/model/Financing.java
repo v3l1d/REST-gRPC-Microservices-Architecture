@@ -1,4 +1,4 @@
-package com.thesis.financialcalcservice.model;
+package com.thesis.bankingservice.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="financing")
+@Table(name="practice")
 public class Financing {
     @Id
     @Column(name = "financing_id")
@@ -67,11 +67,12 @@ public class Financing {
     @Override
     public String toString() {
         return "{" +
-                "\"financingId\":\"" + getFinancingId() + "\"," +
-                "\"vehicleId\":\"" + getVehicleId() + "\"," +
-                "\"loanAmount\":" + getLoanAmount() + "," +
-                "\"loanTerm\":" + getLoanTerm() +
+                "\"financingId\":\"" + financingId + "\"," +
+                "\"vehicleId\":\"" + vehicleId + "\"," +
+                "\"loanAmount\":" + loanAmount + "," +
+                "\"loanTerm\":" + loanTerm +
                 "}";
     }
+
 
 }

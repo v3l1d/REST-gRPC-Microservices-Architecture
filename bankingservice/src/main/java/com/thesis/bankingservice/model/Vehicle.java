@@ -1,4 +1,4 @@
-package com.thesis.financialcalcservice.model;
+package com.thesis.bankingservice.model;
 
 
 import jakarta.persistence.Column;
@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="vehicles")
+@Table(name="practice")
 public class Vehicle {
     @Id
     @Column(name="vehicle_id")

@@ -1,14 +1,30 @@
 package com.thesis.bankingservice.model;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 public class Card {
     private String Owner;
     private String CardNumber;
     private String Code;
 
-    public Card(String owner, String cardNumber, String code) {
-        Owner = owner;
-        CardNumber = cardNumber;
-        Code = code;
+    private LocalDate expireDate;
+
+    public LocalDate getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(LocalDate expireDate) {
+        this.expireDate = expireDate;
+    }
+
+    public Card(String owner, String cardNumber, String code, LocalDate expireDate) {
+        this.Owner = owner;
+        this.CardNumber = cardNumber;
+        this.Code = code;
+        this.expireDate=expireDate;
+
+
     }
 
     public String getOwner() {
@@ -37,10 +53,12 @@ public class Card {
 
     @Override
     public String toString() {
-        return "Card{" +
-                "Owner='" + Owner + '\'' +
-                ", CardNumber='" + CardNumber + '\'' +
-                ", Code='" + Code + '\'' +
-                '}';
+        return "{" +
+                "\"Owner\": \"" + Owner + "\"," +
+                "\"CardNumber\": \"" + CardNumber + "\"," +
+                "\"Code\": \"" + Code + "\"," +
+                "\"expireDate\": \"" + expireDate + "\"" +
+                "}";
     }
+
 }

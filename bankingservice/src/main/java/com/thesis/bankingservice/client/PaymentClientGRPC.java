@@ -41,6 +41,7 @@ public class PaymentClientGRPC {
                 logger.info("HEADER:{}",headers);
                 PaymentGrpc.PaymentBlockingStub stub= PaymentGrpc.newBlockingStub(chan);
                 stub=stub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(headers));
+
             CardPayment request = CardPayment.newBuilder()
                     .setCard(CreditCard.newBuilder().setCode(card.getCode()).setNumber(card.getCardNumber()).setOwner(card.getOwner()))
                     .build();
@@ -68,6 +69,7 @@ public class PaymentClientGRPC {
                 BankPayment request= BankPayment.newBuilder()
                         .setTransfer(BankTransfer.newBuilder().setBankId(transfer.getBankId()).setOwner(transfer.getOwner()))
                         .build();
+
                 PaymentResponse response=stub.bankPay(request);
                 if(response.getResult().equals("ACCEPTED")){
                     logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,transfer,response.getResult());

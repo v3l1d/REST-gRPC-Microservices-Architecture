@@ -1,6 +1,12 @@
 package com.thesis.bankingservice.service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Random;
+
+import com.thesis.bankingservice.model.AdditionalInfo;
+import com.thesis.bankingservice.model.Financing;
+import com.thesis.bankingservice.model.Vehicle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,22 +45,23 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
                 String status="CREATED";
                 tempId=practiceIdGen();
                 String practiceId=tempId;
-
-                logger.info(request.getAmount());
-
                 PracticeEntity entity= new PracticeEntity();
                 entity.setStatus(status);
                 entity.setPracticeId(practiceId);
                 entity.setEmail(request.getEmail());
-                entity.setAmount(request.getAmount());
                 entity.setPhone(request.getPhone());
                 entity.setName(request.getName());
                 entity.setSurname(request.getSurname());
-                entity.setFinancingId(request.getFinancingId());
-                logger.info("VALUE IN ENTITY: {}",entity.getAmount());
-                entity.setFinancingId(request.getFinancingId());
-                // practiceRepository.save(entity);
-
+                Financing finTemp= new Financing(request.getFinancingInfo().getFinancingId(),
+                        request.getFinancingInfo().getVehicleId(),
+                        request.getFinancingInfo().getLoanAmount(),
+                        request.getFinancingInfo().getLoanTerm());
+                entity.setFinancingInfo(finTemp.toString());
+                Vehicle vehicleTemp=new Vehicle(request.getVehicleInfo().getVehicleId(),
+                        request.getVehicleInfo().getBrand(),
+                        request.getVehicleInfo().getName(),
+                        request.getVehicleInfo().getYear());
+                entity.setVehicleInfo(vehicleTemp.toString());
 
                 dbService.newPractice(entity);
                 PracticeResponse resp= PracticeResponse.newBuilder()
@@ -64,7 +71,7 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
                 responseObserver.onNext(resp);
                 responseObserver.onCompleted();
             }else{
-                responseObserver.onError(Status.PERMISSION_DENIED.withDescription("Practice for this financing and user already exists!").asException());
+                responseObserver.onError(Status.ALREADY_EXISTS.withDescription("Practice for this financing and user already exists!").asException());
             }
 
       } else {
@@ -76,6 +83,29 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
     }
 
 
+    @Override
+    public void updatePractice(Practice request,StreamObserver<PracticeResponse> responseObserver){
+       if(request!=null){
+           if(dbService.practiceExists(request.getPracticeId())){
+                PracticeEntity temp=dbService.getFullPractice(request.getPracticeId());
+               AdditionalInfo addInfoTemp=new AdditionalInfo(
+                       request.getAdditionalInfo().getJob(),
+                       request.getAdditionalInfo().getGender(),
+                       LocalDate.of(request.getAdditionalInfo().getDateOfBirth().getYear(),
+                       request.getAdditionalInfo().getDateOfBirth().getMonth(),
+                               request.getAdditionalInfo().getDateOfBirth().getDay()),
+                       request.getAdditionalInfo().getProvince()
+               );
+               dbService.updatePractice(request.getPracticeId(), addInfoTemp.toString());
+               temp.setAdditionalInfo(addInfoTemp.toString());
+           }else{
+               responseObserver.onError(Status.NOT_FOUND.withDescription("Practice not found!").asRuntimeException());
+           }
+
+       }else {
+           responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Invalid practice Providede").asRuntimeException());
+       }
+    }
 
 
 
@@ -98,4 +128,4 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
     }
 
         
-}   
+}

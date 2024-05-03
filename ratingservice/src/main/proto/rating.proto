@@ -12,5 +12,5 @@ message EvaluationResponse{
 }
 
 service Evaluation{
-    rpc Evaluate(EvaluationRequest) returns (EvaluationResponse);
+    rpc Evaluate(Practice) returns (EvaluationResponse);
 }

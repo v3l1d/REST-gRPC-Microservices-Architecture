@@ -1,8 +1,11 @@
 package com.thesis.bankingservice.controller;
 
 import brave.grpc.GrpcTracing;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.thesis.bankingservice.client.PaymentClientGRPC;
 import com.thesis.bankingservice.client.RatingClientGRPC;
+import com.thesis.bankingservice.model.AdditionalInfo;
+import com.thesis.bankingservice.model.PracticeEntity;
 import com.thesis.bankingservice.model.Transfer;
 import com.thesis.bankingservice.model.Card;
 import com.thesis.bankingservice.service.BankDBService;
@@ -12,11 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Profile("grpc")
 @RestController
@@ -46,10 +48,14 @@ public class BankingControllerGrpc {
         logger.info("PRACITCE ID:{} ", practiceId);
         logger.info("CARD:{}", card);
         if (dbService.practiceExists(practiceId)) {
+
             String response= paymentClientGRPC.paymentRequestCard(card,reqId);
             logger.info("RESPONSE IN CONTROLLER: {}",response);
             if(!response.isEmpty()){
+                dbService.setPaymentMethod(practiceId,"card",card.toString());
+                dbService.setPracticeToCompleted(practiceId);
                 return ResponseEntity.ok().body(response);
+
             }else{
                 return ResponseEntity.badRequest().body("PAYMENT REFUSED");
             }
@@ -64,6 +70,8 @@ public class BankingControllerGrpc {
     public ResponseEntity<String> btPayment(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId,@RequestBody Transfer transfer){
       
         if (dbService.practiceExists(practiceId)) {
+            dbService.setPaymentMethod(practiceId,"transfer",transfer.toString());
+            dbService.setPracticeToCompleted(practiceId);
             String response= paymentClientGRPC.paymentRequestBank(transfer,reqId);
             logger.info("RESPONSE IN CONTROLLER: {}",response);
             if(!response.isEmpty()){
@@ -76,11 +84,25 @@ public class BankingControllerGrpc {
         }
     }
 
+    @PostMapping("/complete-practice")
+    public ResponseEntity<String> completePractice(@RequestHeader(value="X-Request-ID") String reqId, @RequestParam String practiceId, @RequestBody AdditionalInfo additionalInfo){
+       if(dbService.practiceExists(practiceId)){
+           logger.info(additionalInfo);
+            if(additionalInfo.isValid()){
+                dbService.updatePractice(practiceId,additionalInfo.toString());
+                return ResponseEntity.ok().body(additionalInfo.toString());
+            }else {
+                return ResponseEntity.badRequest().body("MISSING ADDITIONAL INFO!");
+            }
+       }else {
+           return ResponseEntity.badRequest().body("PRACTICE NOT FOUND!");
+       }
+    }
     @PostMapping("/evaluate-practice")
-    public ResponseEntity<String> evaluatePractice(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId){
+    public ResponseEntity<String> evaluatePractice(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId) throws JsonProcessingException {
         logger.info("Request ID: {}", reqId);
         if(dbService.practiceExists(practiceId)){
-                String response=ratingClientGRPC.getPracticeEvaluation(practiceId,reqId);
+                String response=ratingClientGRPC.getPracticeEvaluation(dbService.getFullPractice(practiceId),reqId);
             if(response.equals("GOOD PRACTICE!")){
 
                 return ResponseEntity.ok("PRACTICE QUALITY: (8/10)");
@@ -92,6 +114,16 @@ public class BankingControllerGrpc {
             return ResponseEntity.badRequest().body("PRACTICE NOT FOUND!");
         }
 
+    }
+
+    @GetMapping("/practice-overview")
+    public ResponseEntity<String> practiceOverview(@RequestHeader(value="X-Request-ID")String reqId,@RequestParam String practiceId){
+        if(dbService.practiceExists(practiceId)){
+            PracticeEntity result=dbService.getFullPractice(practiceId);
+            return ResponseEntity.ok().body(result.toString());
+        }else{
+            return ResponseEntity.badRequest().body("Practice not found!");
+        }
     }
 
 }

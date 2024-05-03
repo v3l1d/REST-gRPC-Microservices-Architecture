@@ -2,6 +2,8 @@ package com.thesis.bankingservice.service;
 
 import java.util.Random;
 
+import com.thesis.bankingservice.model.Financing;
+import com.thesis.bankingservice.model.Vehicle;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +23,16 @@ public class BankingServiceREST {
   
 
 
-    public String createPractice( String name, String surname, String phone,String customerEmail,String financingId,double amount){
+    public String createPractice(String name, String surname, String phone, String email, String financingInfo,String vehicleInfo){
         
             PracticeEntity newPractice= new PracticeEntity();
             newPractice.setPracticeId(practiceIdGen());
             newPractice.setName(name);
             newPractice.setSurname(surname);
-            newPractice.setEmail(customerEmail);
+            newPractice.setEmail(email);
             newPractice.setPhone(phone);
-            newPractice.setFinancingId(financingId);
-            newPractice.setAmount(amount);
+            newPractice.setFinancingInfo(financingInfo);
+            newPractice.setVehicleInfo(vehicleInfo);
             newPractice.setStatus("CREATED");
             dbService.newPractice(newPractice);
 
@@ -40,7 +42,6 @@ public class BankingServiceREST {
                 return null;
             }
     }
-    
     
 
     public String practiceIdGen(){

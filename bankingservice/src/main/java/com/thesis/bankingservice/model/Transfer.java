@@ -24,4 +24,13 @@ public class Transfer {
     public void setBankId(String bankId) {
         BankId = bankId;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"Owner\": \"" + Owner + "\"," +
+                "\"BankId\": \"" + BankId + "\"" +
+                "}";
+    }
+
 }

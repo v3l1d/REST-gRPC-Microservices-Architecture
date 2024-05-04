@@ -71,4 +71,5 @@ service Banking{
     rpc CreatePractice(Practice) returns (PracticeResponse);
     rpc UpdatePractice(Practice) returns (PracticeResponse);
     rpc CompletePractice(Practice) returns (PracticeResponse);
+    
 }

@@ -19,17 +19,16 @@ public class RatingClientREST {
         this.webClient=webClientBuilder.baseUrl(host).build();
     }
 
-    public String getPracticeEvaluation(String practiceJson,String reqId){
+    public String getPracticeEvaluation(String practiceJson){
 
 
         String response=webClient.post()
                 .uri("/evaluate-practice")
-                .header("Request-ID", reqId)
                 .bodyValue(practiceJson)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-        logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,practiceJson,response);
+        logger.info("INPUT:{} OUTPUT:{}",practiceJson,response);
         return response;
 
     }

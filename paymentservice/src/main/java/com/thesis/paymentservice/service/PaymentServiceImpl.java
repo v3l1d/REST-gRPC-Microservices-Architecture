@@ -15,6 +15,7 @@ public class PaymentServiceImpl extends PaymentGrpc.PaymentImplBase {
 
     @Override
     public void cardPay(CardPayment request,StreamObserver<PaymentResponse> responseObserver){
+
         PaymentResponse resp= PaymentResponse.newBuilder()
                 .setPaymentId(generatePaymentId())
                 .setResult("ACCEPTED")

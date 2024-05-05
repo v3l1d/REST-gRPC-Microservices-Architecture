@@ -89,5 +89,5 @@ service Banking{
     rpc PayInfoPractice(Practice) returns (PracticeResponse);
     rpc SendToEvaluation(Practice) returns (PracticeResponse);
     rpc PracticeReview(Practice) returns (Practice);
-
+    
 }

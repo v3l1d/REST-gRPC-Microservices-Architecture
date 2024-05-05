@@ -1,39 +1,53 @@
 package com.thesis.bankingservice.service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Random;
 
+import brave.grpc.GrpcTracing;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.thesis.bankingservice.client.PaymentClientGRPC;
+import com.thesis.bankingservice.client.RatingClientGRPC;
+import com.thesis.bankingservice.model.*;
 import com.thesis.bankingservice.model.AdditionalInfo;
-import com.thesis.bankingservice.model.Financing;
-import com.thesis.bankingservice.model.Vehicle;
+import com.thesis.generated.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.thesis.bankingservice.model.PracticeEntity;
-import com.thesis.generated.BankingGrpc;
-import com.thesis.generated.Practice;
-import com.thesis.generated.PracticeResponse;
-
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 
 @Profile("grpc")
 @GrpcService(interceptors = {HeaderInterceptor.class})
 public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
     private final Logger logger=LogManager.getLogger(BankingServiceImpl.class);
-    @Autowired
+
     private BankDBService dbService;
     private String tempId;
 
+    private final PaymentClientGRPC paymentClientGRPC;
 
-   @Autowired
-   public void setDbService(BankDBService dbService){
-        this.dbService=dbService;
-   }
+    private final RatingClientGRPC ratingClientGRPC;
+
+
+    @Autowired
+
+    public BankingServiceImpl(@Value("${paymentservice.grpc.url}") String paymentServerGrpcUrl,
+
+                              @Value("${ratingservice.grpc.url}") String ratingServerGrpcUrl,
+
+                              BankDBService dbService, GrpcTracing grpcTracing) {
+
+        this.dbService = dbService;
+
+        this.paymentClientGRPC = new PaymentClientGRPC(paymentServerGrpcUrl, grpcTracing);
+
+        this.ratingClientGRPC = new RatingClientGRPC(ratingServerGrpcUrl, grpcTracing);
+
+    }
 
 
 
@@ -84,6 +98,111 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
 
 
     @Override
+    public void addInfoPractice(Practice request,StreamObserver<PracticeResponse> responseObserver){
+       PracticeEntity temp=dbService.getFullPractice(request.getPracticeId());
+       if(temp!=null){
+           AdditionalInfo addInfoTemp= new AdditionalInfo(
+                   request.getAdditionalInfo().getJob(),
+                   request.getAdditionalInfo().getGender(),
+                   LocalDate.of(
+                           request.getAdditionalInfo().getDateOfBirth().getYear(),
+                           request.getAdditionalInfo().getDateOfBirth().getMonth(),
+                           request.getAdditionalInfo().getDateOfBirth().getDay()
+                   ),
+                   request.getAdditionalInfo().getProvince());
+           dbService.updatePractice(request.getPracticeId(),addInfoTemp.toString());
+           PracticeResponse resp=PracticeResponse.newBuilder()
+                   .setPracticeId(request.getPracticeId())
+                   .setStatus("updated").build();
+           responseObserver.onNext(resp);
+           responseObserver.onCompleted();
+       }else {
+           responseObserver.onError(Status.NOT_FOUND.withDescription("Practice NOT FOUND").asRuntimeException());
+       }
+
+    }
+
+
+
+    @Override
+    public void payInfoPractice(Practice request,StreamObserver<PracticeResponse> responseObserver){
+            PracticeEntity temp=dbService.getFullPractice(request.getPracticeId());
+
+            if(request.getPaymentInfo().hasBankTransfer()){
+
+                Transfer transferTemp=new Transfer(
+                        request.getPaymentInfo().getBankTransfer().getOwner(),
+                        request.getPaymentInfo().getBankTransfer().getBankId()
+                );
+                String paymentResp=paymentClientGRPC.paymentRequestTransfer(BankPayment.newBuilder().setTransfer(request.getPaymentInfo().getBankTransfer()).build());
+                if(paymentResp.equals("ACCEPTED")){
+                    dbService.setPaymentMethod(request.getPracticeId(),"transfer",transferTemp.toString());
+                    dbService.setPracticeToCompleted(request.getPracticeId());
+                    PracticeResponse resp;
+                    resp=PracticeResponse.newBuilder()
+                            .setStatus("updated")
+                            .setPracticeId(request.getPracticeId()).build();
+                    responseObserver.onNext(resp);
+                    responseObserver.onCompleted();
+                }else{
+                    responseObserver.onError(Status.PERMISSION_DENIED.withDescription("Payment refused!").asRuntimeException());
+                }
+            }
+
+            if(request.getPaymentInfo().hasCardPayment()){
+                CardPaymentInfo cardPaymentInfo=request.getPaymentInfo().getCardPayment();
+                String paymentResp=paymentClientGRPC.paymentRequestCard(CardPayment.newBuilder().setCard(cardPaymentInfo).build());
+                if(paymentResp.equals("ACCEPTED")){
+                    Card cardTemp= new Card(
+                            request.getPaymentInfo().getCardPayment().getOwner(),
+                            request.getPaymentInfo().getCardPayment().getCardNumber(),
+                            request.getPaymentInfo().getCardPayment().getCode(),
+                            LocalDate.of(
+                                    request.getPaymentInfo().getCardPayment().getExpireDate().getYear(),
+                                    request.getPaymentInfo().getCardPayment().getExpireDate().getMonth(),
+                                    request.getPaymentInfo().getCardPayment().getExpireDate().getDay()
+                            )
+                    );
+                    dbService.setPaymentMethod(request.getPracticeId(),"card",cardTemp.toString());
+                    dbService.setPracticeToCompleted(request.getPracticeId());
+                    PracticeResponse resp;
+                    resp=PracticeResponse.newBuilder()
+                            .setStatus("updated")
+                            .setPracticeId(request.getPracticeId()).build();
+                    responseObserver.onNext(resp);
+                    responseObserver.onCompleted();
+                }else{
+                    responseObserver.onError(Status.PERMISSION_DENIED.withDescription("PaymentRefused").asRuntimeException());
+                }
+
+            }
+
+
+    }
+
+    @Override
+    public void sendToEvaluation(Practice request,StreamObserver<PracticeResponse> responseObserver){
+        if(dbService.practiceExists(request.getPracticeId())){
+            PracticeEntity temp=dbService.getFullPractice(request.getPracticeId());
+            try {
+                logger.info(temp);
+                String response=ratingClientGRPC.getPracticeEvaluation(temp);
+                PracticeResponse evalResp=PracticeResponse.newBuilder()
+                        .setPracticeId(request.getPracticeId())
+                        .setStatus(temp.getStatus())
+                        .setEvaluationResult(response)
+                        .build();
+                logger.info(evalResp);
+                responseObserver.onNext(evalResp);
+                responseObserver.onCompleted();
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
+
+ /*   @Override
     public void updatePractice(Practice request,StreamObserver<PracticeResponse> responseObserver){
        if(request!=null){
            if(dbService.practiceExists(request.getPracticeId())){
@@ -105,8 +224,7 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
        }else {
            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Invalid practice Providede").asRuntimeException());
        }
-    }
-
+    } */
 
 
 

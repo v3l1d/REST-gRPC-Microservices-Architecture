@@ -11,14 +11,16 @@ import io.grpc.stub.MetadataUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
 
 @Profile("grpc")
+
 public class PaymentClientGRPC {
     private final Logger logger=LogManager.getLogger(PaymentClientGRPC.class);
     private final ManagedChannel chan;
-   
+
 
     public PaymentClientGRPC(String host, GrpcTracing grpcTracing) {
 
@@ -29,7 +31,7 @@ public class PaymentClientGRPC {
 
 
     }
-
+/*
     public String paymentRequestCard(Card card,String reqId) {
         String result="";
         try{
@@ -55,8 +57,7 @@ public class PaymentClientGRPC {
         }
         return result;
     }
-
-    public String paymentRequestBank(Transfer transfer,String reqId){
+     public String paymentRequestBank(Transfer transfer,String reqId){
         String result="";
         try{
             if(transfer!=null){
@@ -80,6 +81,19 @@ public class PaymentClientGRPC {
             logger.error("PAYMENT REFUSED!",e);
         }
         return result;
+    }
+ */
+    public String paymentRequestCard(CardPayment request){
+        PaymentGrpc.PaymentBlockingStub stub=PaymentGrpc.newBlockingStub(chan);
+        PaymentResponse response=stub.cardPay(request);
+        return response.getResult();
+    }
+
+    public String paymentRequestTransfer(BankPayment request){
+        PaymentGrpc.PaymentBlockingStub stub=PaymentGrpc.newBlockingStub(chan);
+        PaymentResponse response=stub.bankPay(request);
+        return response.getResult();
+
     }
 
 

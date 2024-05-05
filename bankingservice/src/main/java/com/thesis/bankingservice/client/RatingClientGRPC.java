@@ -33,13 +33,10 @@ private final Logger logger=LogManager.getLogger(RatingClientGRPC.class);
                 .build();
     }
 
-    public String getPracticeEvaluation(PracticeEntity practice,String reqId) throws JsonProcessingException {
+    public String getPracticeEvaluation(PracticeEntity practice) throws JsonProcessingException {
         ObjectMapper obj=new ObjectMapper();
-         Metadata headers = new Metadata();
-                Metadata.Key<String> requestIdKey = Metadata.Key.of("Request-ID", Metadata.ASCII_STRING_MARSHALLER);
-                headers.put(requestIdKey, reqId);
-                EvaluationGrpc.EvaluationBlockingStub stub= EvaluationGrpc.newBlockingStub(chan);
-                 stub=stub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(headers));
+        EvaluationGrpc.EvaluationBlockingStub stub= EvaluationGrpc.newBlockingStub(chan);
+        logger.info(practice.getAdditionalInfo());
         JsonNode info=obj.readTree(practice.getAdditionalInfo());
         JsonNode financingInfo=obj.readTree(practice.getFinancingInfo());
         JsonNode vehicleInfo=obj.readTree(practice.getVehicleInfo());

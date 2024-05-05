@@ -25,31 +25,27 @@ public class PaymentClientREST {
         this.webClient=webClientBuilder.baseUrl(PaymentServiceUrl).build();
 
     }
-    public boolean creditCardPayment(Card card,String reqId){
+    public boolean creditCardPayment(Card card){
         ObjectNode requestBody=obj.createObjectNode()
                 .putPOJO("creditCard",card);
         String result=webClient.post()
                 .uri("/credit-card")
-                .header("Request-ID", reqId)
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-        logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,card,result);
         return Objects.equals(result, "ACCEPTED");
 
     }
-    public boolean bankTransferPayment(Transfer transfer,String reqId){
+    public boolean bankTransferPayment(Transfer transfer){
         ObjectNode requestBody=obj.createObjectNode()
                 .putPOJO("bankTransfer",transfer);
         String result=webClient.post()
                 .uri("/bank-transfer")
-                .header("Request-ID", reqId)
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-        logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,transfer,result);
         return Objects.equals(result, "ACCEPTED");
 
     }

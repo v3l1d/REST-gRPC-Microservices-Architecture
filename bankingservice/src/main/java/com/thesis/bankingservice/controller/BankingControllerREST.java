@@ -14,11 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 
 
@@ -33,7 +29,6 @@ public class BankingControllerREST {
     private final PaymentClientREST paymentClientREST;
     private final RatingClientREST ratingClientREST;
     private final BankDBService dbService;
-    private final ObjectMapper objectMapper= new ObjectMapper();
  
     public BankingControllerREST(BankDBService dbService,@Value("${ratingservice.rest.url}") String ratingServiceUrl,@Value("${paymentservice.rest.url}")String paymentServerUrl,WebClient.Builder webClientBuilder){
         this.dbService=dbService;
@@ -71,13 +66,14 @@ public class BankingControllerREST {
 
     }
 
-    @PostMapping("/complete-practice")
-    public ResponseEntity<String> completePractice(@RequestHeader(value="X-Request-ID") String reqId, @RequestParam String practiceId, @RequestBody AdditionalInfo additionalInfo) throws JsonProcessingException {
+
+    @PostMapping("/additional-info")
+    public ResponseEntity<String> addInfo( @RequestParam String practiceId, @RequestBody AdditionalInfo additionalInfo) throws JsonProcessingException {
         if (dbService.practiceExists(practiceId)) {
             logger.info(additionalInfo);
             if (additionalInfo.isValid()) {
                 dbService.updatePractice(practiceId,additionalInfo.toString());
-                return ResponseEntity.ok().body(additionalInfo.toString());
+                return ResponseEntity.ok().body("added");
             }
         }else{
             return ResponseEntity.badRequest().body("MISSING ADDITIONAL INFO!");
@@ -85,27 +81,27 @@ public class BankingControllerREST {
         return ResponseEntity.badRequest().body("PRACTICE NOT FOUND!");
     }
     @PostMapping("/credit-card-payment")
-    public ResponseEntity<String> ccPayment(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam  String practiceId, @RequestBody  Card card){
+    public ResponseEntity<String> ccPayment(String reqId,@RequestParam  String practiceId, @RequestBody  Card card){
         if(dbService.practiceExists(practiceId)){
             dbService.setPaymentMethod(practiceId,"card",card.toString());
-            if(paymentClientREST.creditCardPayment(card,reqId)){
+            if(paymentClientREST.creditCardPayment(card)){
                 dbService.setPracticeToCompleted(practiceId);
-                return ResponseEntity.ok().body("PAYMENT ACCEPTED!");
+                return ResponseEntity.ok().body("accepted");
             }else{
-                return ResponseEntity.badRequest().body("PAYMENT REFUSED!");
+                return ResponseEntity.badRequest().body("refused");
             }
         }else{
-            return ResponseEntity.badRequest().body("PAYMENT REFUSED!");
+            return ResponseEntity.badRequest().build();
         }
     }
 
 
 
     @PostMapping("/bank-transfer-payment")
-    public ResponseEntity<String> btPayment(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId, @RequestBody Transfer transfer){
+    public ResponseEntity<String> btPayment(@RequestParam String practiceId, @RequestBody Transfer transfer){
         if(dbService.practiceExists(practiceId)){
             dbService.setPaymentMethod(practiceId,"transfer",transfer.toString());
-            if(paymentClientREST.bankTransferPayment(transfer,reqId)){
+            if(paymentClientREST.bankTransferPayment(transfer)){
                 dbService.setPracticeToCompleted(practiceId);
             return  ResponseEntity.ok().body("PAYMENT ACCEPTED!");
             }else{
@@ -118,11 +114,11 @@ public class BankingControllerREST {
 
     }
     @PostMapping("/evaluate-practice")
-    public ResponseEntity<String> evaluatePractice(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId) throws JsonProcessingException {
+    public ResponseEntity<String> evaluatePractice(@RequestParam String practiceId) throws JsonProcessingException {
         if(dbService.practiceExists(practiceId)){
             String practiceJson=practiceEntityToJson(dbService.getFullPractice(practiceId));
             logger.info(practiceJson);
-            String response=ratingClientREST.getPracticeEvaluation(practiceJson, reqId);
+            String response=ratingClientREST.getPracticeEvaluation(practiceJson);
             if(!response.isEmpty()){
                 return ResponseEntity.ok().body(response);
         }else{
@@ -133,6 +129,10 @@ public class BankingControllerREST {
         return ResponseEntity.badRequest().body("PRACTICE NOT FOUND!");
     }
 }
-    
+    @GetMapping("/practice-exists")
+    public ResponseEntity<Boolean> practiceCheck(@RequestParam String practiceId){
+        return ResponseEntity.ok().body(dbService.practiceExists(practiceId));
+
+    }
 
 }

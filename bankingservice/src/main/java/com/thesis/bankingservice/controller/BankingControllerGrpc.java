@@ -42,7 +42,7 @@ public class BankingControllerGrpc {
         this.paymentClientGRPC = new PaymentClientGRPC(paymentServerGrpcUrl,grpcTracing);
     }
 
-
+ /*
     @PostMapping("/credit-card-payment")
     public ResponseEntity<String> ccPayment(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId,@RequestBody Card card) {
         logger.info("PRACITCE ID:{} ", practiceId);
@@ -68,7 +68,7 @@ public class BankingControllerGrpc {
 
     @PostMapping("/bank-transfer-payment")
     public ResponseEntity<String> btPayment(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String practiceId,@RequestBody Transfer transfer){
-      
+
         if (dbService.practiceExists(practiceId)) {
             dbService.setPaymentMethod(practiceId,"transfer",transfer.toString());
             dbService.setPracticeToCompleted(practiceId);
@@ -83,8 +83,7 @@ public class BankingControllerGrpc {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Practice not found!");
         }
     }
-
-    @PostMapping("/complete-practice")
+     @PostMapping("/complete-practice")
     public ResponseEntity<String> completePractice(@RequestHeader(value="X-Request-ID") String reqId, @RequestParam String practiceId, @RequestBody AdditionalInfo additionalInfo){
        if(dbService.practiceExists(practiceId)){
            logger.info(additionalInfo);
@@ -106,7 +105,7 @@ public class BankingControllerGrpc {
             if(response.equals("GOOD PRACTICE!")){
 
                 return ResponseEntity.ok("PRACTICE QUALITY: (8/10)");
-       
+
             }else{
                 return ResponseEntity.ok().body("ERROR IN EVALUATION");
             }
@@ -114,7 +113,9 @@ public class BankingControllerGrpc {
             return ResponseEntity.badRequest().body("PRACTICE NOT FOUND!");
         }
 
-    }
+    }*/
+
+
 
     @GetMapping("/practice-overview")
     public ResponseEntity<String> practiceOverview(@RequestHeader(value="X-Request-ID")String reqId,@RequestParam String practiceId){
@@ -124,6 +125,12 @@ public class BankingControllerGrpc {
         }else{
             return ResponseEntity.badRequest().body("Practice not found!");
         }
+    }
+
+    @GetMapping("/practice-exists")
+    public ResponseEntity<Boolean> practiceCheck(@RequestParam String practiceId){
+            return ResponseEntity.ok().body(dbService.practiceExists(practiceId));
+
     }
 
 }

@@ -21,8 +21,7 @@ public class PaymentController {
     private final Logger logger=LogManager.getLogger();
 
     @PostMapping("/credit-card")
-    public ResponseEntity<String> ccPayment(@RequestHeader(value="Request-ID") String reqId,@RequestBody String card) throws JsonProcessingException {
-        logger.info("REQUEST ID:{}",reqId);
+    public ResponseEntity<String> ccPayment(@RequestBody String card) throws JsonProcessingException {
         logger.info("REQUEST BODY:{}",card);
         JsonNode reqBody=obj.readTree(card);
         if(reqBody!=null){
@@ -33,8 +32,7 @@ public class PaymentController {
     }
 
     @PostMapping("/bank-transfer")
-    public ResponseEntity<String> btPayment(@RequestHeader(value="Request-ID") String reqId,@RequestBody String transfer) throws JsonProcessingException {
-        logger.info("REQUEST ID:{}",reqId);
+    public ResponseEntity<String> btPayment(@RequestBody String transfer) throws JsonProcessingException {
         logger.info("REQUEST BODY:{}",transfer);
         JsonNode reqBody= obj.readTree(transfer);
         if(reqBody!=null){

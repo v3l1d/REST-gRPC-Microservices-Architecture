@@ -20,6 +20,17 @@ message AdditionalInfo {
     string gender = 2;
     Date dateOfBirth = 3;
     string province=4;
+    string taxCode=5;
+}
+
+message PersonalDocumentInfo{
+    string documentId=1;
+    string documentType=2;
+    Date expireDate=3;
+}
+
+message CreditDocumentInfo{
+    string crediDocument=1;
 }
 
 message FinancingInfo {
@@ -37,7 +48,9 @@ message CardPaymentInfo {
 }
 
 message BankTransferInfo {
-    string bankId = 1;
+
+    string owner=1;
+    string bankId = 2;
 }
 
 // Define PaymentInfo as a oneof to represent either card payment or bank transfer.
@@ -59,15 +72,22 @@ message Practice {
     AdditionalInfo additionalInfo = 8;
     FinancingInfo financingInfo = 9;
     VehicleInfo vehicleInfo = 10;
+    PersonalDocumentInfo personalDocumentInfo=11;
+    CreditDocumentInfo creditDocumentInfo=12;
+
 }
 
 message PracticeResponse{
     string status=1;
     string practiceId=2;
+    string evaluationResult=3;
 }
 
 service Banking{
     rpc CreatePractice(Practice) returns (PracticeResponse);
-    rpc UpdatePractice(Practice) returns (PracticeResponse);
-    rpc CompletePractice(Practice) returns (PracticeResponse);
+    rpc AddInfoPractice(Practice) returns (PracticeResponse);
+    rpc PayInfoPractice(Practice) returns (PracticeResponse);
+    rpc SendToEvaluation(Practice) returns (PracticeResponse);
+    rpc PracticeReview(Practice) returns (Practice);
+
 }

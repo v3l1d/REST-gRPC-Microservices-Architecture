@@ -39,6 +39,13 @@ public class PracticeEntity {
 
     @Column(name="payment_info")
     private String paymentInfo;
+
+    @Column(name="personal_document")
+    private String personalDocument;
+
+    @Column(name="credit_document")
+    private String creditDocument;
+
     public String getAdditionalInfo() {
         return additionalInfo;
     }
@@ -129,6 +136,22 @@ public class PracticeEntity {
         this.paymentInfo = paymentInfo;
     }
 
+    public String getPersonalDocument() {
+        return personalDocument;
+    }
+
+    public void setPersonalDocument(String personalDocument) {
+        this.personalDocument = personalDocument;
+    }
+
+    public String getCreditDocument() {
+        return creditDocument;
+    }
+
+    public void setCreditDocument(String creditDocument) {
+        this.creditDocument = creditDocument;
+    }
+
     @Override
     public String toString() {
         return "{" +
@@ -142,7 +165,9 @@ public class PracticeEntity {
                 "\"additionalInfo\": " + additionalInfo + "," +
                 "\"financingInfo\": " + financingInfo + "," +
                 "\"vehicleInfo\": " + vehicleInfo + "," +
-                "\"paymentInfo\": " + paymentInfo +
+                "\"paymentInfo\": " + paymentInfo + "," +
+                "\"personalDocument\":" + personalDocument + "," +
+                "\"creditDocument\":" + creditDocument +
                 "}";
     }
 

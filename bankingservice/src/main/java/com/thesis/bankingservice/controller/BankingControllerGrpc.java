@@ -118,7 +118,7 @@ public class BankingControllerGrpc {
 
 
     @GetMapping("/practice-overview")
-    public ResponseEntity<String> practiceOverview(@RequestHeader(value="X-Request-ID")String reqId,@RequestParam String practiceId){
+    public ResponseEntity<String> practiceOverview(@RequestParam String practiceId){
         if(dbService.practiceExists(practiceId)){
             PracticeEntity result=dbService.getFullPractice(practiceId);
             return ResponseEntity.ok().body(result.toString());

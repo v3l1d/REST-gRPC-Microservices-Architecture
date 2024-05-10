@@ -1,0 +1,108 @@
+{
+  "personalDetails": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "phoneNumber": "123-456-7890",
+    "dateOfBirth": "1980-01-01",
+    "gender": "male",
+    "maritalStatus": "married",
+    "nationality": "American",
+    "profession": "Software Engineer"
+  },
+  "addressInfo": {
+    "addressType": "home",
+    "streetAddress": "123 Main St",
+    "city": "Anytown",
+    "state": "CA",
+    "zipCode": "12345",
+    "country": "USA"
+  },
+  "documentInfo": {
+    "documentType": "passport",
+    "documentNumber": "123456789",
+    "issuingCountry": "USA",
+    "issueDate": "2010-01-01",
+    "expirationDate": "2025-01-01"
+  },
+  "householdInfo": {
+    "householdType": "nuclear",
+    "householdMembers": [
+      {
+        "memberType": "spouse",
+        "firstName": "Jane",
+        "lastName": "Doe",
+        "dateOfBirth": "1985-01-01",
+        "gender": "female",
+        "maritalStatus": "married",
+        "nationality": "American",
+        "profession": "Teacher"
+      },
+      {
+        "memberType": "child",
+        "firstName": "Billy",
+        "lastName": "Doe",
+        "dateOfBirth": "2010-01-01",
+        "gender": "male",
+        "nationality": "American"
+      }
+    ],
+    "maritalStatus": {
+      "code": "married",
+      "label": "Married",
+      "value": true
+    },
+    "houseProperty": {
+      "code": "owned",
+      "label": "Owned",
+      "value": true
+    },
+    "workStartingDate": "2015-01-01",
+    "familyMembers": "2",
+    "workingMembers": "2"
+  },
+  "incomeDocumentInfo": {
+    "jobOccupation": {
+      "code": "softwareEngineer",
+      "label": "Software Engineer",
+      "value": true,
+      "grossAnnualIncomeRequired": false
+    },
+    "incomeDocType": "w2",
+    "workingStartDate": "2015-01-01",
+    "taxYear": "2022",
+    "netMonthlyIncome": 5000.0,
+    "taxWitholdingFlag": true,
+    "taxWitholdingCode": "FED",
+    "inpsRegistrationFlag": true,
+    "countryOfEmployment": "USA",
+    "companyInfo": {
+      "companyName": "Acme Inc.",
+      "companyAddress": "456 Elm St",
+      "companyCountry": {
+        "code": "USA",
+        "label": "United States",
+        "value": true,
+        "codeIso3": "USA",
+        "optional": false
+      },
+      "companyProvince": {
+        "code": "CA",
+        "label": "California",
+        "value": true,
+        "countryCode": "USA"
+      },
+      "companyCity": {
+        "code": "SanFrancisco",
+        "label": "San Francisco",
+        "value": true,
+        "belfioreCode": "0640000",
+        "provinceCode": "CA",
+        "bancaItaliaCode": "0100000001"
+      },
+      "companyZipCode": "94101"
+    }
+  },
+  "accountCheck": true,
+  "step": "completed"
+}

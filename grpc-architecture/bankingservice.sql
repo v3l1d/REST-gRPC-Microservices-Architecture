@@ -18,6 +18,7 @@
 --
 -- Table structure for table `practice`
 --
+
 DROP TABLE IF EXISTS `practice`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -28,8 +29,13 @@ CREATE TABLE `practice` (
   `surname` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `phone` varchar(255) DEFAULT NULL,
-  `financing_id` varchar(255) DEFAULT NULL,
-  `amount` decimal(10,2) DEFAULT NULL
+  `additional_info` json DEFAULT NULL,
+  `financing_info` json DEFAULT NULL,
+  `vehicle_info` json DEFAULT NULL,
+  `payment_method` varchar(255) DEFAULT NULL,
+  `payment_info` json DEFAULT NULL,
+  `personal_document` json DEFAULT NULL,
+  `credit_document` longtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -39,7 +45,7 @@ CREATE TABLE `practice` (
 
 LOCK TABLES `practice` WRITE;
 /*!40000 ALTER TABLE `practice` DISABLE KEYS */;
-INSERT INTO `practice` VALUES ('OF101214','CREATED','ferdinando','dilevrano','dileale@gmail.com@gmail.com','393444343532','F001',0.00),('BH0815','CREATED','ferdinando','dilevrano','dileale@gmail.com@gmail.com','393444343532','F001',0.00),('HM1606','CREATED','ferdinando','dilevrano','dileale@gmail.com@gmail.com','393444343532','F001',15000.00),('FX1069','CREATED','ferdinando','dilevrano','dileale@gmail.com@gmail.com','393444343532','F001',15000.00),('TP181717','CREATED','ferdinando','dilevrano','dileale@gmail.com@gmail.com','393444343532','F001',15000.00),('JI141810','CREATED','ferdinando','dilevrano','dileale@gmail.com@gmail.com','393444343532','F001',15000.00),('DE21614','CREATED','ferdinando','dilevrano','dileale@gmail.com@gmail.com','393444343532','F001',15000.00),('IV121612','CREATED','ferdinando','dilevrano','dileale@gmail.com@gmail.com','393444343532','F001',15000.00),('HA0152','CREATED','alessandro','dilevrano','dileale@gmail.com','33974325','',0.00),('WL81811','CREATED','ferdinando','dilevrano','dileferdi@gmail.com','393444343532','F001',15000.00),('WS41216','CREATED','ferdinando','dilevrano','dileferdi@gmail.com','393444343532','F001',15000.00);
+INSERT INTO `practice` VALUES ('QI0106','CREATED','test','test','test@example.com','393444343532',NULL,'{\"loanTerm\": 36.0, \"vehicleId\": \"F123\", \"loanAmount\": 15000.0, \"financingId\": \"F001\"}','{\"year\": 2021, \"brand\": \"Ford\", \"model\": \"Fusion\", \"vehicleId\": \"F123\"}','card','{\"Code\": \"123\", \"Owner\": \"John Doe\", \"CardNumber\": \"1234567890123456\", \"expireDate\": \"2025-01-15\"}','{\"documentId\": \"CA88078DH\", \"expireDate\": \"2029-01-15\", \"documentType\": \"DNI\"}',''),('AS6129','COMPLETED','test','test','test@example.com','393444343532','{\"job\": \"Software Developer\", \"gender\": \"male\", \"province\": \"Taranto\", \"dateOfBirth\": \"1992-01-15\"}','{\"loanTerm\": 36.0, \"vehicleId\": \"F123\", \"loanAmount\": 15000.0, \"financingId\": \"F001\"}','{\"year\": 2021, \"brand\": \"Ford\", \"model\": \"Fusion\", \"vehicleId\": \"F123\"}','transfer','{\"Owner\": \"John Doe\", \"BankId\": \"IT2141825\"}','{\"documentId\": \"CA88078DH\", \"expireDate\": \"2029-01-15\", \"documentType\": \"DNI\"}','\"3lzdGVtY3RsY2lhb2NpYW8K\"'),('DT1510','COMPLETED','test','test','test','test@example.com','{\"job\": \"Software Developer\", \"gender\": \"male\", \"province\": \"Taranto\", \"dateOfBirth\": \"1992-01-15\"}','{\"loanTerm\": 36.0, \"vehicleId\": \"F123\", \"loanAmount\": 15000.0, \"financingId\": \"F001\"}','{\"year\": 2021, \"brand\": \"Ford\", \"model\": \"Fusion\", \"vehicleId\": \"F123\"}','transfer','{\"Owner\": \"John Doe\", \"BankId\": \"IT2141825\"}',NULL,NULL);
 /*!40000 ALTER TABLE `practice` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -52,4 +58,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-15 18:26:58
+-- Dump completed on 2024-05-07 13:58:48

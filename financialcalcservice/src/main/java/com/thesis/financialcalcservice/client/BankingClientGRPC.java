@@ -23,29 +23,23 @@ public class BankingClientGRPC {
     private final Logger logger= LogManager.getLogger(BankingClientGRPC.class);
 
     private final ManagedChannel chan;
-
+    private final BankingGrpc.BankingBlockingStub stub;
     public BankingClientGRPC(String host,GrpcTracing grpcTracing)  {
         this.chan=ManagedChannelBuilder.forTarget(host)
                 .usePlaintext()
                 .intercept(grpcTracing.newClientInterceptor())
                 .build();
-
+        this.stub=BankingGrpc.newBlockingStub(chan);
     }
 
     public void shutdown() throws InterruptedException {
         chan.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 //
-    public String createPractice(Customer personalData, Financing financing, Vehicle vehicleTemp, String reqId){
+    public String createPractice(Customer personalData, Financing financing, Vehicle vehicleTemp){
 
         try{
-             Metadata headers = new Metadata();
-        // Add the Request-ID header to the Metadata object
-        Metadata.Key<String> requestIdKey = Metadata.Key.of("Request-ID", Metadata.ASCII_STRING_MARSHALLER);
-        headers.put(requestIdKey, reqId);
 
-        BankingGrpc.BankingBlockingStub stub= BankingGrpc.newBlockingStub(chan);
-        stub=stub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(headers));
             Practice request= Practice.newBuilder()
                     .setEmail(personalData.getEmail())
                     .setName(personalData.getName())
@@ -65,7 +59,7 @@ public class BankingClientGRPC {
                     .build();
             PracticeResponse resp=stub.createPractice(request);
     
-            logger.info("Request id: {} got this repsonse: {} ", reqId, resp.getPracticeId());
+            logger.info("got this repsonse: {} ", resp.getPracticeId());
             if(resp.getStatus().equals("CREATED")){
                 
                 return resp.getPracticeId();

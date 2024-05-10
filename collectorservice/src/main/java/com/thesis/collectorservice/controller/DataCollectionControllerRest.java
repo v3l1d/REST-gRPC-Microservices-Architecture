@@ -1,22 +1,23 @@
 package com.thesis.collectorservice.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thesis.collectorservice.client.BankingClientREST;
-import com.thesis.collectorservice.model.AdditionalInfo;
-import com.thesis.collectorservice.model.Card;
-import com.thesis.collectorservice.model.Transfer;
+import com.thesis.collectorservice.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.io.File;
+import java.io.IOException;
 
 @Profile("rest")
 @RestController
@@ -26,7 +27,7 @@ public class DataCollectionControllerRest {
     private final BankingClientREST bankingClientREST;
     private final RestTemplate restTemplate;
     private final WebClient.Builder webClientBuilder;
-    private static final String url="http://localhost:9091/practice-exists?practiceId=";
+    private static final String url="http://bankingservice:9091/practice-exists?practiceId=";
 
 
     public DataCollectionControllerRest(@Value("${bankingservice.rest.url}")String bankingHost, RestTemplate restTemplate, WebClient.Builder webClientBuilder) {
@@ -44,6 +45,30 @@ public class DataCollectionControllerRest {
             if(res) return ResponseEntity.ok().body("Additional information added!");
             else return ResponseEntity.badRequest().build();
         }else{
+            return ResponseEntity.badRequest().body("Practice not found!");
+        }
+    }
+
+    @PostMapping("/personal-document")
+    public ResponseEntity<String> personalDocument(@RequestParam String practiceId, @RequestBody PersonalDocument personalDocument){
+        boolean verify=bankingClientREST.practiceExists(practiceId);
+        if(verify){
+            boolean res=bankingClientREST.insertPersonalDocument(practiceId,personalDocument);
+            if(res) return ResponseEntity.ok().body("Personal document added!");
+            else return ResponseEntity.ok().body("Personal document adding failed!");
+        }else {
+            return ResponseEntity.badRequest().body("Practice not found!");
+        }
+    }
+
+    @PostMapping("/credit-document")
+    public ResponseEntity<String> creditDocument(@RequestParam String practiceId,@RequestBody String creditDocument){
+        ResponseEntity<Boolean> verify=restTemplate.getForEntity(url.concat(practiceId),Boolean.class);
+        if(verify.getBody().toString().equals("true")){
+            boolean res=bankingClientREST.insertCreditDocument(practiceId,creditDocument);
+            if(res) return ResponseEntity.ok().body("Credit document added!");
+            else return ResponseEntity.ok().body("Credit document adding failed!");
+        }else {
             return ResponseEntity.badRequest().body("Practice not found!");
         }
     }
@@ -81,6 +106,28 @@ public class DataCollectionControllerRest {
         } else {
             return ResponseEntity.badRequest().body("Practice not found!");
         }
+    }
+
+    @GetMapping("/practice-overview")
+    public ResponseEntity<String> practiceOverview(@RequestParam String practiceId){
+        ResponseEntity<Boolean> verify=restTemplate.getForEntity(url.concat(practiceId),Boolean.class);
+        if (verify.getBody().toString().equals("true")) {
+            String result= bankingClientREST.practiceOverview(practiceId);
+            if(result!=null){
+                return ResponseEntity.ok().body(result);
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Practice not found!");
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/userData")
+
+    public UserData createUserData(@RequestBody UserData userData) throws JsonProcessingException {
+        bankingClientREST.sentToBank(userData);
+        return userData;
+
     }
 
 }

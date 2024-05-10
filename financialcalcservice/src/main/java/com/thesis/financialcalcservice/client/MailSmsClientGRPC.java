@@ -18,6 +18,7 @@ public class MailSmsClientGRPC {
     private final ManagedChannel channel;
     private final VerifyServiceGrpc.VerifyServiceBlockingStub blockingStub;
     private static final Logger logger= LogManager.getLogger(MailSmsClientGRPC.class);
+
     public MailSmsClientGRPC(String host, GrpcTracing grpcTracing) {
         this.channel = ManagedChannelBuilder.forTarget(host)
                 .usePlaintext()
@@ -30,46 +31,31 @@ public class MailSmsClientGRPC {
         channel.shutdown().awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS);
     }
 
-    public String createSmsOtp(String number,String reqId) {
+    public String createSmsOtp(String number) {
         String result="";
 
         try {
-            Metadata headers = new Metadata();
-            // Add the Request-ID header to the Metadata object
-            Metadata.Key<String> requestIdKey = Metadata.Key.of("Request-ID", Metadata.ASCII_STRING_MARSHALLER);
-            headers.put(requestIdKey, reqId);
-            VerifyServiceGrpc.VerifyServiceBlockingStub stub= VerifyServiceGrpc.newBlockingStub(channel);
-            // Attach the Metadata object to the stub
-            stub=stub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(headers));
-                  
             Sms request = Sms.newBuilder()
                 .setNumber(number)
                 .build();
             Otp response = blockingStub.smsOtp(request);
             result=response.getPassword();
-            logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,number,response.getPassword());
+            logger.info("INPUT:{} OUTPUT:{}",number,response.getPassword());
         } catch (StatusRuntimeException e) {
             System.err.println("RPC failed: " + e.getStatus());
         }
         return result;
     }
 
-    public String createMailOtp(String email,String reqId){
+    public String createMailOtp(String email){
             String result="";
             try{
-                Metadata headers = new Metadata();
-        // Add the Request-ID header to the Metadata object
-                Metadata.Key<String> requestIdKey = Metadata.Key.of("Request-ID", Metadata.ASCII_STRING_MARSHALLER);
-                headers.put(requestIdKey, reqId);
-                VerifyServiceGrpc.VerifyServiceBlockingStub stub= VerifyServiceGrpc.newBlockingStub(channel);
-        // Attach the Metadata object to the stub
-                stub=stub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(headers));
                 Mail mail= Mail.newBuilder()
                     .setAddress(email)
                     .build();
-                Otp response=stub.mailOtp(mail);
+                Otp response=blockingStub.mailOtp(mail);
                 result=response.getPassword();
-                logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,email,response.getPassword());
+                logger.info("INPUT:{} OUTPUT:{}",email,response.getPassword());
             }catch (StatusRuntimeException e){
                 System.err.println("RPC failed: " + e.getStatus());
             }
@@ -77,21 +63,17 @@ public class MailSmsClientGRPC {
         return result;
     }
 
-    public Boolean verifySms(String password,String reqId){
+    public Boolean verifySms(String password){
         boolean res=false;
         try{
             if((!password.isEmpty())){
-                Metadata headers = new Metadata();
-                Metadata.Key<String> requestIdKey = Metadata.Key.of("Request-ID", Metadata.ASCII_STRING_MARSHALLER);
-                headers.put(requestIdKey, reqId);
-                VerifyServiceGrpc.VerifyServiceBlockingStub stub= VerifyServiceGrpc.newBlockingStub(channel);
                 Otp toVerify=Otp.newBuilder()
                     .setPassword(password)
                     .build();
-                Response resp=stub.verifySmsOtp(toVerify);
+                Response resp=blockingStub.verifySmsOtp(toVerify);
                 res=resp.getVerified();
                 
-                logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,password,res);
+                logger.info("INPUT:{} OUTPUT:{}",password,res);
             }
         }catch (StatusRuntimeException e){
             logger.error("Error processing password",e);
@@ -99,20 +81,16 @@ public class MailSmsClientGRPC {
         return res;
     }
 
-    public Boolean verifyMail(String password,String reqId){
+    public Boolean verifyMail(String password){
         boolean res=false;
             try{
                 if(!password.isEmpty()){
-                    Metadata headers = new Metadata();
-                    Metadata.Key<String> requestIdKey = Metadata.Key.of("Request-ID", Metadata.ASCII_STRING_MARSHALLER);
-                    headers.put(requestIdKey, reqId);
-                    VerifyServiceGrpc.VerifyServiceBlockingStub stub= VerifyServiceGrpc.newBlockingStub(channel);
                     Otp toVerify=Otp.newBuilder()  
                         .setPassword(password)
                         .build();
-                    Response resp=stub.verifyMailOtp(toVerify);
+                    Response resp=blockingStub.verifyMailOtp(toVerify);
                     res=resp.getVerified();
-                    logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,password,res);
+                    logger.info("INPUT:{} OUTPUT:{}",password,res);
 
                 }
             }catch (StatusRuntimeException e){

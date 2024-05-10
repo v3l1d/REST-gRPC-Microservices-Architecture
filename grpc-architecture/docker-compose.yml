@@ -27,6 +27,13 @@ services:
     networks:
       - grpc-architecture-network
 
+  collectorservice:
+    build:
+      context: .
+      dockerfile: dockerfile-collectorservice
+    networks:
+      - grpc-architecture-network
+
   bankingservice:
     build:
       context: .

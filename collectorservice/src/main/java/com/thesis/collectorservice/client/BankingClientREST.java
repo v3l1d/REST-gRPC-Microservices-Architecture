@@ -1,12 +1,12 @@
 package com.thesis.collectorservice.client;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.thesis.collectorservice.model.AdditionalInfo;
-import com.thesis.collectorservice.model.Card;
-import com.thesis.collectorservice.model.Transfer;
+import com.thesis.collectorservice.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,5 +81,59 @@ public class BankingClientREST {
                 .block();
         logger.info(result);
         return result.equals("accepted");
+    }
+
+    public boolean insertPersonalDocument(String practiceId, PersonalDocument personalDocument){
+        String result=webClient.post()
+                .uri("/personal-document?practiceId=" + practiceId)
+                .bodyValue(personalDocument)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        return result.equals("added");
+    }
+
+    public boolean insertCreditDocument(String practiceId, String creditDocument){
+        String result=webClient.post()
+                .uri("/credit-document?practiceId="+ practiceId)
+                .bodyValue(creditDocument)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        return result.equals("added");
+    }
+
+    public boolean practiceExists(String practiceId){
+        Boolean resp=webClient.get()
+                .uri("/practice-exists?practiceId="+practiceId)
+                .retrieve()
+                .bodyToMono(Boolean.class)
+                .block();
+        return Boolean.TRUE.equals(resp);
+    }
+
+    public String practiceOverview(String practiceId){
+        String result = webClient.get()
+                .uri("/practice-overview?practiceId=" + practiceId)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        logger.info(result);
+        return result;
+    }
+
+    public void sentToBank(UserData userData) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String jsonString = objectMapper.writeValueAsString(userData);
+        ObjectNode requestBody=objectMapper.createObjectNode()
+                .put("userData",jsonString);
+        String result=webClient.post()
+                .uri("/get-user-data")
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        logger.info(result);
     }
 }

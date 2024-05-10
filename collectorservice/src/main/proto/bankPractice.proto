@@ -1,6 +1,7 @@
 syntax="proto3";
 package com.thesis.generated;
 option java_multiple_files=true;
+import "userData.proto";
 
 message Date{
     int32 year=1;
@@ -15,6 +16,7 @@ message VehicleInfo {
     int32 year = 4;
 }
 
+
 message AdditionalInfo {
     string job = 1;
     string gender = 2;
@@ -23,15 +25,12 @@ message AdditionalInfo {
     string taxCode=5;
 }
 
-message PersonalDocumentInfo{
+message PersonalDocument{
     string documentId=1;
     string documentType=2;
     Date expireDate=3;
 }
 
-message CreditDocumentInfo{
-    string crediDocument=1;
-}
 
 message FinancingInfo {
     string financingId = 1;
@@ -72,8 +71,9 @@ message Practice {
     AdditionalInfo additionalInfo = 8;
     FinancingInfo financingInfo = 9;
     VehicleInfo vehicleInfo = 10;
-    PersonalDocumentInfo personalDocumentInfo=11;
-    CreditDocumentInfo creditDocumentInfo=12;
+    PersonalDocument personalDocument=11;
+    string creditDocument=12;
+    UserData userData=13;
 
 }
 
@@ -87,7 +87,12 @@ service Banking{
     rpc CreatePractice(Practice) returns (PracticeResponse);
     rpc AddInfoPractice(Practice) returns (PracticeResponse);
     rpc PayInfoPractice(Practice) returns (PracticeResponse);
+    rpc DocumentInfoPractice(Practice) returns (PracticeResponse);
+    rpc UserData(Practice) returns (PracticeResponse);
+    rpc CreditDocInfoPractice(Practice) returns (PracticeResponse);
+    rpc PracticeExists(Practice) returns (PracticeResponse);
     rpc SendToEvaluation(Practice) returns (PracticeResponse);
+    rpc SetUserData(Practice) returns (PracticeResponse);
     rpc PracticeReview(Practice) returns (Practice);
-    
+
 }

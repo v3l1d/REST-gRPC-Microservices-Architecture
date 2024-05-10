@@ -44,7 +44,7 @@ public class BankingControllerREST {
         JsonNode customer=obj.readTree(reqBody);
         logger.info(reqBody);
         if(customer.has("vehicleInfo") && customer.has("financingInfo") && customer.has("personalData")){
-            result=bankingServiceREST.createPractice(
+               result=bankingServiceREST.createPractice(
                     customer.get("personalData").get("name").asText(),
                     customer.get("personalData").get("surname").asText(),
                     customer.get("personalData").get("email").asText(),
@@ -103,36 +103,80 @@ public class BankingControllerREST {
             dbService.setPaymentMethod(practiceId,"transfer",transfer.toString());
             if(paymentClientREST.bankTransferPayment(transfer)){
                 dbService.setPracticeToCompleted(practiceId);
-            return  ResponseEntity.ok().body("PAYMENT ACCEPTED!");
+            return  ResponseEntity.ok().body("accepted");
             }else{
-                return ResponseEntity.badRequest().body("PAYMENT REFUSED");
+                return ResponseEntity.badRequest().body("refused");
             }
         }else {
             return ResponseEntity.badRequest().build();
         }
-
-
     }
+
+
+    @PostMapping("/personal-document")
+    public ResponseEntity<String> personalDocumnet(@RequestParam String practiceId,@RequestBody PersonalDocument personalDocument){
+        if(dbService.practiceExists(practiceId)){
+            dbService.setPersonalDocument(practiceId,personalDocument);
+            return ResponseEntity.ok().body("added");
+        }else{
+            return ResponseEntity.badRequest().body("Practice not found!");
+        }
+    }
+
+    @PostMapping("/credit-document")
+    public ResponseEntity<String> creditDocument(@RequestParam String practiceId,@RequestBody String creditDocument){
+        if(dbService.practiceExists(practiceId)){
+            dbService.setCreditDocument(practiceId,creditDocument);
+            return ResponseEntity.ok().body("added");
+        }else{
+            return ResponseEntity.badRequest().body("Practice not found!");
+        }
+    }
+
     @PostMapping("/evaluate-practice")
     public ResponseEntity<String> evaluatePractice(@RequestParam String practiceId) throws JsonProcessingException {
         if(dbService.practiceExists(practiceId)){
-            String practiceJson=practiceEntityToJson(dbService.getFullPractice(practiceId));
-            logger.info(practiceJson);
-            String response=ratingClientREST.getPracticeEvaluation(practiceJson);
-            if(!response.isEmpty()){
-                return ResponseEntity.ok().body(response);
-        }else{
-            return ResponseEntity.badRequest().body("ERROR IN EVALUATION");
-        }
+            PracticeEntity temp= dbService.getFullPractice(practiceId);
+            if(temp.getAdditionalInfo()!=null && temp.getAdditionalInfo()!=null && temp.getFinancingInfo()!=null && temp.getFinancingInfo()!=null) {
+                String practiceJson = practiceEntityToJson(dbService.getFullPractice(practiceId));
+                logger.info(practiceJson);
+                String response = ratingClientREST.getPracticeEvaluation(practiceJson);
+                if (!response.isEmpty()) {
+                    return ResponseEntity.ok().body(response);
+                } else {
+                    return ResponseEntity.badRequest().body("ERROR IN EVALUATION");
+                }
+            }else{
+                return ResponseEntity.badRequest().body("Missing information in practice, can't evaluate");
+            }
        
     }else{
         return ResponseEntity.badRequest().body("PRACTICE NOT FOUND!");
     }
 }
+
+    @GetMapping("/practice-overview")
+    public ResponseEntity<String> practiceOverview(@RequestParam String practiceId){
+        if(dbService.practiceExists(practiceId)){
+            PracticeEntity result=dbService.getFullPractice(practiceId);
+            return ResponseEntity.ok().body(result.toString());
+        }else{
+            return ResponseEntity.badRequest().body("Practice not found!");
+        }
+    }
+
     @GetMapping("/practice-exists")
     public ResponseEntity<Boolean> practiceCheck(@RequestParam String practiceId){
         return ResponseEntity.ok().body(dbService.practiceExists(practiceId));
 
     }
+
+    @PostMapping("/get-user-data")
+    public ResponseEntity<String> getUserData(@RequestBody String userData){
+        logger.info(userData);
+        return ResponseEntity.ok().body("ok");
+    }
+
+
 
 }

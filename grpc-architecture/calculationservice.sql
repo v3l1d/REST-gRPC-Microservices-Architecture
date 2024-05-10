@@ -31,7 +31,7 @@ CREATE TABLE `customers` (
   `sms_verified` tinyint(1) NOT NULL DEFAULT '0',
   `mail_verified` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `customers` (
 
 LOCK TABLES `customers` WRITE;
 /*!40000 ALTER TABLE `customers` DISABLE KEYS */;
-INSERT INTO `customers` VALUES (5,'ferdinando','dilevrano','dileferdi@gmail.com','34443435321',1,1),(6,'caludia','cav','clacav@gmail.com','324355253',1,1);
+INSERT INTO `customers` VALUES (5,'ferdinando','dilevrano','dileferdi@gmail.com','34443435321',1,1),(6,'caludia','cav','clacav@gmail.com','324355253',1,1),(7,'john','doe','test@example.com','1234567890',0,0);
 /*!40000 ALTER TABLE `customers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -78,11 +78,11 @@ DROP TABLE IF EXISTS `vehicles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `vehicles` (
-  `id` varchar(10) NOT NULL,
+  `vehicle_id` varchar(255) NOT NULL,
   `brand` varchar(50) DEFAULT NULL,
   `model` varchar(50) DEFAULT NULL,
   `year` int DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`vehicle_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -105,4 +105,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-14 22:14:28
+-- Dump completed on 2024-05-07 13:59:42

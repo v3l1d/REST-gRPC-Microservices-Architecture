@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.TreeCodec;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thesis.bankingservice.model.AdditionalInfo;
+import com.thesis.bankingservice.model.PersonalDocument;
 import com.thesis.bankingservice.model.PracticeEntity;
 import com.thesis.bankingservice.repository.PracticeRepository;
 import jakarta.transaction.Transactional;
@@ -31,7 +32,7 @@ public class BankDBService {
 
     @Transactional
     public PracticeEntity getFullPractice(String practiceId){
-        if(practiceExists(practiceId)){
+        if(practiceExists(practiceId) ){
             return repository.findByPracticeId(practiceId);
         }else{
             return null;
@@ -65,6 +66,7 @@ public class BankDBService {
         if(temp!=null && temp.getPaymentMethod()==null){
             temp.setPaymentMethod(paymentMethod);
             temp.setPaymentInfo(paymentInfo);
+            repository.save(temp);
         }
     }
 
@@ -81,6 +83,24 @@ public class BankDBService {
     public void newPractice(PracticeEntity practice){
         if(practice!=null){
             repository.save(practice);
+        }
+    }
+
+    @Transactional
+    public void setPersonalDocument(String practiceId,PersonalDocument personalDocument){
+        if(practiceExists(practiceId)){
+            PracticeEntity temp=getFullPractice(practiceId);
+            temp.setPersonalDocument(personalDocument.toString());
+            repository.save(temp);
+        }
+    }
+
+    @Transactional
+    public void setCreditDocument(String practiceId, String creditDocument){
+        if(practiceExists(practiceId)){
+            PracticeEntity temp=getFullPractice(practiceId);
+            temp.setCreditDocument(creditDocument);
+            repository.save(temp);
         }
     }
 

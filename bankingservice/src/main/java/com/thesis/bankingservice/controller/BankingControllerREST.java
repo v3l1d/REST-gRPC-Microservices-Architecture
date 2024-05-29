@@ -4,15 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thesis.bankingservice.client.PaymentClientREST;
 import com.thesis.bankingservice.client.RatingClientREST;
 import com.thesis.bankingservice.model.*;
+import com.thesis.bankingservice.model.UserDataModels.model.UserData;
 import com.thesis.bankingservice.service.BankDBService;
 import com.thesis.bankingservice.service.BankingServiceREST;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -134,26 +137,21 @@ public class BankingControllerREST {
     }
 
     @PostMapping("/evaluate-practice")
-    public ResponseEntity<String> evaluatePractice(@RequestParam String practiceId) throws JsonProcessingException {
-        if(dbService.practiceExists(practiceId)){
-            PracticeEntity temp= dbService.getFullPractice(practiceId);
-            if(temp.getAdditionalInfo()!=null && temp.getAdditionalInfo()!=null && temp.getFinancingInfo()!=null && temp.getFinancingInfo()!=null) {
-                String practiceJson = practiceEntityToJson(dbService.getFullPractice(practiceId));
-                logger.info(practiceJson);
-                String response = ratingClientREST.getPracticeEvaluation(practiceJson);
-                if (!response.isEmpty()) {
-                    return ResponseEntity.ok().body(response);
-                } else {
-                    return ResponseEntity.badRequest().body("ERROR IN EVALUATION");
-                }
-            }else{
-                return ResponseEntity.badRequest().body("Missing information in practice, can't evaluate");
-            }
-       
-    }else{
-        return ResponseEntity.badRequest().body("PRACTICE NOT FOUND!");
+    public ResponseEntity<PracticeEntity> evaluatePractice(@RequestParam String practiceId, @RequestBody PracticeEntity practice) throws JsonProcessingException {
+        if (dbService.practiceExists(practice.getPracticeId())){
+            logger.info(practice);
+            PracticeEntity temp=dbService.getFullPractice(practice.getPracticeId());
+            logger.info(temp);
+            temp.setUserData(practice.getUserData());
+            logger.info(temp);
+            PracticeEntity response=ratingClientREST.getPracticeEvaluation(temp);
+            return ResponseEntity.ok().body(response);
+        }else{
+            return ResponseEntity.badRequest().build();
+        }
     }
-}
+
+
 
     @GetMapping("/practice-overview")
     public ResponseEntity<String> practiceOverview(@RequestParam String practiceId){

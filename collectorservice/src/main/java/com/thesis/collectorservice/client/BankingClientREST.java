@@ -5,18 +5,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.thesis.collectorservice.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
+import com.thesis.collectorservice.model.UserDataModels.UserData;
 import reactor.core.publisher.Mono;
 
 @Profile("rest")
@@ -62,14 +57,18 @@ public class BankingClientREST {
     }
 
 
-    public String sendToEvaluation(String practiceId) {
-        String result=webClient.post()
-                .uri("/evaluate-practice?practiceId=" + practiceId)
+    public PracticeEntity sendToEvaluation(String practiceId, UserData userData) throws JsonProcessingException {
+        PracticeEntity practice = new PracticeEntity();
+        practice.setPracticeId(practiceId);
+        practice.setUserData(userData);
+        logger.info(practice);
+        PracticeEntity practiceJson = webClient.post()
+                .uri("/evaluate-practice?practiceId="+practiceId)
+                .bodyValue(practice)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(PracticeEntity.class)
                 .block();
-
-        return result;
+        return practiceJson;
     }
 
     public boolean insertCardInfo(String practiceId, Card card) {

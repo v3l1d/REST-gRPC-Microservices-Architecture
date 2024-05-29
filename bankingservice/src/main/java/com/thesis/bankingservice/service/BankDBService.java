@@ -33,7 +33,9 @@ public class BankDBService {
     @Transactional
     public PracticeEntity getFullPractice(String practiceId){
         if(practiceExists(practiceId) ){
-            return repository.findByPracticeId(practiceId);
+            PracticeEntity temp=repository.findByPracticeId(practiceId);
+            return  temp;
+
         }else{
             return null;
         }

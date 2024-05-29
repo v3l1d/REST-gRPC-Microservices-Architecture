@@ -2,6 +2,7 @@ package com.thesis.ratingservice.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.thesis.generated.Practice;
+import io.grpc.Status;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Profile;
@@ -23,13 +24,14 @@ public class EvaluationServiceImpl extends EvaluationGrpc.EvaluationImplBase{
             double kpi1 = calculateKPI1(request);
             double kpi2 = calculateKPI2(request);
             double kpi3 = calculateKPI3(request);
-            logger.info(request);
             double overallScore = (kpi1 + kpi2 + kpi3) / 3;
             EvaluationResponse response=EvaluationResponse.newBuilder()
                     .setResult(evaluatePractice(overallScore))
                     .build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
+        }else {
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Uncompleted practice").asException());
         }
     }
     private double calculateKPI1(Practice request) {

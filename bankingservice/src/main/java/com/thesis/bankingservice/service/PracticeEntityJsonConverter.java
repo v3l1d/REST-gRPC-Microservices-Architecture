@@ -24,7 +24,7 @@ public class PracticeEntityJsonConverter {
             practiceNode.set("vehicleInfo", mapper.readTree(practiceEntity.getVehicleInfo()));
             practiceNode.set("paymentInfo", mapper.readTree(practiceEntity.getPaymentInfo()));
 
-            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(practiceNode);
+            return mapper.writeValueAsString(practiceNode);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return null;

@@ -19,20 +19,27 @@ import org.springframework.context.annotation.Profile;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 @Profile("grpc")
 public class RatingClientGRPC {
 private final ManagedChannel chan;
 private final Logger logger=LogManager.getLogger(RatingClientGRPC.class);
-
+private final EvaluationGrpc.EvaluationBlockingStub stub;
     public RatingClientGRPC(String host, GrpcTracing grpcTracing){
 
         this.chan = ManagedChannelBuilder.forTarget(host)
                 .usePlaintext()
                 .intercept(grpcTracing.newClientInterceptor())
+                .keepAliveTime(60, TimeUnit.SECONDS) // Keep-alive time for connections
+                .keepAliveTimeout(20, TimeUnit.SECONDS) // Timeout for keep-alive pings
+                .keepAliveWithoutCalls(true) // Allow keep-alive pings without active calls
+                .usePlaintext() // Use plaintext or TLS based on your setup
                 .build();
+        stub=EvaluationGrpc.newBlockingStub(chan);
     }
 
+    /*
     public String getPracticeEvaluation(PracticeEntity practice) throws JsonProcessingException {
         ObjectMapper obj=new ObjectMapper();
         EvaluationGrpc.EvaluationBlockingStub stub= EvaluationGrpc.newBlockingStub(chan);
@@ -81,7 +88,9 @@ private final Logger logger=LogManager.getLogger(RatingClientGRPC.class);
         logger.info("INPUT:{} OUTPUT:{}",toEvaluate);
         return response.getResult();
     }
-
-
-
+*/
+    public String getPracticeEvaluation(Practice practice){
+        EvaluationResponse response=stub.evaluate(practice);
+        return response.getResult();
+    }
 }

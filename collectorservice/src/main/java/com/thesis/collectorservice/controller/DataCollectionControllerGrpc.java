@@ -26,6 +26,7 @@ public class DataCollectionControllerGrpc {
     private final Logger logger= LogManager.getLogger(DataCollectionControllerGrpc.class);
     private final BankingClientGRPC bankingClientGRPC;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public DataCollectionControllerGrpc(@Value("${bankingservice.grpc.url}") String bankingHost, GrpcTracing grpcTracing, RestTemplate restTemplate){
         this.bankingClientGRPC=new BankingClientGRPC(bankingHost,grpcTracing);
@@ -98,18 +99,23 @@ public class DataCollectionControllerGrpc {
     }
 
     @PostMapping("/evaluate-practice")
-    public ResponseEntity<String> evaluatePractice(@RequestParam String practiceId) {
-        boolean check= bankingClientGRPC.practiceExists(practiceId);
-        if (check){
-            String response = bankingClientGRPC.sendToEvaluation(practiceId);
-            return ResponseEntity.ok().body(response);
+    public ResponseEntity<String> evaluatePractice(@RequestParam String practiceId,@RequestBody com.thesis.collectorservice.model.UserDataModels.UserData userData) throws JsonProcessingException, InvalidProtocolBufferException {
+        // Convert the Java UserData object to the Protobuf UserData object
+        UserData.Builder builder = UserData.newBuilder();
+        JsonFormat.parser().merge(objectMapper.writeValueAsString(userData), builder);
+        UserData protoUserData = builder.build();
+
+        boolean check = bankingClientGRPC.practiceExists(practiceId);
+        if (check) {
+            PracticeResponse response = bankingClientGRPC.sendToEvaluation(practiceId, protoUserData);
+            return ResponseEntity.ok().body(response.getAllFields().toString());
         } else {
             return ResponseEntity.badRequest().body("Practice not found!");
         }
     }
 
     @GetMapping("/practice-overview")
-        public ResponseEntity<String> practiceOverview(@RequestParam String practiceId){
+        public ResponseEntity<String> practiceOverview(@RequestParam String practiceId) throws InvalidProtocolBufferException {
         boolean check= bankingClientGRPC.practiceExists(practiceId);
         if (check){
             String result= bankingClientGRPC.practiceOverview(practiceId);

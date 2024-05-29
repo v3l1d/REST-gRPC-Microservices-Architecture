@@ -54,7 +54,7 @@ public class BankingClientGRPC {
                     .setVehicleInfo(VehicleInfo.newBuilder()
                             .setVehicleId(vehicleTemp.getVehicleId())
                             .setBrand(vehicleTemp.getBrand())
-                            .setName(vehicleTemp.getModel())
+                            .setModel(vehicleTemp.getModel())
                             .setYear(vehicleTemp.getYear()))
                     .build();
             PracticeResponse resp=stub.createPractice(request);

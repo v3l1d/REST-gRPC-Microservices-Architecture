@@ -1,9 +1,7 @@
 package com.thesis.bankingservice.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.thesis.bankingservice.model.UserDataModels.model.UserData;
+import jakarta.persistence.*;
 
 import java.util.Date;
 
@@ -45,6 +43,28 @@ public class PracticeEntity {
 
     @Column(name="credit_document")
     private String creditDocument;
+    
+   @Transient
+    private UserData userData;
+
+   @Transient
+   private String evaluationResult;
+
+    public String getEvaluationResult() {
+        return evaluationResult;
+    }
+
+    public void setEvaluationResult(String evaluationResult) {
+        this.evaluationResult = evaluationResult;
+    }
+
+    public UserData getUserData() {
+        return userData;
+    }
+
+    public void setUserData(UserData userData) {
+        this.userData = userData;
+    }
 
     public String getAdditionalInfo() {
         return additionalInfo;
@@ -167,7 +187,8 @@ public class PracticeEntity {
                 "\"vehicleInfo\": " + vehicleInfo + "," +
                 "\"paymentInfo\": " + paymentInfo + "," +
                 "\"personalDocument\":" + personalDocument + "," +
-                "\"creditDocument\":" + creditDocument +
+                "\"creditDocument\":" + creditDocument + "," +
+                "\"userData\":" + userData + ", "+
                 "}";
     }
 

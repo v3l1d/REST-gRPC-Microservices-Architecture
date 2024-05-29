@@ -12,7 +12,7 @@ message Date{
 message VehicleInfo {
     string vehicleId = 1;
     string brand = 2;
-    string name = 3;
+    string model = 3;
     int32 year = 4;
 }
 
@@ -80,7 +80,8 @@ message Practice {
 message PracticeResponse{
     string status=1;
     string practiceId=2;
-    string evaluationResult=3;
+    Practice practice=3;
+    string evaluationResult=4;
 }
 
 service Banking{
@@ -92,6 +93,7 @@ service Banking{
     rpc CreditDocInfoPractice(Practice) returns (PracticeResponse);
     rpc PracticeExists(Practice) returns (PracticeResponse);
     rpc SendToEvaluation(Practice) returns (PracticeResponse);
+    rpc SetUserData(Practice) returns (PracticeResponse);
     rpc PracticeReview(Practice) returns (Practice);
 
 }

@@ -1,0 +1,146 @@
+{
+  "personalDetails": {
+    "surname": "Doe",
+    "firstName": "Jane",
+    "gender": "F",
+    "birthCountry": {
+      "code": "US",
+      "label": "United States",
+      "value": true
+    },
+    "birthProvince": {
+      "code": "NY",
+      "label": "New York",
+      "value": true,
+      "countryCode": "US"
+    },
+    "birthCity": {
+      "code": "NYC",
+      "label": "New York City",
+      "value": true,
+      "belfioreCode": "36061",
+      "provinceCode": "NY",
+      "bancaItaliaCode": null
+    },
+    "birthDate": "1990-05-15",
+    "taxCode": "98765432109",
+    "email": "jane.doe@example.com",
+    "phone": "+1 917 555 1234",
+    "citizenship": {
+      "code": "US",
+      "label": "United States",
+      "value": true
+    },
+    "pep": false,
+    "fcaEmployee": false
+  },
+  "addressInfo": {
+    "resAddress": "789 Oak St",
+    "resZipCode": "10002",
+    "resCountry": {
+      "code": "US",
+      "label": "United States",
+      "value": true
+    },
+    "resProvince": {
+      "code": "NY",
+      "label": "New York",
+      "value": true,
+      "countryCode": "US"
+    },
+    "resTown": {
+      "code": "NYC",
+      "label": "New York City",
+      "value": true,
+      "belfioreCode": "36061",
+      "provinceCode": "NY",
+      "bancaItaliaCode": null
+    },
+    "isDomEqualsRes": true
+  },
+  "documentInfo": {
+    "idDocumentType": "DriverLicense",
+    "idDocumentNumber": "123456789",
+    "idDocumentReleaseDate": "2015-06-01",
+    "idDocumentExpireDate": "2025-06-01",
+    "idDocumentReleaseEntity": {
+      "code": "US",
+      "label": "United States",
+      "value": true
+    },
+    "idDocumentReleaseProvince": {
+      "code": "NY",
+      "label": "New York",
+      "value": true,
+      "countryCode": "US"
+    },
+    "idDocumentReleaseCity": {
+      "code": "NYC",
+      "label": "New York City",
+      "value": true,
+      "belfioreCode": "36061",
+      "provinceCode": "NY",
+      "bancaItaliaCode": null
+    },
+    "healthInsuranceNumber": "123456789"
+  },
+  "householdInfo": {
+    "maritalStatus": {
+      "code": "S",
+      "label": "Single",
+      "value": true
+    },
+    "houseProperty": {
+      "code": "R",
+      "label": "Rented",
+      "value": true
+    },
+    "workStartingDate": "2012-06-01",
+    "familyMembers": "1",
+    "workingMembers": "1"
+  },
+  "incomeDocumentInfo": {
+    "jobOccupation": {
+      "code": "E",
+      "label": "Employee",
+      "value": true,
+      "grossAnnualIncomeRequired": false
+    },
+    "incomeDocType": "W2",
+    "workingStartDate": "2015-06-01",
+    "taxYear": "2021",
+    "netMonthlyIncome": 4000.0,
+    "taxWitholdingFlag": true,
+    "taxWitholdingCode": "FED",
+    "inpsRegistrationFlag": true,
+    "countryOfEmployment": "US",
+    "companyInfo": {
+      "companyName": "XYZ Corp",
+      "companyAddress": "321 Maple St",
+      "companyCountry": {
+        "code": "US",
+        "label": "United States",
+        "value": true,
+        "codeIso3": "USA",
+        "optional": null
+      },
+      "companyProvince": {
+        "code": "NY",
+        "label": "New York",
+        "value": true,
+        "countryCode": "US"
+      },
+      "companyCity": {
+        "code": "NYC",
+        "label": "New York City",
+        "value": true,
+        "belfioreCode": "36061",
+        "provinceCode": "NY",
+        "bancaItaliaCode": null
+      },
+      "companyZipCode": "10003"
+    }
+  },
+  "accountCheck": true,
+  "step": "completed"
+}

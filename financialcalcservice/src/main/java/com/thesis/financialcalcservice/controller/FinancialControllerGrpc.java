@@ -60,7 +60,7 @@ public class FinancialControllerGrpc {
     }
 
     @GetMapping("/get-vehicles")
-    @Observed
+
     public List<Vehicle> getVehiclesList(@RequestHeader(value="X-Request-ID") String reqId) {
         logger.info("Request id: {}", reqId);
         return vehicleService.getAllVehicles();
@@ -71,15 +71,13 @@ public class FinancialControllerGrpc {
     }
 
     @GetMapping("/financing-request")
-    @Observed
-    public ResponseEntity<List<Financing>> listFinancings(@RequestHeader(value="X-Request-ID") String reqId,@RequestParam String vehicleId) {
-        logger.info("Request ID:{} INPUT:{} OUTPUT:{}",reqId,vehicleId,financingService.getFinancingsByVehicleId(vehicleId));
+
+    public ResponseEntity<List<Financing>> listFinancings(@RequestParam String vehicleId) {
         return ResponseEntity.ok().body(financingService.getFinancingsByVehicleId(vehicleId));
 
     }
 
     @PostMapping("/verify-otp")
-    @Observed
     public ResponseEntity<String> otpVerification(@RequestBody String otps , @RequestParam String address) {
         try {
 
@@ -118,7 +116,6 @@ public class FinancialControllerGrpc {
         }
 
     }
-
 
     @PostMapping("/generate-otp")
     public ResponseEntity<String> generateOtp(@RequestBody Customer personalData){

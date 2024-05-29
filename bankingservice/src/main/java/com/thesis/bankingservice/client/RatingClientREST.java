@@ -1,9 +1,10 @@
 package com.thesis.bankingservice.client;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thesis.bankingservice.model.PracticeEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,16 +20,14 @@ public class RatingClientREST {
         this.webClient=webClientBuilder.baseUrl(host).build();
     }
 
-    public String getPracticeEvaluation(String practiceJson){
-
-
-        String response=webClient.post()
+    public PracticeEntity getPracticeEvaluation(PracticeEntity practice){
+        logger.info(practice);
+        PracticeEntity response=webClient.post()
                 .uri("/evaluate-practice")
-                .bodyValue(practiceJson)
+                .bodyValue(practice)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(PracticeEntity.class)
                 .block();
-        logger.info("INPUT:{} OUTPUT:{}",practiceJson,response);
         return response;
 
     }

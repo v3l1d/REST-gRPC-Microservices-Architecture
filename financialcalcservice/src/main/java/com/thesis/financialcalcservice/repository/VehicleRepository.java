@@ -20,5 +20,4 @@ public interface VehicleRepository extends JpaRepository<Vehicle,String> {
     @NonNull
     List<Vehicle> findAll();
 
-
 }

@@ -2,22 +2,21 @@ package com.thesis.collectorservice.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thesis.collectorservice.client.BankingClientREST;
 import com.thesis.collectorservice.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.io.File;
-import java.io.IOException;
+import com.thesis.collectorservice.model.UserDataModels.UserData;
 
 @Profile("rest")
 @RestController
@@ -98,13 +97,17 @@ public class DataCollectionControllerRest {
     }
 
     @PostMapping("/evaluate-practice")
-    public ResponseEntity<String> evaluatePractice(@RequestParam String practiceId) {
-        ResponseEntity<Boolean> verify = restTemplate.getForEntity(url.concat(practiceId), Boolean.class);
-        if (verify.getBody().toString().equals("true")) {
-            String response = bankingClientREST.sendToEvaluation(practiceId);
-            return ResponseEntity.ok().body(response);
-        } else {
-            return ResponseEntity.badRequest().body("Practice not found!");
+    public ResponseEntity<PracticeEntity> evaluatePractice(@RequestParam String practiceId, @RequestBody UserData userData) throws JsonProcessingException {
+        ResponseEntity<Boolean> verify=restTemplate.getForEntity(url.concat(practiceId),Boolean.class);
+        if(verify.getBody().toString().equals("true")) {
+            ObjectMapper mapper=new ObjectMapper();
+           // UserData uData=mapper.readValue(userData, UserData.class);
+            PracticeEntity temp= bankingClientREST.sendToEvaluation(practiceId,userData);
+            ObjectNode resp=mapper.createObjectNode()
+                    .putPOJO("practice",temp);
+            return ResponseEntity.ok().body(temp);
+        }else{
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -123,7 +126,6 @@ public class DataCollectionControllerRest {
     }
 
     @PostMapping("/userData")
-
     public UserData createUserData(@RequestBody UserData userData) throws JsonProcessingException {
         bankingClientREST.sentToBank(userData);
         return userData;

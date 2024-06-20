@@ -23,7 +23,7 @@ public class BankingServiceREST {
   
 
 
-    public String createPractice(String name, String surname, String phone, String email, String financingInfo,String vehicleInfo){
+    public String createPractice(String name, String surname, String phone, String email, Financing financingInfo,Vehicle vehicleInfo){
         
             PracticeEntity newPractice= new PracticeEntity();
             newPractice.setPracticeId(practiceIdGen());

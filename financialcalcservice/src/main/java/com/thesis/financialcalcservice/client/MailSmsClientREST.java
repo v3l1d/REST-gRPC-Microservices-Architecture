@@ -21,10 +21,10 @@ public class MailSmsClientREST {
         this.webClient = webClientBuilder.baseUrl(MailSmsServiceUrl).build();
     }
 
-    public String getMailOtp(String email,String reqId) {
+    public String getMailOtp(String mail,String reqId) {
         String otp;
         JsonNode requestBody = obj.createObjectNode()
-                .put("email", email);
+                .put("mail", mail);
         String response = webClient.post()
                 .uri("/get-mail-otp")
                 .header("Request-ID", reqId)
@@ -32,7 +32,6 @@ public class MailSmsClientREST {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-                logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,email,response);
         otp = response != null ? response : "";
         return otp;
     }
@@ -58,41 +57,28 @@ public class MailSmsClientREST {
         boolean result;
         JsonNode requestBody= obj.createObjectNode()
         .put("mailOtp", otp);
-        
-        String response=webClient.post()
+        Boolean response=webClient.post()
         .uri("/verify-mail")
         .header("Request-ID", reqId)
         .bodyValue(requestBody)
         .retrieve()
-        .bodyToMono(String.class)
+        .bodyToMono(Boolean.class)
         .block();
         
-        logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,otp,response);
-        if(response.equals("VERIFIED")){
-            result=true;
-        }else{
-            result=false;
-        }
-        return result;
+        return response.equals(true);
     }
 
-    public boolean verifySms(String otp,String reqId){
+    public boolean verifySms(String otp,String reqId) {
         boolean result;
-        JsonNode requestBody=obj.createObjectNode()
-            .put("smsOtp",otp);
-            String response=webClient.post()
+        JsonNode requestBody = obj.createObjectNode()
+                .put("smsOtp", otp);
+        Boolean response = webClient.post()
                 .uri("/verify-sms")
                 .header("Request-ID", reqId)
                 .bodyValue(requestBody)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(Boolean.class)
                 .block();
-                logger.info("REQUEST ID:{} INPUT:{} OUTPUT:{}",reqId,otp,response);
-            if(response.equals("VERIFIED")){
-                result=true;
-            }else{
-                result=false;
-            }
-            return result;
+        return response.equals(true);
     }
 }

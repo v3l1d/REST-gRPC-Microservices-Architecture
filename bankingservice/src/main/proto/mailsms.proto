@@ -1,0 +1,31 @@
+syntax="proto3";
+option java_multiple_files=true;
+package com.thesis.generated;
+import "bankPractice.proto";
+
+message Sms{
+    string number=1;
+}
+
+message Mail{
+    string address=1;
+
+}
+
+message Otp{
+    string password=1;
+}
+
+message Response{
+    bool verified=1;
+}
+
+
+service VerifyService{
+    rpc mailOtp(Mail) returns (Otp);
+    rpc smsOtp(Sms) returns (Otp);
+    rpc verifySmsOtp(Otp) returns (Response);
+    rpc verifyMailOtp(Otp) returns (Response);
+    rpc practiceOverview(Practice) returns (Practice);
+
+}

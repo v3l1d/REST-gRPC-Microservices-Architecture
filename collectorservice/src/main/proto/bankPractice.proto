@@ -20,7 +20,7 @@ message VehicleInfo {
 message AdditionalInfo {
     string job = 1;
     string gender = 2;
-    Date dateOfBirth = 3;
+    string dateOfBirth = 3;
     string province=4;
     string taxCode=5;
 }
@@ -28,7 +28,7 @@ message AdditionalInfo {
 message PersonalDocument{
     string documentId=1;
     string documentType=2;
-    Date expireDate=3;
+    string expireDate=3;
 }
 
 
@@ -43,7 +43,7 @@ message CardPaymentInfo {
     string owner = 1;
     string cardNumber = 2;
     string code = 3;
-    Date expireDate = 4;
+    string expireDate = 4;
 }
 
 message BankTransferInfo {

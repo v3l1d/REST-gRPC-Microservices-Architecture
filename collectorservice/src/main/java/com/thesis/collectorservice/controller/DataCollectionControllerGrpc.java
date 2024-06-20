@@ -64,7 +64,7 @@ public class DataCollectionControllerGrpc {
     public ResponseEntity<String>  creditDocument(@RequestParam String practiceId, @RequestBody String creditDocument){
         boolean check= bankingClientGRPC.practiceExists(practiceId);
         if (check){
-            boolean res=bankingClientGRPC.creditDocumnet(practiceId,creditDocument);
+            boolean res=bankingClientGRPC.creditDocument(practiceId,creditDocument);
             if (res) return ResponseEntity.ok().body("Personal document added!");
             else return  ResponseEntity.badRequest().body("Personal document adding failed!");
         }else{
@@ -99,15 +99,11 @@ public class DataCollectionControllerGrpc {
     }
 
     @PostMapping("/evaluate-practice")
-    public ResponseEntity<String> evaluatePractice(@RequestParam String practiceId,@RequestBody com.thesis.collectorservice.model.UserDataModels.UserData userData) throws JsonProcessingException, InvalidProtocolBufferException {
+    public ResponseEntity<String> evaluatePractice(@RequestParam String practiceId) throws InvalidProtocolBufferException {
         // Convert the Java UserData object to the Protobuf UserData object
-        UserData.Builder builder = UserData.newBuilder();
-        JsonFormat.parser().merge(objectMapper.writeValueAsString(userData), builder);
-        UserData protoUserData = builder.build();
-
         boolean check = bankingClientGRPC.practiceExists(practiceId);
         if (check) {
-            PracticeResponse response = bankingClientGRPC.sendToEvaluation(practiceId, protoUserData);
+            PracticeResponse response = bankingClientGRPC.sendToEvaluation(practiceId);
             return ResponseEntity.ok().body(response.getAllFields().toString());
         } else {
             return ResponseEntity.badRequest().body("Practice not found!");
@@ -119,7 +115,6 @@ public class DataCollectionControllerGrpc {
         boolean check= bankingClientGRPC.practiceExists(practiceId);
         if (check){
             String result= bankingClientGRPC.practiceOverview(practiceId);
-            logger.info(result);
             return ResponseEntity.ok().body(result);
         } else {
             return ResponseEntity.badRequest().body("Practice not found!");
@@ -128,16 +123,15 @@ public class DataCollectionControllerGrpc {
 
 
     @PostMapping("/user-data")
-    public ResponseEntity<String> handleUserData(@RequestBody String userData) throws JsonProcessingException, InvalidProtocolBufferException {
+    public ResponseEntity<Boolean> handleUserData(@RequestParam String practiceId,@RequestBody com.thesis.collectorservice.model.UserDataModels.UserData userData) throws JsonProcessingException, InvalidProtocolBufferException {
         ObjectMapper obj= new ObjectMapper();
-        JsonNode node=obj.readTree(userData);
+        String userDataJson=obj.writeValueAsString(userData);
         UserData.Builder builder=UserData.newBuilder();
-        JsonFormat.parser().merge(userData,builder);
+        JsonFormat.parser().merge(userDataJson,builder);
         UserData object=builder.build();
-        boolean res=bankingClientGRPC.setUserData(object);
-        return ResponseEntity.ok().body(String.valueOf(res));
-        // Do something with the user data here
-
+        boolean res=bankingClientGRPC.setUserData(practiceId,object);
+        if(res) return ResponseEntity.ok().body(true);
+        else return ResponseEntity.badRequest().body(false);
     }
 
 

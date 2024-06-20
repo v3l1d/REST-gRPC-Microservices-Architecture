@@ -3,12 +3,9 @@ package com.thesis.mailsmsservice.Service;
 import java.security.SecureRandom;
 import java.util.Base64;
 
+import com.thesis.generated.*;
 import org.springframework.context.annotation.Profile;
 
-import com.thesis.generated.Mail;
-import com.thesis.generated.Otp;
-import com.thesis.generated.Sms;
-import com.thesis.generated.Response;
 import com.thesis.generated.VerifyServiceGrpc.VerifyServiceImplBase;
 
 import io.grpc.Status;
@@ -97,6 +94,13 @@ public class VerifyServiceImpl extends VerifyServiceImplBase {
     }
 
 
+    @Override
+    public void practiceOverview(Practice request,StreamObserver<Practice> responseObserver){
+        Practice practice=request;
+        responseObserver.onNext(practice);
+        responseObserver.onCompleted();
+
+    }
 
       public static String generateRandomString(int length) {
 

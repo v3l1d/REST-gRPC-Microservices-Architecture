@@ -24,7 +24,7 @@ public class EvaluationServiceImpl extends EvaluationGrpc.EvaluationImplBase{
             double kpi1 = calculateKPI1(request);
             double kpi2 = calculateKPI2(request);
             double kpi3 = calculateKPI3(request);
-            double overallScore = (kpi1 + kpi2 + kpi3) / 3;
+            double overallScore = (kpi1) / 3;
             EvaluationResponse response=EvaluationResponse.newBuilder()
                     .setResult(evaluatePractice(overallScore))
                     .build();

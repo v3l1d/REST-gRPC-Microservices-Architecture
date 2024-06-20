@@ -11,11 +11,11 @@ public class PracticeEntity {
     private String email;
     private String phone;
     private String paymentMethod;
-    private String additionalInfo;
+    private AdditionalInfo additionalInfo;
 
-    private String financingInfo;
+    private Financing financingInfo;
 
-    private String vehicleInfo;
+    private Vehicle vehicleInfo;
 
     private String paymentInfo;
 
@@ -40,31 +40,30 @@ public class PracticeEntity {
     public void setUserData(UserData userData) {
         this.userData = userData;
     }
-    public String getAdditionalInfo() {
+
+    public AdditionalInfo getAdditionalInfo() {
         return additionalInfo;
     }
 
-    public void setAdditionalInfo(String additionalInfo) {
+    public void setAdditionalInfo(AdditionalInfo additionalInfo) {
         this.additionalInfo = additionalInfo;
     }
 
-    public String getFinancingInfo() {
+    public Financing getFinancingInfo() {
         return financingInfo;
     }
 
-    public void setFinancingInfo(String financingInfo) {
+    public void setFinancingInfo(Financing financingInfo) {
         this.financingInfo = financingInfo;
     }
 
-    public String getVehicleInfo() {
+    public Vehicle getVehicleInfo() {
         return vehicleInfo;
     }
 
-    public void setVehicleInfo(String vehicleInfo) {
+    public void setVehicleInfo(Vehicle vehicleInfo) {
         this.vehicleInfo = vehicleInfo;
     }
-
-
 
     public String getPracticeId() {
         return practiceId;

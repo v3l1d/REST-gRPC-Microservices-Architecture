@@ -1,36 +1,29 @@
 package com.thesis.bankingservice.service;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Random;
-import java.util.stream.Stream;
-
 import brave.grpc.GrpcTracing;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.json.Json;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
+import com.thesis.bankingservice.client.MailSMSClientGRPC;
 import com.thesis.bankingservice.client.PaymentClientGRPC;
 import com.thesis.bankingservice.client.RatingClientGRPC;
-import com.thesis.bankingservice.model.*;
 import com.thesis.bankingservice.model.AdditionalInfo;
 import com.thesis.bankingservice.model.PersonalDocument;
+import com.thesis.bankingservice.model.*;
 import com.thesis.generated.*;
-import org.apache.catalina.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.ResponseEntity;
 
-import static com.thesis.bankingservice.service.PracticeEntityJsonConverter.practiceEntityToJson;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Random;
 
 @Profile("grpc")
 @GrpcService
@@ -44,6 +37,10 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
 
     private final RatingClientGRPC ratingClientGRPC;
 
+    private final MailSMSClientGRPC mailSMSClientGRPC;
+    private ObjectMapper obj=new ObjectMapper();
+
+
 
     @Autowired
 
@@ -51,7 +48,9 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
 
                               @Value("${ratingservice.grpc.url}") String ratingServerGrpcUrl,
 
-                              BankDBService dbService, GrpcTracing grpcTracing) {
+                              @Value("${mailsmsservice.grpc.url}")  String mailSMSServerGrpcUrl,
+
+                              BankDBService dbService, GrpcTracing grpcTracing,ObjectMapper obj) {
 
         this.dbService = dbService;
 
@@ -59,6 +58,9 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
 
         this.ratingClientGRPC = new RatingClientGRPC(ratingServerGrpcUrl, grpcTracing);
 
+        this.mailSMSClientGRPC=new MailSMSClientGRPC(mailSMSServerGrpcUrl,grpcTracing);
+
+        this.obj=obj;
     }
 
 
@@ -81,12 +83,12 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
                         request.getFinancingInfo().getVehicleId(),
                         request.getFinancingInfo().getLoanAmount(),
                         request.getFinancingInfo().getLoanTerm());
-                entity.setFinancingInfo(finTemp.toString());
+                entity.setFinancingInfo(finTemp);
                 Vehicle vehicleTemp = new Vehicle(request.getVehicleInfo().getVehicleId(),
                         request.getVehicleInfo().getBrand(),
                         request.getVehicleInfo().getModel(),
                         request.getVehicleInfo().getYear());
-                entity.setVehicleInfo(vehicleTemp.toString());
+                entity.setVehicleInfo(vehicleTemp);
 
                 dbService.newPractice(entity);
                 PracticeResponse resp = PracticeResponse.newBuilder()
@@ -115,20 +117,16 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
             AdditionalInfo addInfoTemp = new AdditionalInfo(
                     request.getAdditionalInfo().getJob(),
                     request.getAdditionalInfo().getGender(),
-                    LocalDate.of(
-                            request.getAdditionalInfo().getDateOfBirth().getYear(),
-                            request.getAdditionalInfo().getDateOfBirth().getMonth(),
-                            request.getAdditionalInfo().getDateOfBirth().getDay()
-                    ),
+                    LocalDate.parse(request.getAdditionalInfo().getDateOfBirth(),DateTimeFormatter.ofPattern("yyyy-MM-dd")),
                     request.getAdditionalInfo().getProvince());
-            dbService.updatePractice(request.getPracticeId(), addInfoTemp.toString());
+            dbService.updatePractice(request.getPracticeId(), addInfoTemp);
             PracticeResponse resp = PracticeResponse.newBuilder()
                     .setPracticeId(request.getPracticeId())
                     .setStatus("updated").build();
             responseObserver.onNext(resp);
             responseObserver.onCompleted();
         } else {
-            responseObserver.onError(Status.NOT_FOUND.withDescription("Practice NOT FOUND").asRuntimeException());
+            responseObserver.onError(Status.NOT_FOUND.withDescription("Practice NOT FOUND").asException());
         }
 
     }
@@ -137,9 +135,7 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
     @Override
     public void payInfoPractice(Practice request, StreamObserver<PracticeResponse> responseObserver) {
         PracticeEntity temp = dbService.getFullPractice(request.getPracticeId());
-
         if (request.getPaymentInfo().hasBankTransfer()) {
-
             Transfer transferTemp = new Transfer(
                     request.getPaymentInfo().getBankTransfer().getOwner(),
                     request.getPaymentInfo().getBankTransfer().getBankId()
@@ -167,11 +163,8 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
                         request.getPaymentInfo().getCardPayment().getOwner(),
                         request.getPaymentInfo().getCardPayment().getCardNumber(),
                         request.getPaymentInfo().getCardPayment().getCode(),
-                        LocalDate.of(
-                                request.getPaymentInfo().getCardPayment().getExpireDate().getYear(),
-                                request.getPaymentInfo().getCardPayment().getExpireDate().getMonth(),
-                                request.getPaymentInfo().getCardPayment().getExpireDate().getDay()
-                        )
+                        LocalDate.parse(request.getPaymentInfo().getCardPayment().getExpireDate(),DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
                 );
                 dbService.setPaymentMethod(request.getPracticeId(), "card", cardTemp.toString());
                 dbService.setPracticeToCompleted(request.getPracticeId());
@@ -189,6 +182,7 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
 
 
     }
+
     /*
     @Override
     public void sendToEvaluation(Practice request, StreamObserver<PracticeResponse> responseObserver) {
@@ -197,7 +191,7 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
             try {
                 logger.info(temp);
                 if (temp.getAdditionalInfo() != null && temp.getAdditionalInfo() != null && temp.getFinancingInfo() != null && temp.getFinancingInfo() != null) {
-                    String response = ratingClientGRPC.getPracticeEvaluation(temp);
+                    String response = ratingClientGRPC.getPracticegEvaluation(temp);
                     PracticeResponse evalResp = PracticeResponse.newBuilder()
                             .setPracticeId(request.getPracticeId())
                             .setStatus(temp.getStatus())
@@ -222,23 +216,29 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
     public void sendToEvaluation(Practice request,StreamObserver<PracticeResponse> responseObserver)  {
         if(dbService.practiceExists(request.getPracticeId())){
             PracticeEntity practice=dbService.getFullPractice(request.getPracticeId());
-            ObjectMapper obj=new ObjectMapper();
             FinancingInfo.Builder finBuilder=FinancingInfo.newBuilder();
             VehicleInfo.Builder vehicleBuilder=VehicleInfo.newBuilder();
-
+            UserData.Builder userDataBuilder=UserData.newBuilder();
+            com.thesis.generated.AdditionalInfo.Builder addInfoBuilder= com.thesis.generated.AdditionalInfo.newBuilder();
             try {
-                JsonFormat.parser().merge(practice.getFinancingInfo(),finBuilder);
-                JsonFormat.parser().merge(practice.getVehicleInfo(),vehicleBuilder);
+                String financingInfoJson=obj.writeValueAsString(practice.getFinancingInfo());
+                JsonFormat.parser().merge(financingInfoJson,finBuilder);
+                String vehicleInfoJson=obj.writeValueAsString(practice.getVehicleInfo());
+                JsonFormat.parser().merge(vehicleInfoJson,vehicleBuilder);
+                String userDataString=obj.writeValueAsString(practice.getUserData());
+                JsonFormat.parser().merge(userDataString,userDataBuilder);
                 VehicleInfo vehicleInfo=vehicleBuilder.build();
                 FinancingInfo financingInfo=finBuilder.build();
+                String addInfoString=obj.writeValueAsString(practice.getAdditionalInfo());
+                logger.info(addInfoString);
+                UserData userData=userDataBuilder.build();
                 Practice toEvaluate=Practice.newBuilder()
                         .setPracticeId(request.getPracticeId())
                         .setStatus("COMPLETED")
-                        .setUserData(request.getUserData())
+                        .setUserData(userData)
                         .setFinancingInfo(financingInfo)
                         .setVehicleInfo(vehicleInfo)
                         .build();
-
                 logger.info(toEvaluate.getStatus());
                 String response = ratingClientGRPC.getPracticeEvaluation(toEvaluate);
                 PracticeResponse evalResp = PracticeResponse.newBuilder()
@@ -250,7 +250,7 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
                 logger.info(evalResp);
                 responseObserver.onNext(evalResp);
                 responseObserver.onCompleted();
-            } catch (InvalidProtocolBufferException e) {
+            } catch (InvalidProtocolBufferException | JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
         }else{
@@ -260,11 +260,11 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
     @Override
     public void documentInfoPractice(Practice request, StreamObserver<PracticeResponse> responseObserver) {
         if (dbService.practiceExists(request.getPracticeId())) {
-            PersonalDocument temp = new PersonalDocument(request.getPersonalDocument().getDocumentId(), request.getPersonalDocument().getDocumentType(), LocalDate.of(
-                    request.getPersonalDocument().getExpireDate().getYear(),
-                    request.getPersonalDocument().getExpireDate().getMonth(),
-                    request.getPersonalDocument().getExpireDate().getDay()
-            ));
+            PersonalDocument temp = new PersonalDocument(
+                    request.getPersonalDocument().getDocumentId(),
+                    request.getPersonalDocument().getDocumentType(),
+                    LocalDate.parse(request.getPersonalDocument().getExpireDate(),DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            );
             logger.info(temp);
             dbService.setPersonalDocument(request.getPracticeId(), temp);
             PracticeResponse response = PracticeResponse.newBuilder()
@@ -304,45 +304,91 @@ public class BankingServiceImpl  extends BankingGrpc.BankingImplBase {
             responseStreamObserver.onNext(response);
             responseStreamObserver.onCompleted();
         } else {
-            responseStreamObserver.onError(Status.NOT_FOUND.withDescription("Practice don't exists").asException());
+            PracticeResponse response = PracticeResponse.newBuilder()
+                    .setPracticeId(request.getPracticeId())
+                    .setStatus("notfound")
+                    .build();
+            responseStreamObserver.onNext(response);
+            responseStreamObserver.onCompleted();
         }
     }
 
     @Override
-    public void setUserData(Practice request,StreamObserver<PracticeResponse> responseObserver){
+    public void setUserData(Practice request,StreamObserver<PracticeResponse> responseObserver)  {
     UserData userData = request.getUserData();
-        String practiceId = request.getPracticeId();
-        logger.info(request);
-        PracticeResponse response = PracticeResponse.newBuilder()
-                .setPracticeId(practiceId)
-                .setStatus("SUCCESS")
-                .build();
-        // Send the response back to the client
-        responseObserver.onNext(response);
-
-        responseObserver.onCompleted();
+        try {
+            if (dbService.practiceExists(request.getPracticeId())) {
+                String UserData = JsonFormat.printer().print(request.getUserData());
+                logger.info(userData);
+                ObjectMapper mapper=new ObjectMapper();
+                com.thesis.bankingservice.model.UserDataModels.model.UserData temp=mapper.readValue(UserData, com.thesis.bankingservice.model.UserDataModels.model.UserData.class);
+                dbService.setUserData(request.getPracticeId(), temp);
+                PracticeResponse response = PracticeResponse.newBuilder()
+                        .setPracticeId(request.getPracticeId())
+                        .setStatus("SUCCESS")
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            } else {
+                responseObserver.onError(Status.NOT_FOUND.withDescription("Practice don't exists").asException());
+            }
+        }catch (InvalidProtocolBufferException e){
+            responseObserver.onError(Status.INTERNAL.withDescription("Error processing UserData").asException());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void practiceReview(Practice request, StreamObserver<Practice> responseObserver) {
         if(dbService.practiceExists(request.getPracticeId())){
-            PracticeEntity temp=dbService.getFullPractice(request.getPracticeId());
-            Practice.Builder builder=Practice.newBuilder();
-            UserData uData= UserData.newBuilder().build();
-            builder.setUserData(uData);
-            String practString=temp.toString();
             try {
-                JsonFormat.parser().merge(practString,builder);
+                ObjectMapper mapper = new ObjectMapper();
+                PracticeEntity temp = dbService.getFullPractice(request.getPracticeId());
+                AdditionalInfo additionalInfo = temp.getAdditionalInfo();
+                Financing financing = temp.getFinancingInfo();
+                com.thesis.bankingservice.model.UserDataModels.model.UserData udata = temp.getUserData();
+                Vehicle vehicle = temp.getVehicleInfo();
+                String addInfoString = mapper.writeValueAsString(additionalInfo);
+                String vehicleInfo = mapper.writeValueAsString(vehicle);
+                String financingInfo = mapper.writeValueAsString(financing);
+                String udataString = mapper.writeValueAsString(udata);
+
+                VehicleInfo.Builder vehicleBuilder = VehicleInfo.newBuilder();
+                FinancingInfo.Builder finBuilder = FinancingInfo.newBuilder();
+                UserData.Builder udataBuilder = UserData.newBuilder();
+                JsonFormat.parser().merge(financingInfo, finBuilder);
+                JsonFormat.parser().merge(vehicleInfo, vehicleBuilder);
+                JsonFormat.parser().merge(udataString, udataBuilder);
+
+                VehicleInfo vehicleInfo1 = vehicleBuilder.build();
+                FinancingInfo finInfo = finBuilder.build();
+                UserData userData = udataBuilder.build();
+
+                Practice toOverview = Practice.newBuilder()
+                        .setPracticeId(request.getPracticeId())
+                        .setPhone(temp.getPhone())
+                        .setEmail(temp.getEmail())
+                        .setName(temp.getName())
+                        .setSurname(temp.getSurname())
+                        .setStatus(temp.getStatus())
+                        .setVehicleInfo(vehicleInfo1)
+                        .setFinancingInfo(finInfo)
+                        .setUserData(userData)
+                        .build();
+
+                Practice response=mailSMSClientGRPC.practiceOverview(toOverview);
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
             } catch (InvalidProtocolBufferException e) {
                 throw new RuntimeException(e);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
             }
-
-            Practice response=builder.build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-        }else{
-            responseObserver.onError(Status.NOT_FOUND.asException());
+        }else {
+            responseObserver.onError(Status.NOT_FOUND.withDescription("Practice not found!").asException());
         }
+
     }
 
     public String practiceIdGen(){

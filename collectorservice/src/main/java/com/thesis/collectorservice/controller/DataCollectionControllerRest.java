@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -97,14 +98,10 @@ public class DataCollectionControllerRest {
     }
 
     @PostMapping("/evaluate-practice")
-    public ResponseEntity<PracticeEntity> evaluatePractice(@RequestParam String practiceId, @RequestBody UserData userData) throws JsonProcessingException {
+    public ResponseEntity<PracticeEntity> evaluatePractice(@RequestParam String practiceId) throws JsonProcessingException {
         ResponseEntity<Boolean> verify=restTemplate.getForEntity(url.concat(practiceId),Boolean.class);
         if(verify.getBody().toString().equals("true")) {
-            ObjectMapper mapper=new ObjectMapper();
-           // UserData uData=mapper.readValue(userData, UserData.class);
-            PracticeEntity temp= bankingClientREST.sendToEvaluation(practiceId,userData);
-            ObjectNode resp=mapper.createObjectNode()
-                    .putPOJO("practice",temp);
+            PracticeEntity temp= bankingClientREST.sendToEvaluation(practiceId);
             return ResponseEntity.ok().body(temp);
         }else{
             return ResponseEntity.badRequest().build();
@@ -112,24 +109,24 @@ public class DataCollectionControllerRest {
     }
 
     @GetMapping("/practice-overview")
-    public ResponseEntity<String> practiceOverview(@RequestParam String practiceId){
+    public ResponseEntity<PracticeEntity> practiceOverview(@RequestParam String practiceId){
         ResponseEntity<Boolean> verify=restTemplate.getForEntity(url.concat(practiceId),Boolean.class);
         if (verify.getBody().toString().equals("true")) {
-            String result= bankingClientREST.practiceOverview(practiceId);
+            PracticeEntity result= bankingClientREST.practiceOverview(practiceId);
             if(result!=null){
                 return ResponseEntity.ok().body(result);
             }
         } else {
-            return ResponseEntity.badRequest().body("Practice not found!");
+            return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.badRequest().build();
     }
 
-    @PostMapping("/userData")
-    public UserData createUserData(@RequestBody UserData userData) throws JsonProcessingException {
-        bankingClientREST.sentToBank(userData);
-        return userData;
-
+    @PostMapping("/user-data")
+    public ResponseEntity<Boolean> setUserData(@RequestParam String practiceId,@RequestBody UserData userData) throws JsonProcessingException {
+        Boolean res=bankingClientREST.setUserData(practiceId,userData);
+        if(res) return ResponseEntity.ok().body(true);
+        else return ResponseEntity.badRequest().body(false);
     }
 
 }

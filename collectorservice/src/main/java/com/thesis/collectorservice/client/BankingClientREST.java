@@ -35,12 +35,7 @@ public class BankingClientREST {
                 .bodyToMono(String.class)
                 .block();
         logger.info(result);
-        if(result.equals("added")){
-            return true;
-        }else {
-
-            return false;
-        }
+        return result.equals("added");
     }
 
 
@@ -57,10 +52,9 @@ public class BankingClientREST {
     }
 
 
-    public PracticeEntity sendToEvaluation(String practiceId, UserData userData) throws JsonProcessingException {
+    public PracticeEntity sendToEvaluation(String practiceId) throws JsonProcessingException {
         PracticeEntity practice = new PracticeEntity();
         practice.setPracticeId(practiceId);
-        practice.setUserData(userData);
         logger.info(practice);
         PracticeEntity practiceJson = webClient.post()
                 .uri("/evaluate-practice?practiceId="+practiceId)
@@ -111,28 +105,22 @@ public class BankingClientREST {
         return Boolean.TRUE.equals(resp);
     }
 
-    public String practiceOverview(String practiceId){
-        String result = webClient.get()
+    public PracticeEntity practiceOverview(String practiceId){
+        PracticeEntity result = webClient.get()
                 .uri("/practice-overview?practiceId=" + practiceId)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(PracticeEntity.class)
                 .block();
-        logger.info(result);
         return result;
     }
 
-    public void sentToBank(UserData userData) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        String jsonString = objectMapper.writeValueAsString(userData);
-        ObjectNode requestBody=objectMapper.createObjectNode()
-                .put("userData",jsonString);
-        String result=webClient.post()
-                .uri("/get-user-data")
-                .bodyValue(requestBody)
+    public Boolean setUserData(String practiceId,UserData userData) throws JsonProcessingException {
+        Boolean result=webClient.post()
+                .uri("/set-user-data?practiceId="+practiceId)
+                .bodyValue(userData)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(Boolean.class)
                 .block();
-        logger.info(result);
+        return result;
     }
 }

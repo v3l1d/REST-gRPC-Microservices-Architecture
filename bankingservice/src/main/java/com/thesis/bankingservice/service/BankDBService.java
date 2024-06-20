@@ -1,18 +1,16 @@
 package com.thesis.bankingservice.service;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.TreeCodec;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thesis.bankingservice.model.AdditionalInfo;
+import com.thesis.bankingservice.model.Financing;
 import com.thesis.bankingservice.model.PersonalDocument;
 import com.thesis.bankingservice.model.PracticeEntity;
+import com.thesis.bankingservice.model.UserDataModels.model.UserData;
 import com.thesis.bankingservice.repository.PracticeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,13 +33,12 @@ public class BankDBService {
         if(practiceExists(practiceId) ){
             PracticeEntity temp=repository.findByPracticeId(practiceId);
             return  temp;
-
         }else{
             return null;
         }
     }
     @Transactional
-    public void updatePractice(String practiceId, String additionalInfo){
+    public void updatePractice(String practiceId, AdditionalInfo additionalInfo){
         PracticeEntity toChange=repository.findByPracticeId(practiceId);
         if(toChange!=null) {
             toChange.setAdditionalInfo(additionalInfo);
@@ -73,7 +70,7 @@ public class BankDBService {
     }
 
     @Transactional
-    public String getFinancingIdByPractice(String practiceId){
+    public Financing getFinancingIdByPractice(String practiceId){
         if(repository.findByPracticeId(practiceId)!=null){
             PracticeEntity temp=repository.findByPracticeId(practiceId);
             return temp.getFinancingInfo();
@@ -85,6 +82,15 @@ public class BankDBService {
     public void newPractice(PracticeEntity practice){
         if(practice!=null){
             repository.save(practice);
+        }
+    }
+
+    @Transactional
+    public void setUserData(String practiceId, UserData userData){
+        PracticeEntity temp=repository.findByPracticeId(practiceId);
+        if(temp!=null){
+            temp.setUserData(userData);
+            repository.save(temp);
         }
     }
 

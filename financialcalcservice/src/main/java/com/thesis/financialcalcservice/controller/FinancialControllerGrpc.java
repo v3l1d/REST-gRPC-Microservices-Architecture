@@ -142,7 +142,7 @@ public class FinancialControllerGrpc {
                 String resp= bankingClientGRPC.createPractice(personalData,financingTemp,vehicleTemp);
                 logger.info(resp);
                 if(resp!=null) {
-                    return ResponseEntity.ok("Practice successfully created with id: "+resp);
+                    return ResponseEntity.ok(resp);
                 }
             }else{
                 return ResponseEntity.internalServerError().body("Customer not found!");

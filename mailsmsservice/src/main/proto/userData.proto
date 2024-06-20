@@ -1,0 +1,204 @@
+syntax="proto3";
+package com.thesis.generated;
+option java_multiple_files=true;
+
+message PersonalDataConsent {
+  string code = 1;
+}
+
+message BirthCountry {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  string codeIso3 = 4;
+  string optional = 5;
+}
+
+message BirthProvince {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  string countryCode = 4;
+}
+
+message BirthCity {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  string belfioreCode = 4;
+  string provinceCode = 5;
+  string bancaItaliaCode = 6;
+}
+
+message PersonalDetails {
+  string surname = 1;
+  string firstName = 2;
+  string gender = 3;
+  BirthCountry birthCountry = 4;
+  BirthProvince birthProvince = 5;
+  BirthCity birthCity = 6;
+  string birthDate = 7;
+  string taxCode = 8;
+  string email = 9;
+  string phone = 10;
+  Citizenship citizenship = 11;
+  bool pep = 12;
+  bool fcaEmployee = 13;
+}
+
+message Citizenship {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  string codeIso3 = 4;
+  string optional = 5;
+}
+
+message AddressInfo {
+  string resAddress = 1;
+  string resZipCode = 2;
+  ResCountry resCountry = 3;
+  ResProvince resProvince = 4;
+  ResTown resTown = 5;
+  bool isDomEqualsRes = 6;
+}
+
+message ResCountry {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  string codeIso3 = 4;
+  string optional = 5;
+}
+
+message ResProvince {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  string countryCode = 4;
+}
+
+message ResTown {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  string belfioreCode = 4;
+  string provinceCode = 5;
+  string bancaItaliaCode = 6;
+}
+
+message DocumentInfo {
+  string idDocumentType = 1;
+  string idDocumentNumber = 2;
+  string idDocumentReleaseDate = 3;
+  string idDocumentExpireDate = 4;
+  IdDocumentReleaseEntity idDocumentReleaseEntity = 5;
+  IdDocumentReleaseProvince idDocumentReleaseProvince = 6;
+  IdDocumentReleaseCity idDocumentReleaseCity = 7;
+  string healthInsuranceNumber = 8;
+}
+
+message IdDocumentReleaseEntity {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+}
+
+message IdDocumentReleaseProvince {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  string countryCode = 4;
+}
+
+message IdDocumentReleaseCity {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  string belfioreCode = 4;
+  string provinceCode = 5;
+  string bancaItaliaCode = 6;
+}
+
+message HouseholdInfo {
+  MaritalStatus maritalStatus = 1;
+  HouseProperty houseProperty = 2;
+  string workStartingDate = 3;
+  string familyMembers = 4;
+  string workingMembers = 5;
+}
+
+message MaritalStatus {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+}
+
+message HouseProperty {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+}
+
+message IncomeDocumentInfo {
+  JobOccupation jobOccupation = 1;
+  string incomeDocType = 2;
+  string workingStartDate = 3;
+  string taxYear = 4;
+  double netMonthlyIncome = 5;
+  bool taxWitholdingFlag = 6;
+  string taxWitholdingCode = 7;
+  bool inpsRegistrationFlag = 8;
+  string countryOfEmployment = 9;
+  CompanyInfo companyInfo = 10;
+}
+
+message JobOccupation {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  bool grossAnnualIncomeRequired = 4;
+}
+
+message CompanyInfo {
+  string companyName = 1;
+  string companyAddress = 2;
+  CompanyCountry companyCountry = 3;
+  CompanyProvince companyProvince = 4;
+  CompanyCity companyCity = 5;
+  string companyZipCode = 6;
+}
+
+message CompanyCountry {
+  string code = 1;
+  string label= 2;
+  bool value = 3;
+  string codeIso3 = 4;
+  string optional = 5;
+}
+
+message CompanyProvince {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  string countryCode = 4;
+}
+
+message CompanyCity {
+  string code = 1;
+  string label = 2;
+  bool value = 3;
+  string belfioreCode = 4;
+  string provinceCode = 5;
+  string bancaItaliaCode = 6;
+}
+
+message UserData {
+  PersonalDetails personalDetails = 2;
+  AddressInfo addressInfo = 3;
+  DocumentInfo documentInfo = 4;
+  HouseholdInfo householdInfo = 5;
+  IncomeDocumentInfo incomeDocumentInfo = 6;
+  bool accountCheck = 7;
+  string step = 8;
+}

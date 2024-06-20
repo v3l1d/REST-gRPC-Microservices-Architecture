@@ -10,15 +10,10 @@ public class AdditionalInfo {
 
     private String gender;
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
     private LocalDate dateOfBirth;
+
+
+
 
     private String province;
 
@@ -54,8 +49,12 @@ public class AdditionalInfo {
         this.province = province;
     }
 
-    public boolean isValid(){
-        return !job.isEmpty() && !gender.isEmpty() && dateOfBirth!=null && !province.isEmpty();
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     @Override

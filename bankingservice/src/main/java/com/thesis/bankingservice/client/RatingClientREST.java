@@ -29,7 +29,6 @@ public class RatingClientREST {
                 .bodyToMono(PracticeEntity.class)
                 .block();
         return response;
-
     }
 
 }

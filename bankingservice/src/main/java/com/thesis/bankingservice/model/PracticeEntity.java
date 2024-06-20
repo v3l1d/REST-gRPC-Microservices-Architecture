@@ -1,13 +1,17 @@
 package com.thesis.bankingservice.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thesis.bankingservice.model.UserDataModels.model.UserData;
+import com.thesis.bankingservice.utility.AdditionalInfoJsonAttributeConverter;
+import com.thesis.bankingservice.utility.FinancingJsonAttributeConverter;
+import com.thesis.bankingservice.utility.UserDataJsonAttributeConverter;
+import com.thesis.bankingservice.utility.UserDataJsonAttributeConverter;
+import com.thesis.bankingservice.utility.VehicleJsonAttributeConverter;
 import jakarta.persistence.*;
-
-import java.util.Date;
 
 
 @Entity
-@Table(name="practice")
+@Table(name = "practice")
 public class PracticeEntity {
     @Column(name = "practice_id")
     @Id
@@ -23,32 +27,37 @@ public class PracticeEntity {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name="payment_method")
+    @Column(name = "payment_method")
     private String paymentMethod;
 
-    @Column(name="additional_info")
-    private String additionalInfo;
+    @Column(name = "additional_info", columnDefinition = "JSON")
+    @Convert(converter = AdditionalInfoJsonAttributeConverter.class)
+    @JsonProperty
+    private AdditionalInfo additionalInfo;
 
-    @Column(name="financing_info")
-    private String financingInfo;
+    @Column(name = "financing_info", columnDefinition = "JSON")
+    @Convert(converter = FinancingJsonAttributeConverter.class)
+    private Financing financingInfo;
 
-    @Column(name="vehicle_info")
-    private String vehicleInfo;
+    @Column(name = "vehicle_info", columnDefinition = "JSON")
+    @Convert(converter = VehicleJsonAttributeConverter.class)
+    private Vehicle vehicleInfo;
 
-    @Column(name="payment_info")
+    @Column(name = "payment_info")
     private String paymentInfo;
 
-    @Column(name="personal_document")
+    @Column(name = "personal_document")
     private String personalDocument;
 
-    @Column(name="credit_document")
+    @Column(name = "credit_document")
     private String creditDocument;
-    
-   @Transient
+
+    @Column(name = "user_data", columnDefinition = "JSON")
+    @Convert(converter = UserDataJsonAttributeConverter.class)
     private UserData userData;
 
-   @Transient
-   private String evaluationResult;
+    @Transient
+    private String evaluationResult;
 
     public String getEvaluationResult() {
         return evaluationResult;
@@ -62,35 +71,33 @@ public class PracticeEntity {
         return userData;
     }
 
-    public void setUserData(UserData userData) {
-        this.userData = userData;
-    }
-
-    public String getAdditionalInfo() {
+    public AdditionalInfo getAdditionalInfo() {
         return additionalInfo;
     }
 
-    public void setAdditionalInfo(String additionalInfo) {
+    public void setAdditionalInfo(AdditionalInfo additionalInfo) {
         this.additionalInfo = additionalInfo;
     }
 
-    public String getFinancingInfo() {
+    public Financing getFinancingInfo() {
         return financingInfo;
     }
 
-    public void setFinancingInfo(String financingInfo) {
+    public void setFinancingInfo(Financing financingInfo) {
         this.financingInfo = financingInfo;
     }
 
-    public String getVehicleInfo() {
+    public Vehicle getVehicleInfo() {
         return vehicleInfo;
     }
 
-    public void setVehicleInfo(String vehicleInfo) {
+    public void setVehicleInfo(Vehicle vehicleInfo) {
         this.vehicleInfo = vehicleInfo;
     }
 
-
+    public void setUserData(UserData userData) {
+        this.userData = userData;
+    }
 
     public String getPracticeId() {
         return practiceId;
@@ -188,7 +195,7 @@ public class PracticeEntity {
                 "\"paymentInfo\": " + paymentInfo + "," +
                 "\"personalDocument\":" + personalDocument + "," +
                 "\"creditDocument\":" + creditDocument + "," +
-                "\"userData\":" + userData + ", "+
+                "\"userData\":" + userData + ", " +
                 "}";
     }
 

@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="collectorservice" />
         <module name="bankingservice" />
         <module name="mailsmsservice" />
         <module name="financialcalcservice" />
@@ -20,13 +21,14 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="bankingservice" options="-parameters" />
+      <module name="bankingservice" options="" />
+      <module name="collectorservice" options="" />
       <module name="financialcalcservice" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="grpcserver" options="-parameters" />
       <module name="mailsmsservice" options="-parameters" />
-      <module name="paymentservice" options="-parameters" />
-      <module name="ratingservice" options="-parameters" />
+      <module name="paymentservice" options="" />
+      <module name="ratingservice" options="" />
     </option>
   </component>
 </project>

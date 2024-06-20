@@ -24,9 +24,8 @@ public class RatingController {
 
     @PostMapping("/evaluate-practice")
     public ResponseEntity<PracticeEntity> evaluatePractice(@RequestBody PracticeEntity practice) {
+        logger.info(practice);
         if (practice!=null) {
-            ObjectMapper mapper=new ObjectMapper();
-            logger.info(practice.getUserData()!=null);
             double kpi1 = calculateKPI1(practice);
             double overallScore = (kpi1) / 3;
             String evaluation = evaluatePractice(overallScore);
@@ -43,19 +42,19 @@ public class RatingController {
 
     private double calculateKPI1(PracticeEntity practice) {
         // Example KPI calculation
-        double kpi1 = practice.getUserData().getIncomeDocumentInfo().getNetMonthlyIncome()/ 12;
+        double kpi1 = 200/ 12;
         return kpi1 > 10 ? 10 : kpi1; // KPI1 has a maximum score of 10
     }
 
-    private double calculateKPI2(JsonNode practiceNode) {
+    private double calculateKPI2(PracticeEntity practice) {
         // Example KPI calculation
-        double kpi2 = practiceNode.get("practice").get("financingInfo").get("loanTerm").asDouble() / 12;
+        double kpi2 = practice.getFinancingInfo().getLoanAmount()/ 12;
         return kpi2 > 10 ? 10 : kpi2; // KPI2 has a maximum score of 10
     }
 
-    private double calculateKPI3(JsonNode practiceNode) {
+    private double calculateKPI3(PracticeEntity practice) {
         // Example KPI calculation
-        double kpi3 = practiceNode.get("practice").get("additionalInfo").get("province").asText().equalsIgnoreCase("New York") ? 10 : 0;
+        double kpi3 = practice.getAdditionalInfo().getProvince().equalsIgnoreCase("NEW YORK")? 10 : 0;
         return kpi3; // KPI3 has a maximum score of 10
     }
 

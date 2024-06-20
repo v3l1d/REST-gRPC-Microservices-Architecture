@@ -1,0 +1,546 @@
+{
+	"info": {
+		"_postman_id": "6c1b9c8e-4402-46aa-941d-0b928aae1fe0",
+		"name": "gRPC-REST-Architecture",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Tests\" tab**\n\nTests help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/b5f280a7-4b09-48ec-857f-0a7ed99d7ef8/U2NyZWVuc2hvdCAyMDIzLTAzLTI3IGF0IDkuNDcuMjggUE0ucG5n\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) in \"Tests\" to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32853342"
+	},
+	"item": [
+		{
+			"name": "VERIFY-OTP",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"otps\":{\r\n    \"email\":\"h0jY5CE\"},\r\n    \"address\":\"dileale@gmail.com\"\r\n    \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:80/verify-otp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "80",
+					"path": [
+						"verify-otp"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": []
+		},
+		{
+			"name": "GENERATE-OTP",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \n    \"job\": \"Software Developer\",\n\t\"gender\": \"Male\",\n\t\"dateOfBirth\": \"1992-12-02\",\n\t\"province\": \"New York\"\n    \n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:443/complete-practice?practiceId=UU161816",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"complete-practice"
+					],
+					"query": [
+						{
+							"key": "practiceId",
+							"value": "UU161816"
+						}
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "GET_VEHICLES",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"param\":\"get\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:443/get-vehicles",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"get-vehicles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CREATE-PRACTICE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"alessandro\",\r\n  \"surname\": \"dilevrano\",\r\n  \"email\": \"fdfd@gmail.com\",\r\n  \"phone\": \"33397432524\"\r\n \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:443/create-practice?financingId=F001",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"create-practice"
+					],
+					"query": [
+						{
+							"key": "financingId",
+							"value": "F001"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CREDIT-DOCUMENT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:443/credit-document?practiceId=NP415",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"credit-document"
+					],
+					"query": [
+						{
+							"key": "practiceId",
+							"value": "NP415"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PERSONAL-DOCUMENT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"documentId\":\"CA88078DH\",\r\n    \"documentType\":\"DNI\",\r\n    \"expireDate\":\"2029-01-15\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:443/personal-document?practiceId=DT1510",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"personal-document"
+					],
+					"query": [
+						{
+							"key": "practiceId",
+							"value": "DT1510"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "USER-DATA",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"personalDetails\": {\r\n    \"surname\": \"Doe\",\r\n    \"firstName\": \"Jane\",\r\n    \"gender\": \"F\",\r\n    \"birthCountry\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"birthProvince\": {\r\n      \"code\": \"NY\",\r\n      \"label\": \"New York\",\r\n      \"value\": true,\r\n      \"countryCode\": \"US\"\r\n    },\r\n    \"birthCity\": {\r\n      \"code\": \"NYC\",\r\n      \"label\": \"New York City\",\r\n      \"value\": true,\r\n      \"belfioreCode\": \"36061\",\r\n      \"provinceCode\": \"NY\",\r\n      \"bancaItaliaCode\": null\r\n    },\r\n    \"birthDate\": \"1990-05-15\",\r\n    \"taxCode\": \"98765432109\",\r\n    \"email\": \"jane.doe@example.com\",\r\n    \"phone\": \"+1 917 555 1234\",\r\n    \"citizenship\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"pep\": false,\r\n    \"fcaEmployee\": false\r\n  },\r\n  \"addressInfo\": {\r\n    \"resAddress\": \"789 Oak St\",\r\n    \"resZipCode\": \"10002\",\r\n    \"resCountry\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"resProvince\": {\r\n      \"code\": \"NY\",\r\n      \"label\": \"New York\",\r\n      \"value\": true,\r\n      \"countryCode\": \"US\"\r\n    },\r\n    \"resTown\": {\r\n      \"code\": \"NYC\",\r\n      \"label\": \"New York City\",\r\n      \"value\": true,\r\n      \"belfioreCode\": \"36061\",\r\n      \"provinceCode\": \"NY\",\r\n      \"bancaItaliaCode\": null\r\n    },\r\n    \"isDomEqualsRes\": true\r\n  },\r\n  \"documentInfo\": {\r\n    \"idDocumentType\": \"DriverLicense\",\r\n    \"idDocumentNumber\": \"123456789\",\r\n    \"idDocumentReleaseDate\": \"2015-06-01\",\r\n    \"idDocumentExpireDate\": \"2025-06-01\",\r\n    \"idDocumentReleaseEntity\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"idDocumentReleaseProvince\": {\r\n      \"code\": \"NY\",\r\n      \"label\": \"New York\",\r\n      \"value\": true,\r\n      \"countryCode\": \"US\"\r\n    },\r\n    \"idDocumentReleaseCity\": {\r\n      \"code\": \"NYC\",\r\n      \"label\": \"New York City\",\r\n      \"value\": true,\r\n      \"belfioreCode\": \"36061\",\r\n      \"provinceCode\": \"NY\",\r\n      \"bancaItaliaCode\": null\r\n    },\r\n    \"healthInsuranceNumber\": \"123456789\"\r\n  },\r\n  \"householdInfo\": {\r\n    \"maritalStatus\": {\r\n      \"code\": \"S\",\r\n      \"label\": \"Single\",\r\n      \"value\": true\r\n    },\r\n    \"houseProperty\": {\r\n      \"code\": \"R\",\r\n      \"label\": \"Rented\",\r\n      \"value\": true\r\n    },\r\n    \"workStartingDate\": \"2012-06-01\",\r\n    \"familyMembers\": \"1\",\r\n    \"workingMembers\": \"1\"\r\n  },\r\n  \"incomeDocumentInfo\": {\r\n    \"jobOccupation\": {\r\n      \"code\": \"E\",\r\n      \"label\": \"Employee\",\r\n      \"value\": true,\r\n      \"grossAnnualIncomeRequired\": false\r\n    },\r\n    \"incomeDocType\": \"W2\",\r\n    \"workingStartDate\": \"2015-06-01\",\r\n    \"taxYear\": \"2021\",\r\n    \"netMonthlyIncome\": 4000.0,\r\n    \"taxWitholdingFlag\": true,\r\n    \"taxWitholdingCode\": \"FED\",\r\n    \"inpsRegistrationFlag\": true,\r\n    \"countryOfEmployment\": \"US\",\r\n    \"companyInfo\": {\r\n      \"companyName\": \"XYZ Corp\",\r\n      \"companyAddress\": \"321 Maple St\",\r\n      \"companyCountry\": {\r\n        \"code\": \"US\",\r\n        \"label\": \"United States\",\r\n        \"value\": true,\r\n        \"codeIso3\": \"USA\",\r\n        \"optional\": null\r\n      },\r\n      \"companyProvince\": {\r\n        \"code\": \"NY\",\r\n        \"label\": \"New York\",\r\n        \"value\": true,\r\n        \"countryCode\": \"US\"\r\n      },\r\n      \"companyCity\": {\r\n        \"code\": \"NYC\",\r\n        \"label\": \"New York City\",\r\n        \"value\": true,\r\n        \"belfioreCode\": \"36061\",\r\n        \"provinceCode\": \"NY\",\r\n        \"bancaItaliaCode\": null\r\n      },\r\n      \"companyZipCode\": \"10003\"\r\n    }\r\n  },\r\n  \"accountCheck\": true,\r\n  \"step\": \"completed\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "htttps://localhost:443/user-data?practiceId",
+					"protocol": "htttps",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"user-data"
+					],
+					"query": [
+						{
+							"key": "practiceId",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PRACTICE-OVERVIEW",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"personalDetails\": {\r\n    \"surname\": \"Doe\",\r\n    \"firstName\": \"Jane\",\r\n    \"gender\": \"F\",\r\n    \"birthCountry\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"birthProvince\": {\r\n      \"code\": \"NY\",\r\n      \"label\": \"New York\",\r\n      \"value\": true,\r\n      \"countryCode\": \"US\"\r\n    },\r\n    \"birthCity\": {\r\n      \"code\": \"NYC\",\r\n      \"label\": \"New York City\",\r\n      \"value\": true,\r\n      \"belfioreCode\": \"36061\",\r\n      \"provinceCode\": \"NY\",\r\n      \"bancaItaliaCode\": null\r\n    },\r\n    \"birthDate\": \"1990-05-15\",\r\n    \"taxCode\": \"98765432109\",\r\n    \"email\": \"jane.doe@example.com\",\r\n    \"phone\": \"+1 917 555 1234\",\r\n    \"citizenship\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"pep\": false,\r\n    \"fcaEmployee\": false\r\n  },\r\n  \"addressInfo\": {\r\n    \"resAddress\": \"789 Oak St\",\r\n    \"resZipCode\": \"10002\",\r\n    \"resCountry\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"resProvince\": {\r\n      \"code\": \"NY\",\r\n      \"label\": \"New York\",\r\n      \"value\": true,\r\n      \"countryCode\": \"US\"\r\n    },\r\n    \"resTown\": {\r\n      \"code\": \"NYC\",\r\n      \"label\": \"New York City\",\r\n      \"value\": true,\r\n      \"belfioreCode\": \"36061\",\r\n      \"provinceCode\": \"NY\",\r\n      \"bancaItaliaCode\": null\r\n    },\r\n    \"isDomEqualsRes\": true\r\n  },\r\n  \"documentInfo\": {\r\n    \"idDocumentType\": \"DriverLicense\",\r\n    \"idDocumentNumber\": \"123456789\",\r\n    \"idDocumentReleaseDate\": \"2015-06-01\",\r\n    \"idDocumentExpireDate\": \"2025-06-01\",\r\n    \"idDocumentReleaseEntity\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"idDocumentReleaseProvince\": {\r\n      \"code\": \"NY\",\r\n      \"label\": \"New York\",\r\n      \"value\": true,\r\n      \"countryCode\": \"US\"\r\n    },\r\n    \"idDocumentReleaseCity\": {\r\n      \"code\": \"NYC\",\r\n      \"label\": \"New York City\",\r\n      \"value\": true,\r\n      \"belfioreCode\": \"36061\",\r\n      \"provinceCode\": \"NY\",\r\n      \"bancaItaliaCode\": null\r\n    },\r\n    \"healthInsuranceNumber\": \"123456789\"\r\n  },\r\n  \"householdInfo\": {\r\n    \"maritalStatus\": {\r\n      \"code\": \"S\",\r\n      \"label\": \"Single\",\r\n      \"value\": true\r\n    },\r\n    \"houseProperty\": {\r\n      \"code\": \"R\",\r\n      \"label\": \"Rented\",\r\n      \"value\": true\r\n    },\r\n    \"workStartingDate\": \"2012-06-01\",\r\n    \"familyMembers\": \"1\",\r\n    \"workingMembers\": \"1\"\r\n  },\r\n  \"incomeDocumentInfo\": {\r\n    \"jobOccupation\": {\r\n      \"code\": \"E\",\r\n      \"label\": \"Employee\",\r\n      \"value\": true,\r\n      \"grossAnnualIncomeRequired\": false\r\n    },\r\n    \"incomeDocType\": \"W2\",\r\n    \"workingStartDate\": \"2015-06-01\",\r\n    \"taxYear\": \"2021\",\r\n    \"netMonthlyIncome\": 4000.0,\r\n    \"taxWitholdingFlag\": true,\r\n    \"taxWitholdingCode\": \"FED\",\r\n    \"inpsRegistrationFlag\": true,\r\n    \"countryOfEmployment\": \"US\",\r\n    \"companyInfo\": {\r\n      \"companyName\": \"XYZ Corp\",\r\n      \"companyAddress\": \"321 Maple St\",\r\n      \"companyCountry\": {\r\n        \"code\": \"US\",\r\n        \"label\": \"United States\",\r\n        \"value\": true,\r\n        \"codeIso3\": \"USA\",\r\n        \"optional\": null\r\n      },\r\n      \"companyProvince\": {\r\n        \"code\": \"NY\",\r\n        \"label\": \"New York\",\r\n        \"value\": true,\r\n        \"countryCode\": \"US\"\r\n      },\r\n      \"companyCity\": {\r\n        \"code\": \"NYC\",\r\n        \"label\": \"New York City\",\r\n        \"value\": true,\r\n        \"belfioreCode\": \"36061\",\r\n        \"provinceCode\": \"NY\",\r\n        \"bancaItaliaCode\": null\r\n      },\r\n      \"companyZipCode\": \"10003\"\r\n    }\r\n  },\r\n  \"accountCheck\": true,\r\n  \"step\": \"completed\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:443/practice-overview?practiceId=YD9217",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"practice-overview"
+					],
+					"query": [
+						{
+							"key": "practiceId",
+							"value": "YD9217"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EVALUATE-PRACTICE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"personalDetails\": {\r\n    \"surname\": \"Doe\",\r\n    \"firstName\": \"Jane\",\r\n    \"gender\": \"F\",\r\n    \"birthCountry\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"birthProvince\": {\r\n      \"code\": \"NY\",\r\n      \"label\": \"New York\",\r\n      \"value\": true,\r\n      \"countryCode\": \"US\"\r\n    },\r\n    \"birthCity\": {\r\n      \"code\": \"NYC\",\r\n      \"label\": \"New York City\",\r\n      \"value\": true,\r\n      \"belfioreCode\": \"36061\",\r\n      \"provinceCode\": \"NY\",\r\n      \"bancaItaliaCode\": null\r\n    },\r\n    \"birthDate\": \"1990-05-15\",\r\n    \"taxCode\": \"98765432109\",\r\n    \"email\": \"jane.doe@example.com\",\r\n    \"phone\": \"+1 917 555 1234\",\r\n    \"citizenship\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"pep\": false,\r\n    \"fcaEmployee\": false\r\n  },\r\n  \"addressInfo\": {\r\n    \"resAddress\": \"789 Oak St\",\r\n    \"resZipCode\": \"10002\",\r\n    \"resCountry\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"resProvince\": {\r\n      \"code\": \"NY\",\r\n      \"label\": \"New York\",\r\n      \"value\": true,\r\n      \"countryCode\": \"US\"\r\n    },\r\n    \"resTown\": {\r\n      \"code\": \"NYC\",\r\n      \"label\": \"New York City\",\r\n      \"value\": true,\r\n      \"belfioreCode\": \"36061\",\r\n      \"provinceCode\": \"NY\",\r\n      \"bancaItaliaCode\": null\r\n    },\r\n    \"isDomEqualsRes\": true\r\n  },\r\n  \"documentInfo\": {\r\n    \"idDocumentType\": \"DriverLicense\",\r\n    \"idDocumentNumber\": \"123456789\",\r\n    \"idDocumentReleaseDate\": \"2015-06-01\",\r\n    \"idDocumentExpireDate\": \"2025-06-01\",\r\n    \"idDocumentReleaseEntity\": {\r\n      \"code\": \"US\",\r\n      \"label\": \"United States\",\r\n      \"value\": true\r\n    },\r\n    \"idDocumentReleaseProvince\": {\r\n      \"code\": \"NY\",\r\n      \"label\": \"New York\",\r\n      \"value\": true,\r\n      \"countryCode\": \"US\"\r\n    },\r\n    \"idDocumentReleaseCity\": {\r\n      \"code\": \"NYC\",\r\n      \"label\": \"New York City\",\r\n      \"value\": true,\r\n      \"belfioreCode\": \"36061\",\r\n      \"provinceCode\": \"NY\",\r\n      \"bancaItaliaCode\": null\r\n    },\r\n    \"healthInsuranceNumber\": \"123456789\"\r\n  },\r\n  \"householdInfo\": {\r\n    \"maritalStatus\": {\r\n      \"code\": \"S\",\r\n      \"label\": \"Single\",\r\n      \"value\": true\r\n    },\r\n    \"houseProperty\": {\r\n      \"code\": \"R\",\r\n      \"label\": \"Rented\",\r\n      \"value\": true\r\n    },\r\n    \"workStartingDate\": \"2012-06-01\",\r\n    \"familyMembers\": \"1\",\r\n    \"workingMembers\": \"1\"\r\n  },\r\n  \"incomeDocumentInfo\": {\r\n    \"jobOccupation\": {\r\n      \"code\": \"E\",\r\n      \"label\": \"Employee\",\r\n      \"value\": true,\r\n      \"grossAnnualIncomeRequired\": false\r\n    },\r\n    \"incomeDocType\": \"W2\",\r\n    \"workingStartDate\": \"2015-06-01\",\r\n    \"taxYear\": \"2021\",\r\n    \"netMonthlyIncome\": 4000.0,\r\n    \"taxWitholdingFlag\": true,\r\n    \"taxWitholdingCode\": \"FED\",\r\n    \"inpsRegistrationFlag\": true,\r\n    \"countryOfEmployment\": \"US\",\r\n    \"companyInfo\": {\r\n      \"companyName\": \"XYZ Corp\",\r\n      \"companyAddress\": \"321 Maple St\",\r\n      \"companyCountry\": {\r\n        \"code\": \"US\",\r\n        \"label\": \"United States\",\r\n        \"value\": true,\r\n        \"codeIso3\": \"USA\",\r\n        \"optional\": null\r\n      },\r\n      \"companyProvince\": {\r\n        \"code\": \"NY\",\r\n        \"label\": \"New York\",\r\n        \"value\": true,\r\n        \"countryCode\": \"US\"\r\n      },\r\n      \"companyCity\": {\r\n        \"code\": \"NYC\",\r\n        \"label\": \"New York City\",\r\n        \"value\": true,\r\n        \"belfioreCode\": \"36061\",\r\n        \"provinceCode\": \"NY\",\r\n        \"bancaItaliaCode\": null\r\n      },\r\n      \"companyZipCode\": \"10003\"\r\n    }\r\n  },\r\n  \"accountCheck\": true,\r\n  \"step\": \"completed\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:443/evaluate-practice?practiceId=OO1761",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"evaluate-practice"
+					],
+					"query": [
+						{
+							"key": "practiceId",
+							"value": "OO1761"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BANK-TRANSFER-PAYMANET",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"owner\": \"John Doe\",\r\n    \"bankId\":\"IT2141825\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:443/bank-transfer-payment?practiceId=DT1510",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"bank-transfer-payment"
+					],
+					"query": [
+						{
+							"key": "practiceId",
+							"value": "DT1510"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ADDITIONAL-INFO",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"job\":\"Software Developer\",\r\n    \"gender\":\"male\",\r\n    \"dateOfBirth\":\"1992-01-15\",\r\n    \"province\":\"Taranto\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:443/additional-info?practiceId=YD9217",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"additional-info"
+					],
+					"query": [
+						{
+							"key": "practiceId",
+							"value": "YD9217"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CREDIT-CARD-PAYMENT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"owner\": \"John Doe\",\r\n    \"cardNumber\": \"1234567890123456\",\r\n    \"code\": \"123\",\r\n    \"expireDate\":\"2025-01-15\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:443/credit-card-payment?practiceId=YD9217",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"credit-card-payment"
+					],
+					"query": [
+						{
+							"key": "practiceId",
+							"value": "YD9217"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PRACTICE-EXISTS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9091/practice-exists?practiceId=DT1510",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"practice-exists"
+					],
+					"query": [
+						{
+							"key": "practiceId",
+							"value": "DT1510"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FINANCING-REQUEST",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"param\":\"get\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:443/financing-request?vehicleId=F123",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "443",
+					"path": [
+						"financing-request"
+					],
+					"query": [
+						{
+							"key": "vehicleId",
+							"value": "F123"
+						},
+						{
+							"key": "param",
+							"value": "get",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		}
+	]
+}

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Profile;
 import java.util.Random;
 
 @Profile("grpc")
-@GrpcService(interceptors = {HeaderInterceptor.class})
+@GrpcService
 public class PaymentServiceImpl extends PaymentGrpc.PaymentImplBase {
 
     @Override

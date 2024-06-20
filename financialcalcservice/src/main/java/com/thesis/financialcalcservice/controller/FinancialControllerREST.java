@@ -125,7 +125,7 @@ public class FinancialControllerREST {
         if(temp!=null){
             String response=BankingClientREST.createPractice(PersonalData, financingId,reqId);
             if(response!=null){
-                return ResponseEntity.ok().body("PRACTICE CREATED with ID:" + response);
+                return ResponseEntity.ok().body(response);
             }
         }else{
             return ResponseEntity.badRequest().body("FINANCING NOT FOUND! UNABLE TO CREATE PRACTICE!!");
